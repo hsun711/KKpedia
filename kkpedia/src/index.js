@@ -1,19 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
-import Map from "./Map";
-import MapTest from "./MapTest";
-import MapAutocomplete from "./MapAutocomplete";
-import RenderCalender from "./RenderCalender";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App";
+import NewOne from "./Components/NewOne";
+import LoginPage from "./Components/LoginPage";
+// import MapTest from "./Components/MapTest";
+// import RenderCalender from "./Components/RenderCalender";
 
 ReactDOM.render(
-	<React.StrictMode>
-		<MapTest />
-		{/* <MapAutocomplete /> */}
-		{/* <Map /> */}
+	<BrowserRouter>
+		{/* <MapTest /> */}
 		{/* <RenderCalender /> */}
-
-		{/* <App /> */}
-	</React.StrictMode>,
+		<App />
+		{/* <NewOne /> */}
+		{/* <LoginPage /> */}
+	</BrowserRouter>,
 	document.getElementById("root")
 );
