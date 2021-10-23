@@ -5,8 +5,8 @@ import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import NewOne from "./Components/NewOne";
 import LoginPage from "./Components/LoginPage";
-import MapTest from "./Components/MapTest";
-import RenderCalender from "./Components/RenderCalender";
+// import MapTest from "./Components/MapTest";
+// import RenderCalender from "./Components/RenderCalender";
 
 ReactDOM.render(
 	<BrowserRouter>
