@@ -46,7 +46,7 @@ SimpleMap.defaultProps = {
 };
 
 // App
-function App() {
+function Map() {
 	return (
 		<div className="App">
 			<SimpleMap />
@@ -54,4 +54,4 @@ function App() {
 	);
 }
 
-export default App;
+export default Map;
