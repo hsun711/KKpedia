@@ -1,10 +1,27 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 import PlacesAutocomplete, {
 	geocodeByAddress,
 	geocodeByPlaceId,
 	getLatLng,
 } from "react-places-autocomplete";
 
+const InputArea = styled.div`
+	width: 100%;
+	margin: 15px 0px;
+`;
+
+const Input = styled.input`
+	border-radius: 5px;
+	width: 100%;
+	height: 4vmin;
+	padding-left: 10px;
+	padding-top: 0.5vmin;
+	font-size: 2vmin;
+	@media screen and (max-width: 800px) {
+		font-size: 1.5vmin;
+	}
+`;
 function MapAutocomplete() {
 	const [address, setAddress] = useState("");
 	const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
@@ -17,7 +34,7 @@ function MapAutocomplete() {
 		console.log(results);
 	};
 	return (
-		<div>
+		<InputArea>
 			<PlacesAutocomplete
 				value={address}
 				onChange={setAddress}
@@ -25,15 +42,15 @@ function MapAutocomplete() {
 			>
 				{({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
 					<div>
-						<p>Latitude：{coordinates.lat}</p>
-						<p>Longitude：{coordinates.lng}</p>
+						{/* <p>Latitude：{coordinates.lat}</p> */}
+						{/* <p>Longitude：{coordinates.lng}</p> */}
 
-						<input {...getInputProps({ placeholder: "Type address" })} />
+						<Input {...getInputProps({ placeholder: "Type address" })} />
 						<div>
 							{loading ? <div>...loading</div> : null}
 							{suggestions.map((suggestion) => {
 								const style = {
-									backgroundColor: suggestion.active ? "#41b6e6" : "#fff",
+									backgroundColor: suggestion.active ? "#16A085" : "#fff",
 								};
 
 								return (
@@ -49,7 +66,7 @@ function MapAutocomplete() {
 					</div>
 				)}
 			</PlacesAutocomplete>
-		</div>
+		</InputArea>
 	);
 }
 

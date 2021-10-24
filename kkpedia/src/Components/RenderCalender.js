@@ -45,6 +45,7 @@ export default function RenderCalender() {
 	const HandleDateClick = (date) => {
 		let event = prompt("Enter the event");
 		let selectedDate = new Date(date.dateStr + "T00:00:00");
+
 		const calenderEvent = JSON.parse(
 			window.localStorage.getItem("calender" || [])
 		);
@@ -55,6 +56,7 @@ export default function RenderCalender() {
 				date: selectedDate,
 			},
 		]);
+
 		alert("Great. Now, update your database...");
 		// console.log(date);
 		// console.log(event);
@@ -62,7 +64,7 @@ export default function RenderCalender() {
 			date: date.dateStr,
 			event: event,
 		};
-		// window.localStorage.setItem("calender", JSON.stringify([calenderContent]));
+		window.localStorage.setItem("calender", JSON.stringify([calenderContent]));
 		const newCalenderEvent = [...calenderEvent, calenderContent];
 		window.localStorage.setItem("calender", JSON.stringify(newCalenderEvent));
 		window.location.reload();

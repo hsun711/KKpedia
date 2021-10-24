@@ -12,6 +12,7 @@ import Place from "./Place";
 import Picture from "./Picture";
 import Calender from "./Calender";
 import Post from "./Post";
+import NewPlace from "./NewPlace.js";
 import idolimage from "../img/wanted.png";
 import fb from "../img/facebook.png";
 import ig from "../img/instagram.png";
@@ -22,6 +23,7 @@ import pin from "../img/pin-map.png";
 import pictures from "../img/pictures.png";
 import schedule from "../img/schedule.png";
 import comment from "../img/comment.png";
+import add from "../img/plus.png";
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -110,47 +112,65 @@ function IdolPage() {
 	);
 	const [tw, setTwitter] = useState("https://twitter.com/bts_twt");
 	const [yt, setYoutube] = useState("https://www.youtube.com/user/BANGTANTV");
+	const [location, setLocation] = useState("南山塔");
+
 	return (
 		<MainContainer>
 			<Container>
-				<Person>
-					<PersonName>{title}</PersonName>
-					<PersonImage src={idolimage} />
-				</Person>
-				<SnsIconUl>
-					<SnsLink href={facebook} target="_blank">
-						<SnsImg src={fb} />
-					</SnsLink>
-					<SnsLink href={instagram} target="_blank">
-						<SnsImg src={ig} />
-					</SnsLink>
-					<SnsLink href={tw} target="_blank">
-						<SnsImg src={twitter} />
-					</SnsLink>
-					<SnsLink href={yt} target="_blank">
-						<SnsImg src={youtube} />
-					</SnsLink>
-				</SnsIconUl>
-				<MenuBar>
-					<MenuLink>
-						<MenuImage src={pin} />
-						聖地
-					</MenuLink>
-					<MenuLink>
-						<MenuImage src={pictures} />
-						圖片區
-					</MenuLink>
-					<MenuLink>
-						<MenuImage src={schedule} />
-						日程表
-					</MenuLink>
-					<MenuLink>
-						<MenuImage src={comment} />
-						留言區
-					</MenuLink>
-				</MenuBar>
-
-				<PlaceContainer></PlaceContainer>
+				<BrowserRouter>
+					<Person>
+						<PersonName>{title}</PersonName>
+						<PersonImage src={idolimage} />
+					</Person>
+					<SnsIconUl>
+						<SnsLink href={facebook} target="_blank">
+							<SnsImg src={fb} />
+						</SnsLink>
+						<SnsLink href={instagram} target="_blank">
+							<SnsImg src={ig} />
+						</SnsLink>
+						<SnsLink href={tw} target="_blank">
+							<SnsImg src={twitter} />
+						</SnsLink>
+						<SnsLink href={yt} target="_blank">
+							<SnsImg src={youtube} />
+						</SnsLink>
+					</SnsIconUl>
+					<MenuBar>
+						<MenuLink to={`${url}`}>
+							<MenuImage src={pin} />
+							聖地
+						</MenuLink>
+						<MenuLink to={`${url}/picture`}>
+							<MenuImage src={pictures} />
+							圖片區
+						</MenuLink>
+						<MenuLink to={`${url}/calender`}>
+							<MenuImage src={schedule} />
+							日程表
+						</MenuLink>
+						<MenuLink to={`${url}/post`}>
+							<MenuImage src={comment} />
+							留言區
+						</MenuLink>
+					</MenuBar>
+					<PlaceContainer>
+						<Switch>
+							<Route exact path={path}>
+								<Place title={title} />
+							</Route>
+							<Route path={`${path}/picture`}>
+								<Picture />
+							</Route>
+							<Route path={`${path}/calender`}>
+								<Calender />
+							</Route>
+							<Route path={`${path}/post`}>
+								<Post />
+							</Route>
+						</Switch>
+					</PlaceContainer>
+				</BrowserRouter>
 			</Container>
 		</MainContainer>
 	);
