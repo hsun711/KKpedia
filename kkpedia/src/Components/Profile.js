@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import PersonalData from "./PersonalData";
+import PersonalFavorite from "./PersonalFavorite";
+import PersonalPost from "./PersonalPost";
 import personimage from "../img/wanted.png";
 import levelImg from "../img/level-up.png";
 import profile from "../img/resume.png";
@@ -76,21 +79,25 @@ const MenuImage = styled.img`
 	margin-right: 5px;
 `;
 
-const PlaceContainer = styled.div`
+const ProfileContainer = styled.div`
 	background-image: url(${board});
 	margin-top: 5vmin;
 	padding: 4vmin;
 `;
 
 function Profile() {
+	const [personal, setPersonal] = useState("RenderProfile");
 	const RenderProfile = () => {
 		console.log("RenderProfile");
+		setPersonal("RenderProfile");
 	};
 	const RenderLikePlace = () => {
 		console.log("RenderLikePlace");
+		setPersonal("RenderLikePlace");
 	};
 	const RenderPost = () => {
 		console.log("RenderPost");
+		setPersonal("RenderPost");
 	};
 	return (
 		<MainContainer>
@@ -117,7 +124,7 @@ function Profile() {
 						過往PO文
 					</MenuLink>
 				</MenuBar>
-				<PlaceContainer></PlaceContainer>
+				<ProfileContainer></ProfileContainer>
 			</Container>
 		</MainContainer>
 	);

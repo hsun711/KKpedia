@@ -1,5 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import firebase from "../utils/firebase";
+import { useHistory } from "react-router-dom";
+import "firebase/auth";
+import Loading from "./Loading";
 import fb from "../img/facebook.png";
 import google from "../img/google.png";
 
@@ -66,6 +70,7 @@ const LoginBtn = styled.div`
 	justify-content: center;
 	background-color: #f1f2f6;
 	margin-bottom: 30px;
+	cursor: pointer;
 `;
 
 const LoginImg = styled.img`
@@ -118,7 +123,71 @@ const CheckBtn = styled(LoginBtn)`
 	font-weight: 600;
 `;
 
+const ErrorText = styled(Text)`
+	color: red;
+`;
+
 function LoginPage() {
+	const history = useHistory();
+	const [userName, setUserName] = useState("");
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [errorMsg, setErrorMsg] = useState("");
+	const [loading, setLoading] = useState(false);
+
+	const Register = () => {
+		setLoading(true);
+		setErrorMsg("");
+		firebase
+			.auth()
+			.createUserWithEmailAndPassword(email, password)
+			.then((response) => {
+				console.log(response);
+				history.push("/idol");
+				setLoading(false);
+			})
+			.catch((error) => {
+				switch (error.code) {
+					case "auth/email-already-in-use":
+						setErrorMsg("Email帳號已經註冊過囉🤨🤨🤨");
+						break;
+					case "auth/invalid-email":
+						setErrorMsg("Email格式錯誤囉😈😈😈😈");
+						break;
+					default:
+				}
+				setLoading(false);
+			});
+	};
+
+	const Signin = () => {
+		console.log("Signin");
+		setLoading(true);
+		setErrorMsg("");
+		firebase
+			.auth()
+			.signInWithEmailAndPassword(email, password)
+			.then((resp) => {
+				console.log(resp);
+				history.push("/idol");
+				setLoading(false);
+			})
+			.catch((error) => {
+				switch (error.code) {
+					case "auth/invalid-email":
+						setErrorMsg("Email格式錯囉💀💀💀💀");
+						break;
+					case "auth/user-not-found":
+						setErrorMsg("Email帳號不存在喔👻👻👻👻");
+						break;
+					case "auth/wrong-password":
+						setErrorMsg("密碼錯了唷😱😱😱😱");
+						break;
+					default:
+				}
+				setLoading(false);
+			});
+	};
 	return (
 		<Container>
 			<WelcomeLeft>
@@ -141,14 +210,35 @@ function LoginPage() {
 					</LoginBtn>
 					<Text>使用KKpedia帳號註冊/登入</Text>
 					<InputArea>
-						<NameInput placeholder="請輸入暱稱" />
-						<MailInput placeholder="請輸入註冊/登入Email帳號" />
-						<PasswordInput placeholder="請輸入密碼" type="password" />
+						<NameInput
+							placeholder="請輸入暱稱"
+							value={userName}
+							onChange={(e) => {
+								setUserName(e.target.value);
+							}}
+						/>
+						<MailInput
+							placeholder="請輸入註冊/登入Email帳號"
+							value={email}
+							onChange={(e) => {
+								setEmail(e.target.value);
+							}}
+						/>
+						<PasswordInput
+							placeholder="請輸入密碼"
+							type="password"
+							value={password}
+							onChange={(e) => {
+								setPassword(e.target.value);
+							}}
+						/>
 					</InputArea>
 					<BottomBtn>
-						<CheckBtn>登入</CheckBtn>
-						<CheckBtn>註冊</CheckBtn>
+						<CheckBtn onClick={Signin}>登入</CheckBtn>
+						<CheckBtn onClick={Register}>註冊</CheckBtn>
 					</BottomBtn>
+					{loading && <Loading />}
+					{errorMsg && <ErrorText>{errorMsg}</ErrorText>}
 				</WelcomeArea>
 			</WelcomeRigth>
 		</Container>

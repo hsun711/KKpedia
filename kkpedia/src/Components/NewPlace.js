@@ -6,7 +6,7 @@ import MapAutocomplete from "./MapAutocomplete";
 
 const Container = styled.div`
 	width: 80vmin;
-	height: 70vh;
+	height: 80vh;
 	background-color: beige;
 	position: fixed;
 	top: 50%;
@@ -31,14 +31,14 @@ const InputArea = styled.input`
 	height: 4vmin;
 	margin: 15px 0px;
 	padding-left: 20px;
-	padding-top: 0.5vmin;
+	padding-top: 0.25vmin;
 	font-size: 2vmin;
 	@media screen and (max-width: 800px) {
 		font-size: 1.5vmin;
 	}
 `;
 
-const ArtistName = styled.div`
+const Title = styled.div`
 	width: 100%;
 	margin-top: 3vmin;
 	display: flex;
@@ -76,26 +76,26 @@ function NewPlace({ title }) {
 	return (
 		<Container>
 			<InputTitle>藝人 / 戲劇 / 綜藝名稱：{title}</InputTitle>
-			<ArtistName>
+			<Title>
 				<ShortTitle>貢獻者暱稱：</ShortTitle>
 				<InputArea />
-			</ArtistName>
-			<ArtistName>
+			</Title>
+			<Title>
 				<ShortTitle>景點/餐廳名稱：</ShortTitle>
 				<InputArea />
-			</ArtistName>
-			<ArtistName>
+			</Title>
+			<Title>
 				<ShortTitle>景點/餐廳描述：</ShortTitle>
 				<InputArea placeholder="ex.哪個藝人po文的、哪個場景出現的" />
-			</ArtistName>
-			<ArtistName>
+			</Title>
+			<Title>
 				<ShortTitle>詳細地址：</ShortTitle>
 				<MapAutocomplete />
-			</ArtistName>
-			<ArtistName>
+			</Title>
+			<Title>
 				<ShortTitle>上傳照片：</ShortTitle>
 				<Add />
-			</ArtistName>
+			</Title>
 			<SendBtn />
 		</Container>
 	);
