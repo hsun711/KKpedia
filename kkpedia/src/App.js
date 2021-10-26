@@ -9,25 +9,16 @@ import TvShow from "./Components/TvShow";
 import LandingPage from "./Components/LandingPage";
 import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 import EachLocation from "./Components/EachLocation";
-
-const Cover = styled.div`
-	width: 100vw;
-	height: 100vh;
-	position: fixed;
-	top: 0;
-	left: 0;
-	background-color: black;
-	opacity: 0.8;
-	z-index: 2;
-`;
 
 function App() {
 	const [user, setUser] = useState(null);
+	const history = useHistory();
 	useEffect(() => {
 		firebase.auth().onAuthStateChanged((currentUser) => {
 			setUser(currentUser);
+			history.push("/idol");
 		});
 	}, []);
 	return (

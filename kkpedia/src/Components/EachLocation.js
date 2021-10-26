@@ -78,7 +78,7 @@ const SubTitle = styled.p`
 
 const PlaceMap = styled.div`
 	width: 100%;
-	height: 20vmin;
+	height: 50vmin;
 	margin: 1vmin 0px;
 `;
 

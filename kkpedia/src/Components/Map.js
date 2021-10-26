@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import GoogleMapReact from "google-map-react";
 import { Key } from "../key";
+import styled from "styled-components";
+// import { useState } from "react/cjs/react.development";
 
 const AnyReactComponent = ({ text }) => <div>{text}</div>;
+
+const Container = styled.div`
+	width: 100%;
+	height: 50vmin;
+`;
 
 // Map
 const SimpleMap = (props) => {
@@ -10,11 +17,13 @@ const SimpleMap = (props) => {
 		// use map and maps objects
 		console.log("載入完成!"); // 印出「載入完成」
 	};
-	const getPlace = JSON.parse(window.localStorage.getItem("location"));
+	// const getPlace = JSON.parse(window.localStorage.getItem("location"));
+	const [places, setPlaces] = useState([]);
 
 	return (
 		// Important! Always set the container height explicitly
-		<div style={{ height: "20vmin", width: "100%" }}>
+		<Container>
+			{/* <div style={{ height: "100%", width: "100%" }}> */}
 			<GoogleMapReact
 				bootstrapURLKeys={{ key: Key }}
 				defaultCenter={props.center}
@@ -22,7 +31,7 @@ const SimpleMap = (props) => {
 				yesIWantToUseGoogleMapApiInternals // 設定為 true
 				onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)} // 載入完成後執行
 			>
-				{getPlace.map((item) => (
+				{places.map((item) => (
 					<AnyReactComponent
 						key={item.place_id}
 						lat={item.geometry.location.lat}
@@ -32,7 +41,7 @@ const SimpleMap = (props) => {
 					/>
 				))}
 			</GoogleMapReact>
-		</div>
+		</Container>
 	);
 };
 

@@ -4,8 +4,10 @@ import firebase from "../utils/firebase";
 import { useHistory } from "react-router-dom";
 import "firebase/auth";
 import Loading from "./Loading";
+import socialMediaAuth from "../utils/socialMediaAuth";
 import fb from "../img/facebook.png";
 import google from "../img/google.png";
+import { facebookProvider, googleProvider } from "../utils/authMethod";
 
 // const Container = styled.div`
 // 	width: 100vw;
@@ -135,6 +137,12 @@ function LoginPage() {
 	const [errorMsg, setErrorMsg] = useState("");
 	const [loading, setLoading] = useState(false);
 
+	const HandleLogin = async (provider) => {
+		const res = await socialMediaAuth(provider);
+		history.push("/idol");
+		console.log(res);
+	};
+
 	const Register = () => {
 		setLoading(true);
 		setErrorMsg("");
@@ -161,7 +169,6 @@ function LoginPage() {
 	};
 
 	const Signin = () => {
-		console.log("Signin");
 		setLoading(true);
 		setErrorMsg("");
 		firebase
@@ -200,11 +207,11 @@ function LoginPage() {
 			</WelcomeLeft>
 			<WelcomeRigth>
 				<WelcomeArea>
-					<LoginBtn>
+					<LoginBtn onClick={() => HandleLogin(facebookProvider)}>
 						<LoginImg src={fb} />
 						<LoginText>Facebook 註冊/登入</LoginText>
 					</LoginBtn>
-					<LoginBtn>
+					<LoginBtn onClick={() => HandleLogin(googleProvider)}>
 						<LoginImg src={google} />
 						<LoginText>Google 註冊/登入</LoginText>
 					</LoginBtn>
