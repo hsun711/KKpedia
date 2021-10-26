@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import menu from "../img/burgerMenu.png";
-import user from "../img/user.png";
+import userImg from "../img/user.png";
 import logo from "../img/logo1.png";
 import search from "../img/search.png";
 import SideMenu from "./SideMenu";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logout from "../img/logout.png";
-import LandingPage from "./LandingPage";
 
 const HeaderContent = styled.div`
 	background-color: #fff;
@@ -51,13 +50,11 @@ const BurgerMenu = styled.div`
 	} */
 `;
 
-const Member = styled.div`
-	background-image: url(${user});
-	background-size: 100%;
-	background-repeat: no-repeat;
+const Member = styled.img`
 	width: 3vmin;
 	height: 3vmin;
 	margin: auto 2.5vmin;
+	border-radius: 50%;
 	cursor: pointer;
 `;
 
@@ -106,8 +103,8 @@ const Logout = styled.div`
 `;
 
 function Header() {
-	const history = useHistory();
 	const [sideBar, setSideBar] = useState(true);
+	const user = firebase.auth().currentUser;
 	const showSidebar = () => {
 		setSideBar(!sideBar);
 	};
@@ -117,19 +114,18 @@ function Header() {
 			<HeaderContent>
 				<HeaderNav>
 					<BurgerMenu onClick={showSidebar} />
-					<LinkNav to="/idol">
+					<LinkNav to="/">
 						<Logo />
 					</LinkNav>
 				</HeaderNav>
 				<HeaderNav>
 					<SearchInput />
 					<LinkNav to="/profile">
-						<Member />
+						<Member src={user.photoURL || userImg} />
 					</LinkNav>
 					<Logout
 						onClick={() => {
 							firebase.auth().signOut();
-							history.push("/");
 						}}
 					/>
 				</HeaderNav>

@@ -159,7 +159,7 @@ function IdolPage() {
 					</MenuBar>
 					<PlaceContainer>
 						<Switch>
-							<Route exact path={path}>
+							<Route exact path={`${path}`}>
 								<Place title={title} />
 							</Route>
 							<Route exact path={`${path}/picture`}>

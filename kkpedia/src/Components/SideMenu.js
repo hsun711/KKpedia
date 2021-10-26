@@ -43,7 +43,7 @@ function SideMenu() {
 	return (
 		<MenuBar>
 			<Topic>
-				<LinkNav to="/idol">Idol</LinkNav>
+				<LinkNav to="/">Idol</LinkNav>
 				<LinkNav to="/drama">Drama</LinkNav>
 				<LinkNav to="/tvshow">TV Show</LinkNav>
 			</Topic>

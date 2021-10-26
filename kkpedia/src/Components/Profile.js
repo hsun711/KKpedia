@@ -5,6 +5,7 @@ import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
 import PersonalFavorite from "./PersonalFavorite";
 import PersonalPost from "./PersonalPost";
+import userImg from "../img/user.png";
 import personimage from "../img/wanted.png";
 import levelImg from "../img/level-up.png";
 import profile from "../img/resume.png";
@@ -47,7 +48,7 @@ const PersonImage = styled.img`
 	width: 5vmin;
 	height: 5vmin;
 	border-radius: 50%;
-	outline: 1px solid black;
+	cursor: pointer;
 `;
 
 const LevelTag = styled.p`
@@ -82,12 +83,28 @@ const MenuImage = styled.img`
 `;
 
 function Profile() {
+	const user = firebase.auth().currentUser;
+	const db = firebase.firestore();
+	const userId = user.uid;
+	const docRef = db.collection("users").doc(`${userId}`);
+	const [userName, setUserName] = useState("");
+
+	docRef.get().then((doc) => {
+		if (doc.exists) {
+			console.log(doc.data());
+			setUserName(doc.data().userName);
+		} else {
+			// doc.data() will be undefined in this case
+			console.log("No such document!");
+		}
+	});
+
 	return (
 		<MainContainer>
 			<Container>
 				<Person>
-					<PersonName>User</PersonName>
-					<PersonImage src={personimage} />
+					<PersonName>{user.displayName || userName}</PersonName>
+					<PersonImage src={user.photoURL || userImg} />
 					<LevelTag>
 						<LevelImg src={levelImg} />
 						10

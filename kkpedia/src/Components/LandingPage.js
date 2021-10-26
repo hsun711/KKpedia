@@ -52,7 +52,6 @@ const Cover = styled.div`
 
 function LandingPage() {
 	const [popUpsignin, setPopUpsignin] = useState(false);
-
 	const ShowSignIn = () => {
 		setPopUpsignin(!popUpsignin);
 	};

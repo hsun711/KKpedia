@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import { useHistory } from "react-router-dom";
-import "firebase/auth";
 import Loading from "./Loading";
 import socialMediaAuth from "../utils/socialMediaAuth";
 import fb from "../img/facebook.png";
@@ -131,17 +130,45 @@ const ErrorText = styled(Text)`
 
 function LoginPage() {
 	const history = useHistory();
+	const [userData, setUserData] = useState({});
 	const [userName, setUserName] = useState("");
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
 	const [loading, setLoading] = useState(false);
+	const db = firebase.firestore();
 
 	const HandleLogin = async (provider) => {
 		const res = await socialMediaAuth(provider);
-		history.push("/idol");
-		console.log(res);
+		history.push("/");
+		db.collection("users")
+			.doc(`${res.uid}`)
+			.set({
+				email: res.email,
+				password: password,
+				userImage: res.photoURL,
+				userName: res.displayName,
+				userId: res.uid,
+			})
+			.then((docRef) => {
+				console.log("😁😁😁😁");
+			});
 	};
+
+	// const AddtoFirsebase = async (data) => {
+	// 	db.collection("users")
+	// 		.doc(`${data.uid}`)
+	// 		.set({
+	// 			email: data.email,
+	// 			password: password,
+	// 			userImage: data.photoURL,
+	// 			userName: data.displayName,
+	// 			userId: data.uid,
+	// 		})
+	// 		.then((docRef) => {
+	// 			console.log("😁😁😁😁");
+	// 		});
+	// };
 
 	const Register = () => {
 		setLoading(true);
@@ -150,9 +177,28 @@ function LoginPage() {
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
 			.then((response) => {
-				console.log(response);
-				history.push("/idol");
+				history.push("/");
 				setLoading(false);
+				setUserName(userName);
+				setPassword(password);
+				setUserData(response);
+				setEmail(email);
+				// AddtoFirsebase(response);
+				db.collection("users")
+					.doc(`${response.user.uid}`)
+					.set(
+						{
+							email: response.user.email,
+							password: password,
+							userImage: response.user.photoURL,
+							userName: userName,
+							userId: response.user.uid,
+						},
+						{ merge: true }
+					)
+					.then((docRef) => {
+						console.log("😁😁😁😁");
+					});
 			})
 			.catch((error) => {
 				switch (error.code) {
@@ -175,8 +221,7 @@ function LoginPage() {
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.then((resp) => {
-				console.log(resp);
-				history.push("/idol");
+				history.push("/");
 				setLoading(false);
 			})
 			.catch((error) => {
@@ -209,11 +254,11 @@ function LoginPage() {
 				<WelcomeArea>
 					<LoginBtn onClick={() => HandleLogin(facebookProvider)}>
 						<LoginImg src={fb} />
-						<LoginText>Facebook 註冊/登入</LoginText>
+						<LoginText>Facebook 快速註冊/登入</LoginText>
 					</LoginBtn>
 					<LoginBtn onClick={() => HandleLogin(googleProvider)}>
 						<LoginImg src={google} />
-						<LoginText>Google 註冊/登入</LoginText>
+						<LoginText>Google 快速註冊/登入</LoginText>
 					</LoginBtn>
 					<Text>使用KKpedia帳號註冊/登入</Text>
 					<InputArea>

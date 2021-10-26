@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import firebase from "../utils/firebase";
 import styled from "styled-components";
 import sticker from "../img/sticker.png";
 import board from "../img/cork-board.png";
@@ -56,47 +57,26 @@ const LinkTxt = styled.p`
 	font-weight: 600;
 `;
 
-function TopicContainer({ topic, title }) {
-	const [titleName, setTitileName] = useState(title);
+function TopicContainer({ topic }) {
+	const [titleName, setTitileName] = useState([]);
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
+
+	docRef
+		.where("topic", "==", `${topic}`)
+		.get()
+		.then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				// doc.data() is never undefined for query doc snapshots
+				console.log(doc.data());
+			});
+		})
+		.catch((error) => {
+			console.log("Error getting documents: ", error);
+		});
 
 	return (
 		<Container>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
 			<EachIdol>
 				<LinkNav to={`${titleName}`}>
 					<LinkTxt>{titleName}</LinkTxt>
