@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
-import { useParams } from "react-router-dom";
+import {
+	BrowserRouter,
+	Route,
+	Link,
+	Switch,
+	useParams,
+	useRouteMatch,
+} from "react-router-dom";
 import add from "../img/plus.png";
 import NewPlace from "./NewPlace";
 
@@ -9,10 +16,15 @@ const Container = styled.div`
 	display: flex;
 	background-color: beige;
 	padding: 10px;
-	width: 20vmin;
-	height: 13vmin;
+	/* width: 20vmin;
+	height: 13vmin; */
 	border-radius: 10px;
 	align-items: center;
+`;
+
+const PlaceLink = styled(Link)`
+	text-decoration: none;
+	color: black;
 `;
 
 const EachPlace = styled.div`
@@ -59,6 +71,7 @@ const Cover = styled.div`
 function Place({ title }) {
 	// let { category } = useParams();
 	const [popAddPlace, setPopAddPlace] = useState(false);
+	const [placeName, setPlaceName] = useState("南山塔");
 
 	const AddSomePlace = () => {
 		setPopAddPlace(!popAddPlace);
@@ -72,13 +85,15 @@ function Place({ title }) {
 					<NewPlace title={title} />
 				</div>
 			) : (
-				<EachPlace>
-					<PlaceImage src={idolimage} />
-					<PlaceText>
-						<h3>Place</h3>
-						<PlaceDesp>哈哈哈哈哈哈哈哈</PlaceDesp>
-					</PlaceText>
-				</EachPlace>
+				<PlaceLink to={`/place/${placeName}`}>
+					<EachPlace>
+						<PlaceImage src={idolimage} />
+						<PlaceText>
+							<h3>{placeName}</h3>
+							<PlaceDesp>哈哈哈哈哈哈</PlaceDesp>
+						</PlaceText>
+					</EachPlace>
+				</PlaceLink>
 			)}
 		</Container>
 	);

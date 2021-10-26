@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import firebase from "../utils/firebase";
 import menu from "../img/burgerMenu.png";
 import user from "../img/user.png";
 import logo from "../img/logo1.png";
 import search from "../img/search.png";
 import SideMenu from "./SideMenu";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
+import logout from "../img/logout.png";
+import LandingPage from "./LandingPage";
 
 const HeaderContent = styled.div`
 	background-color: #fff;
@@ -92,13 +95,25 @@ const LinkNav = styled(Link)`
 	}
 `;
 
+const Logout = styled.div`
+	background-image: url(${logout});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 3vmin;
+	height: 3vmin;
+	margin-right: 2vmin;
+	cursor: pointer;
+`;
+
 function Header() {
+	const history = useHistory();
 	const [sideBar, setSideBar] = useState(true);
 	const showSidebar = () => {
 		setSideBar(!sideBar);
 	};
+
 	return (
-		<div>
+		<>
 			<HeaderContent>
 				<HeaderNav>
 					<BurgerMenu onClick={showSidebar} />
@@ -111,10 +126,16 @@ function Header() {
 					<LinkNav to="/profile">
 						<Member />
 					</LinkNav>
+					<Logout
+						onClick={() => {
+							firebase.auth().signOut();
+							history.push("/");
+						}}
+					/>
 				</HeaderNav>
 			</HeaderContent>
 			{sideBar ? <SideMenu /> : <div></div>}
-		</div>
+		</>
 	);
 }
 

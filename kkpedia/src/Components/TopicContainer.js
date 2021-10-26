@@ -3,7 +3,7 @@ import styled from "styled-components";
 import sticker from "../img/sticker.png";
 import board from "../img/cork-board.png";
 import idol from "../img/wanted.png";
-import { Link, useRouteMatch, Route } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
 	width: 70%;
@@ -57,7 +57,6 @@ const LinkTxt = styled.p`
 `;
 
 function TopicContainer({ topic, title }) {
-	let { path, url } = useRouteMatch();
 	const [titleName, setTitileName] = useState(title);
 
 	return (

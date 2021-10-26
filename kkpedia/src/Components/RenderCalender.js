@@ -6,26 +6,40 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import "../index.css";
 
-const initialCalender = JSON.parse(
-	window.localStorage.getItem("calender" || [])
-);
+// const initialCalender = JSON.parse(
+// 	window.localStorage.getItem("calender" || [])
+// );
 
-const items = initialCalender.map((item) => {
-	return {
-		title: item.event,
-		date: new Date(item.date + "T00:00:00"),
-	};
-});
+// const items = initialCalender.map((item) => {
+// 	return {
+// 		title: item.event,
+// 		date: new Date(item.date + "T00:00:00"),
+// 	};
+// });
 
-const INITIAL_EVENTS = items;
+// const INITIAL_EVENTS = items;
 
-const CalenderArea = styled.div`
-	width: 90vmin;
-	height: 70vmin;
-`;
+// const CalenderArea = styled.div`
+// 	width: 90vmin;
+// 	height: 70vmin;
+// `;
 
 export default function RenderCalender() {
 	const [events, setEvents] = useState([]);
+
+	const items = events.map((item) => {
+		return {
+			title: item.event,
+			date: new Date(item.date + "T00:00:00"),
+		};
+	});
+
+	const INITIAL_EVENTS = items;
+
+	const CalenderArea = styled.div`
+		width: 90vmin;
+		height: 70vmin;
+	`;
 
 	// window.localStorage.setItem("calender", JSON.stringify([]));
 
@@ -46,9 +60,9 @@ export default function RenderCalender() {
 		let event = prompt("Enter the event");
 		let selectedDate = new Date(date.dateStr + "T00:00:00");
 
-		const calenderEvent = JSON.parse(
-			window.localStorage.getItem("calender" || [])
-		);
+		// const calenderEvent = JSON.parse(
+		// 	window.localStorage.getItem("calender" || [])
+		// );
 		setEvents([
 			...events,
 			{
@@ -58,29 +72,29 @@ export default function RenderCalender() {
 		]);
 
 		alert("Great. Now, update your database...");
-		// console.log(date);
-		// console.log(event);
-		const calenderContent = {
-			date: date.dateStr,
-			event: event,
-		};
-		window.localStorage.setItem("calender", JSON.stringify([calenderContent]));
-		const newCalenderEvent = [...calenderEvent, calenderContent];
-		window.localStorage.setItem("calender", JSON.stringify(newCalenderEvent));
-		window.location.reload();
+		console.log(date);
+		console.log(event);
+		// const calenderContent = {
+		// 	date: date.dateStr,
+		// 	event: event,
+		// };
+		// window.localStorage.setItem("calender", JSON.stringify([calenderContent]));
+		// const newCalenderEvent = [...calenderEvent, calenderContent];
+		// window.localStorage.setItem("calender", JSON.stringify(newCalenderEvent));
+		// window.location.reload();
 	};
 
 	const DeletedEvent = (eventInfo) => {
 		console.log(eventInfo);
 		console.log(eventInfo.event.title);
-		const calenderEvent = JSON.parse(window.localStorage.getItem("calender"));
+		// const calenderEvent = JSON.parse(window.localStorage.getItem("calender"));
 
-		const newEvent = calenderEvent.filter((obj) => {
-			const result = obj.event !== eventInfo.event.title;
-			return result;
-		});
-		window.localStorage.setItem("calender", JSON.stringify(newEvent));
-		window.location.reload();
+		// const newEvent = calenderEvent.filter((obj) => {
+		// 	const result = obj.event !== eventInfo.event.title;
+		// 	return result;
+		// });
+		// window.localStorage.setItem("calender", JSON.stringify(newEvent));
+		// window.location.reload();
 	};
 
 	return (

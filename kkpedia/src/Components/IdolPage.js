@@ -2,16 +2,19 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
 	BrowserRouter,
+	HashRouter,
 	Route,
 	Link,
 	Switch,
 	useParams,
 	useRouteMatch,
+	useLocation,
 } from "react-router-dom";
 import Place from "./Place";
 import Picture from "./Picture";
 import Calender from "./Calender";
 import Post from "./Post";
+import EachLocation from "./EachLocation";
 import NewPlace from "./NewPlace.js";
 import idolimage from "../img/wanted.png";
 import fb from "../img/facebook.png";
@@ -112,7 +115,6 @@ function IdolPage() {
 	);
 	const [tw, setTwitter] = useState("https://twitter.com/bts_twt");
 	const [yt, setYoutube] = useState("https://www.youtube.com/user/BANGTANTV");
-	const [location, setLocation] = useState("南山塔");
 
 	return (
 		<MainContainer>
@@ -136,6 +138,7 @@ function IdolPage() {
 							<SnsImg src={youtube} />
 						</SnsLink>
 					</SnsIconUl>
+
 					<MenuBar>
 						<MenuLink to={`${url}`}>
 							<MenuImage src={pin} />
@@ -159,14 +162,17 @@ function IdolPage() {
 							<Route exact path={path}>
 								<Place title={title} />
 							</Route>
-							<Route path={`${path}/picture`}>
+							<Route exact path={`${path}/picture`}>
 								<Picture />
 							</Route>
-							<Route path={`${path}/calender`}>
+							<Route exact path={`${path}/calender`}>
 								<Calender />
 							</Route>
-							<Route path={`${path}/post`}>
+							<Route exact path={`${path}/post`}>
 								<Post />
+							</Route>
+							<Route exact path={`/place/:location`}>
+								<EachLocation />
 							</Route>
 						</Switch>
 					</PlaceContainer>

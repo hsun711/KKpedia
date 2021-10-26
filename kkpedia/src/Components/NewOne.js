@@ -5,7 +5,7 @@ import send from "../img/submit.png";
 
 const Container = styled.div`
 	width: 70vmin;
-	height: 80vh;
+	height: 85vh;
 	background-color: beige;
 	position: fixed;
 	top: 50%;
@@ -29,10 +29,8 @@ const InputArea = styled.input`
 	width: 100%;
 	height: 4vmin;
 	margin: 15px 0px;
-	padding-left: 20px;
-	padding-top: 0.5vmin;
+	padding-left: 10px;
 	font-size: 2vmin;
-	text-align: center;
 	@media screen and (max-width: 800px) {
 		font-size: 1.5vmin;
 	}
