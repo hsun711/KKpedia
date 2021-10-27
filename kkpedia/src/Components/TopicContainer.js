@@ -13,7 +13,7 @@ const Container = styled.div`
 	padding: 5vmin 0px;
 	background-image: url(${board});
 	display: flex;
-	justify-content: center;
+	/* justify-content: center; */
 	flex-wrap: wrap;
 	@media screen and (max-width: 992px) {
 		margin: 90px auto;
@@ -62,27 +62,37 @@ function TopicContainer({ topic }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 
-	docRef
-		.where("topic", "==", `${topic}`)
-		.get()
-		.then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				// doc.data() is never undefined for query doc snapshots
-				console.log(doc.data());
+	useEffect(() => {
+		docRef
+			.where("topic", "==", `${topic}`)
+			.get()
+			.then((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push({ star: doc.data() });
+				});
+				setTitileName(item);
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
 			});
-		})
-		.catch((error) => {
-			console.log("Error getting documents: ", error);
-		});
+	}, []);
+
+	// console.log(titleName);
 
 	return (
 		<Container>
-			<EachIdol>
-				<LinkNav to={`${titleName}`}>
-					<LinkTxt>{titleName}</LinkTxt>
-					<IdolImage src={idol} />
-				</LinkNav>
-			</EachIdol>
+			{titleName.map((item) => {
+				return (
+					<EachIdol key={item.star.title}>
+						<LinkNav to={item.star.title}>
+							<LinkTxt>{item.star.title}</LinkTxt>
+							<IdolImage src={idol} />
+						</LinkNav>
+					</EachIdol>
+				);
+			})}
 		</Container>
 	);
 }

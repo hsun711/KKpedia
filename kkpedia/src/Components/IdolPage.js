@@ -2,19 +2,18 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
 	BrowserRouter,
-	HashRouter,
 	Route,
 	Link,
 	Switch,
 	useParams,
 	useRouteMatch,
-	useLocation,
 } from "react-router-dom";
 import Place from "./Place";
 import Picture from "./Picture";
 import Calender from "./Calender";
 import Post from "./Post";
 import EachLocation from "./EachLocation";
+import firebase from "../utils/firebase";
 import NewPlace from "./NewPlace.js";
 import idolimage from "../img/wanted.png";
 import fb from "../img/facebook.png";
@@ -49,6 +48,7 @@ const Person = styled.div`
 	margin-top: 30px;
 	margin-left: 30px;
 	display: flex;
+	align-items: center;
 `;
 
 const PersonName = styled.p`
@@ -107,15 +107,28 @@ const PlaceContainer = styled.div`
 function IdolPage() {
 	let { path, url } = useRouteMatch();
 	let { title } = useParams();
-	const [facebook, setFb] = useState(
-		"https://www.facebook.com/bangtan.official"
-	);
-	const [instagram, setIg] = useState(
-		"https://www.instagram.com/bts.bighitofficial/"
-	);
-	const [tw, setTwitter] = useState("https://twitter.com/bts_twt");
-	const [yt, setYoutube] = useState("https://www.youtube.com/user/BANGTANTV");
+	const [sns, setSns] = useState([]);
 
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
+
+	useEffect(() => {
+		docRef
+			.where("title", "==", `${title}`)
+			.get()
+			.then((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push({ star: doc.data() });
+				});
+				setSns(item);
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+	}, []);
+	// console.log(title);
 	return (
 		<MainContainer>
 			<Container>
@@ -124,20 +137,25 @@ function IdolPage() {
 						<PersonName>{title}</PersonName>
 						<PersonImage src={idolimage} />
 					</Person>
-					<SnsIconUl>
-						<SnsLink href={facebook} target="_blank">
-							<SnsImg src={fb} />
-						</SnsLink>
-						<SnsLink href={instagram} target="_blank">
-							<SnsImg src={ig} />
-						</SnsLink>
-						<SnsLink href={tw} target="_blank">
-							<SnsImg src={twitter} />
-						</SnsLink>
-						<SnsLink href={yt} target="_blank">
-							<SnsImg src={youtube} />
-						</SnsLink>
-					</SnsIconUl>
+
+					{sns.map((item) => {
+						return (
+							<SnsIconUl key={item.star.title}>
+								<SnsLink href={item.star.facebook} target="_blank">
+									<SnsImg src={fb} />
+								</SnsLink>
+								<SnsLink href={item.star.instagram} target="_blank">
+									<SnsImg src={ig} />
+								</SnsLink>
+								<SnsLink href={item.star.twitter} target="_blank">
+									<SnsImg src={twitter} />
+								</SnsLink>
+								<SnsLink href={item.star.youtube} target="_blank">
+									<SnsImg src={youtube} />
+								</SnsLink>
+							</SnsIconUl>
+						);
+					})}
 
 					<MenuBar>
 						<MenuLink to={`${url}`}>
@@ -159,20 +177,20 @@ function IdolPage() {
 					</MenuBar>
 					<PlaceContainer>
 						<Switch>
-							<Route exact path={`${path}`}>
+							<Route exact path={`${url}`}>
 								<Place title={title} />
 							</Route>
-							<Route exact path={`${path}/picture`}>
+							<Route exact path={`${url}/picture`}>
 								<Picture />
 							</Route>
-							<Route exact path={`${path}/calender`}>
+							<Route exact path={`${url}/calender`}>
 								<Calender />
 							</Route>
-							<Route exact path={`${path}/post`}>
+							<Route exact path={`${url}/post`}>
 								<Post />
 							</Route>
 							<Route exact path={`/place/:location`}>
-								<EachLocation />
+								<EachLocation title={title} />
 							</Route>
 						</Switch>
 					</PlaceContainer>

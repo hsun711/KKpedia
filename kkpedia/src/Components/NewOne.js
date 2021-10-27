@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import firebase from "../utils/firebase";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 
 const Container = styled.div`
 	width: 70vmin;
-	height: 85vh;
 	background-color: beige;
 	position: fixed;
 	top: 50%;
@@ -57,7 +57,7 @@ const Add = styled.div`
 
 const SendBtn = styled.div`
 	background-image: url(${send});
-	background-size: 90%;
+	background-size: 100%;
 	background-repeat: no-repeat;
 	width: 10vmin;
 	height: 10vmin;
@@ -71,34 +71,85 @@ const SendBtn = styled.div`
 `;
 
 function NewOne({ topic }) {
+	const db = firebase.firestore();
+	const [title, setTitle] = useState();
+	const [ig, setIg] = useState();
+	const [fb, setFb] = useState();
+	const [twitter, setTwitter] = useState();
+	const [youtube, setYoutube] = useState();
+
+	const SendNewOn = () => {
+		db.collection("categories")
+			.doc(`${title}`)
+			.set(
+				{
+					topic: topic,
+					title: title,
+					facebook: fb,
+					instagram: ig,
+					twitter: twitter,
+					youtube: youtube,
+				},
+				{ merge: true }
+			)
+			.then((docRef) => {
+				console.log("😁😁😁😁");
+			});
+	};
+
 	return (
 		<Container>
 			<InputTitle>類別：{topic}</InputTitle>
 			<ArtistName>
 				<InputTitle>藝人 / 戲劇 / 綜藝名稱：</InputTitle>
-				<InputArea />
+				<InputArea
+					value={title}
+					onChange={(e) => {
+						setTitle(e.target.value);
+					}}
+				/>
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>instagram：</ShortTitle>
-				<InputArea />
+				<InputArea
+					value={ig}
+					onChange={(e) => {
+						setIg(e.target.value);
+					}}
+				/>
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>facebook：</ShortTitle>
-				<InputArea />
+				<InputArea
+					value={fb}
+					onChange={(e) => {
+						setFb(e.target.value);
+					}}
+				/>
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>twitter：</ShortTitle>
-				<InputArea />
+				<InputArea
+					value={twitter}
+					onChange={(e) => {
+						setTwitter(e.target.value);
+					}}
+				/>
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>youtube：</ShortTitle>
-				<InputArea />
+				<InputArea
+					value={youtube}
+					onChange={(e) => {
+						setYoutube(e.target.value);
+					}}
+				/>
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>上傳封面圖：</ShortTitle>
 				<Add />
 			</ArtistName>
-			<SendBtn />
+			<SendBtn onClick={SendNewOn} />
 		</Container>
 	);
 }

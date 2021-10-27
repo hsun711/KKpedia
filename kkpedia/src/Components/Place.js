@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
+import firebase from "../utils/firebase";
 import {
 	BrowserRouter,
 	Route,
@@ -16,10 +17,11 @@ const Container = styled.div`
 	display: flex;
 	background-color: beige;
 	padding: 10px;
-	/* width: 20vmin;
-	height: 13vmin; */
+	width: 25vmin;
+	height: 13vmin;
 	border-radius: 10px;
 	align-items: center;
+	margin-left: 3vmin;
 `;
 
 const PlaceLink = styled(Link)`
@@ -41,8 +43,14 @@ const PlaceText = styled.div`
 	height: 10vmin;
 	margin-left: 0.5vmin;
 `;
+
+const PlaceTitle = styled.p`
+	font-size: 2vmin;
+	font-weight: 600;
+`;
 const PlaceDesp = styled.p`
 	margin-top: 1vmin;
+	font-size: 1.5vmin;
 `;
 
 const Add = styled.div`
@@ -71,13 +79,35 @@ const Cover = styled.div`
 function Place({ title }) {
 	// let { category } = useParams();
 	const [popAddPlace, setPopAddPlace] = useState(false);
-	const [placeName, setPlaceName] = useState("南山塔");
+	// const [place, setPlace] = useState("南山塔");
+	const [place, setPlace] = useState([]);
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
 
 	const AddSomePlace = () => {
 		setPopAddPlace(!popAddPlace);
 	};
+
+	useEffect(() => {
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.get()
+			.then((snapshot) => {
+				const placeDetail = [];
+				snapshot.forEach((doc) => {
+					// console.log(doc.data());
+					placeDetail.push(doc.data());
+				});
+				setPlace(placeDetail);
+			})
+			.catch((err) => {
+				console.log("Error getting sub-collection documents", err);
+			});
+	}, []);
+
 	return (
-		<Container>
+		<>
 			<Add onClick={AddSomePlace} topic="Idol" />
 			{popAddPlace ? (
 				<div>
@@ -85,17 +115,25 @@ function Place({ title }) {
 					<NewPlace title={title} />
 				</div>
 			) : (
-				<PlaceLink to={`/place/${placeName}`}>
-					<EachPlace>
-						<PlaceImage src={idolimage} />
-						<PlaceText>
-							<h3>{placeName}</h3>
-							<PlaceDesp>哈哈哈哈哈哈</PlaceDesp>
-						</PlaceText>
-					</EachPlace>
-				</PlaceLink>
+				<>
+					{place.map((item) => {
+						return (
+							<Container key={item.locationName}>
+								<PlaceLink to={`/place/${item.locationName}`}>
+									<EachPlace>
+										<PlaceImage src={idolimage} />
+										<PlaceText>
+											<PlaceTitle>{item.locationName}</PlaceTitle>
+											<PlaceDesp>{item.description}</PlaceDesp>
+										</PlaceText>
+									</EachPlace>
+								</PlaceLink>
+							</Container>
+						);
+					})}
+				</>
 			)}
-		</Container>
+		</>
 	);
 }
 

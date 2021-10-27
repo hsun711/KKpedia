@@ -7,6 +7,7 @@ import like from "../img/like.png";
 import leftarrow from "../img/left-arrow.png";
 import rightarrow from "../img/right-arrow.png";
 import board from "../img/cork-board.png";
+import { useParams } from "react-router-dom";
 
 const OusideContainer = styled.div`
 	width: 100%;
@@ -155,12 +156,37 @@ const CheckBtn = styled.div`
 	cursor: pointer;
 `;
 
-function EachLocation() {
-	const [locationName, setLocationName] = useState("南山塔");
+const Cover = styled.div`
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: black;
+	opacity: 0.8;
+	z-index: 2;
+`;
+
+function EachLocation({ title }) {
 	const [favorite, setFavorite] = useState(false);
+	const [wirte, setWrite] = useState(false);
+	const [more, setMore] = useState(false);
+	let { location } = useParams();
+	// const [locationName, setLocationName] = useState(location);
 	const AddtoFavorite = () => {
 		setFavorite(!favorite);
 	};
+
+	const WriteComment = () => {
+		setWrite(!wirte);
+	};
+
+	const MoreComment = () => {
+		setMore(!more);
+	};
+
+	console.log(title);
+
 	return (
 		<MainContainer>
 			<Container>
@@ -168,7 +194,7 @@ function EachLocation() {
 					<MainImage src={mainImage} />
 					<LocationDetail>
 						<NormalTxt>UserId</NormalTxt>
-						<TitleName>{locationName}</TitleName>
+						<TitleName>{location}</TitleName>
 						<NormalTxt>
 							Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
 							placerat urna, quis tincidunt lectus.
@@ -213,8 +239,8 @@ function EachLocation() {
 					</Comment>
 				</CommentArea>
 				<BottomBtn>
-					<CheckBtn>評論</CheckBtn>
-					<CheckBtn>查看更多</CheckBtn>
+					<CheckBtn onClick={WriteComment}>評論</CheckBtn>
+					<CheckBtn onClick={MoreComment}>查看更多</CheckBtn>
 				</BottomBtn>
 			</Container>
 		</MainContainer>

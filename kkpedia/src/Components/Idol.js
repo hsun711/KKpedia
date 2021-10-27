@@ -34,7 +34,6 @@ const Cover = styled.div`
 `;
 
 function Idol() {
-	// const [titleName, setTitileName] = useState("BTS");
 	const [popAddOne, setPopAddOne] = useState(false);
 
 	const AddSomeOne = () => {

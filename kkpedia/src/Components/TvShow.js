@@ -33,7 +33,6 @@ const Cover = styled.div`
 `;
 
 function Idol() {
-	const [titleName, setTitileName] = useState("Running Man");
 	const [popAddOne, setPopAddOne] = useState(false);
 
 	const AddSomeOne = () => {
@@ -48,7 +47,7 @@ function Idol() {
 					<NewOne topic="tvshow" />
 				</div>
 			) : (
-				<TopicContainer topic="tvshow" title={titleName} />
+				<TopicContainer topic="tvshow" />
 			)}
 		</MainContainer>
 	);
