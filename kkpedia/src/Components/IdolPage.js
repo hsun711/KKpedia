@@ -14,7 +14,6 @@ import Calender from "./Calender";
 import Post from "./Post";
 import EachLocation from "./EachLocation";
 import firebase from "../utils/firebase";
-import NewPlace from "./NewPlace.js";
 import idolimage from "../img/wanted.png";
 import fb from "../img/facebook.png";
 import ig from "../img/instagram.png";
@@ -181,13 +180,13 @@ function IdolPage() {
 								<Place title={title} />
 							</Route>
 							<Route exact path={`${url}/picture`}>
-								<Picture />
+								<Picture title={title} />
 							</Route>
 							<Route exact path={`${url}/calender`}>
-								<Calender />
+								<Calender title={title} />
 							</Route>
 							<Route exact path={`${url}/post`}>
-								<Post />
+								<Post title={title} />
 							</Route>
 							<Route exact path={`/place/:location`}>
 								<EachLocation title={title} />

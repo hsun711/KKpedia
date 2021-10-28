@@ -2,14 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
-import {
-	BrowserRouter,
-	Route,
-	Link,
-	Switch,
-	useParams,
-	useRouteMatch,
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import add from "../img/plus.png";
 import NewPlace from "./NewPlace";
 
@@ -77,9 +70,7 @@ const Cover = styled.div`
 `;
 
 function Place({ title }) {
-	// let { category } = useParams();
 	const [popAddPlace, setPopAddPlace] = useState(false);
-	// const [place, setPlace] = useState("南山塔");
 	const [place, setPlace] = useState([]);
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
@@ -94,8 +94,6 @@ function NewPlace({ title }) {
 	});
 
 	const GetAddress = (addressdata) => {
-		console.log(addressdata);
-
 		// console.log(dataaddress);
 		setAddress(addressdata[0]);
 		setPlaceId(addressdata[1]);
@@ -104,7 +102,7 @@ function NewPlace({ title }) {
 
 	const AddNewPlace = async () => {
 		const data = {
-			ddress: address,
+			address: address,
 			latitude: latitude,
 			placeId: placeId,
 			description: description,
@@ -119,7 +117,7 @@ function NewPlace({ title }) {
 			.doc(`${locationName}`)
 			.set(data, { merge: true })
 			.then((docRef) => {
-				console.log("😁😁😁😁");
+				alert("新增成功😁😁😁😁");
 			});
 	};
 

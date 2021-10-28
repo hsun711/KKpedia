@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import firebase from "../utils/firebase";
+import Popup from "reactjs-popup";
 import Map from "./Map";
+import LookMore from "./LookMore";
+import WriteComment from "./WriteComment";
 import mainImage from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
@@ -8,12 +12,6 @@ import leftarrow from "../img/left-arrow.png";
 import rightarrow from "../img/right-arrow.png";
 import board from "../img/cork-board.png";
 import { useParams } from "react-router-dom";
-
-const OusideContainer = styled.div`
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-`;
 
 const MainContainer = styled.div`
 	/* width: 70%;
@@ -156,92 +154,144 @@ const CheckBtn = styled.div`
 	cursor: pointer;
 `;
 
-const Cover = styled.div`
-	width: 100vw;
-	height: 100vh;
-	position: fixed;
-	top: 0;
-	left: 0;
-	background-color: black;
-	opacity: 0.8;
-	z-index: 2;
+const StyledPopup = styled(Popup)`
+	/* use your custom style for ".popup-overlay" */
+	&-overlay {
+		background: rgba(0, 0, 0, 0.8);
+	}
+	/* use your custom style for ".popup-content" */
+	/* &-content {
+		margin: auto;
+		width: 700px;
+		display: flex;
+		height: 550px;
+	} */
 `;
 
 function EachLocation({ title }) {
 	const [favorite, setFavorite] = useState(false);
-	const [wirte, setWrite] = useState(false);
-	const [more, setMore] = useState(false);
+	const [placeData, setPlaceData] = useState([]);
+
 	let { location } = useParams();
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
+	const user = firebase.auth().currentUser;
+
 	// const [locationName, setLocationName] = useState(location);
 	const AddtoFavorite = () => {
 		setFavorite(!favorite);
+		console.log(placeData);
+		const locationName = placeData[0].locationName;
+
+		db.collection("users")
+			.doc(`${user.uid}`)
+			.collection("likes")
+			.doc(`${locationName}`)
+			.set({ placeData })
+			.then(() => {
+				alert("收藏進口袋聖地囉🎉🎊");
+			})
+			.catch((error) => {
+				console.error("Error adding document: ", error);
+			});
 	};
 
-	const WriteComment = () => {
-		setWrite(!wirte);
-	};
+	useEffect(() => {
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.where("locationName", "==", `${location}`)
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					// console.log(doc.data());
+					setPlaceData([doc.data()]);
+				});
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+	}, []);
 
-	const MoreComment = () => {
-		setMore(!more);
-	};
-
-	console.log(title);
+	// console.log(title);
+	// console.log(placeData);
 
 	return (
 		<MainContainer>
 			<Container>
-				<TopDetail>
-					<MainImage src={mainImage} />
-					<LocationDetail>
-						<NormalTxt>UserId</NormalTxt>
-						<TitleName>{location}</TitleName>
-						<NormalTxt>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-							placerat urna, quis tincidunt lectus.
-						</NormalTxt>
+				{placeData.map((data) => {
+					return (
+						<div key={data.locationName}>
+							<TopDetail>
+								<MainImage src={mainImage} />
+								<LocationDetail>
+									<NormalTxt>{data.postUser}</NormalTxt>
+									<TitleName>{data.locationName}</TitleName>
+									<NormalTxt>{data.description}</NormalTxt>
 
-						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-					</LocationDetail>
-				</TopDetail>
-				<SubTitle>Location</SubTitle>
-				<NormalTxt>韓國首爾特別市龍山區的南山</NormalTxt>
-				<PlaceMap>
-					<Map />
-				</PlaceMap>
-				<MoreImage>
-					<Arrow src={leftarrow} />
-					<Images src={mainImage} />
-					<Images src={mainImage} />
-					<Images src={mainImage} />
-					<Arrow src={rightarrow} />
-				</MoreImage>
-				<SubTitle>Review</SubTitle>
-				<CommentArea>
-					<Comment>
-						<CommentUser src={mainImage} />
-						<CommentTxt>
-							<NormalTxt>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-								placerat urna, quis tincidunt lectus.
-							</NormalTxt>
-							<TimeStamp>2021/10/23</TimeStamp>
-						</CommentTxt>
-					</Comment>
-					<Comment>
-						<CommentUser src={mainImage} />
-						<CommentTxt>
-							<NormalTxt>
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-								placerat urna, quis tincidunt lectus.
-							</NormalTxt>
-							<TimeStamp>2021/10/23</TimeStamp>
-						</CommentTxt>
-					</Comment>
-				</CommentArea>
-				<BottomBtn>
-					<CheckBtn onClick={WriteComment}>評論</CheckBtn>
-					<CheckBtn onClick={MoreComment}>查看更多</CheckBtn>
-				</BottomBtn>
+									<LikeIcon
+										src={favorite ? like : unlike}
+										onClick={AddtoFavorite}
+									/>
+								</LocationDetail>
+							</TopDetail>
+							<SubTitle>Location</SubTitle>
+							<NormalTxt>{data.address}</NormalTxt>
+							<PlaceMap>
+								<Map latitude={data.latitude} placeId={data.placeId} />
+							</PlaceMap>
+							<MoreImage>
+								<Arrow src={leftarrow} />
+								<Images src={mainImage} />
+								<Images src={mainImage} />
+								<Images src={mainImage} />
+								<Arrow src={rightarrow} />
+							</MoreImage>
+							<SubTitle>Review</SubTitle>
+							<CommentArea>
+								<Comment>
+									<CommentUser src={mainImage} />
+									<CommentTxt>
+										<NormalTxt>
+											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+											In eu placerat urna, quis tincidunt lectus.
+										</NormalTxt>
+										<TimeStamp>2021/10/23</TimeStamp>
+									</CommentTxt>
+								</Comment>
+								<Comment>
+									<CommentUser src={mainImage} />
+									<CommentTxt>
+										<NormalTxt>
+											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+											In eu placerat urna, quis tincidunt lectus.
+										</NormalTxt>
+										<TimeStamp>2021/10/23</TimeStamp>
+									</CommentTxt>
+								</Comment>
+							</CommentArea>
+							<BottomBtn>
+								<StyledPopup
+									trigger={<CheckBtn>評論</CheckBtn>}
+									position="center center"
+									modal
+									closeOnDocumentClick
+								>
+									<WriteComment />
+								</StyledPopup>
+								<StyledPopup
+									trigger={<CheckBtn>查看更多</CheckBtn>}
+									position="center center"
+									modal
+									closeOnDocumentClick
+								>
+									<LookMore />
+								</StyledPopup>
+							</BottomBtn>
+						</div>
+					);
+				})}
 			</Container>
 		</MainContainer>
 	);

@@ -23,7 +23,17 @@ const FellowStar = styled.div`
 `;
 
 const EachFellow = styled.div`
-	margin-right: 2vmin;
+	margin-right: 1vmin;
+	padding: 1vmin;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	/* outline: 1px solid black; */
+`;
+
+const EachStar = styled.div`
+	display: flex;
+	align-items: center;
 `;
 
 const PerStar = styled.img`
@@ -34,7 +44,7 @@ const PerStar = styled.img`
 const LikeIcon = styled.img`
 	width: 2vmin;
 	height: 2vmin;
-	margin-top: 1vmin;
+	margin-left: 1vmin;
 	cursor: pointer;
 `;
 
@@ -62,15 +72,24 @@ function PersonalData() {
 			<FellowStar>
 				<EachFellow>
 					<PerStar src={image} />
-					<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
+					<EachStar>
+						<NormalTxt>南山塔</NormalTxt>
+						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
+					</EachStar>
 				</EachFellow>
 				<EachFellow>
 					<PerStar src={image} />
-					<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
+					<EachStar>
+						<NormalTxt>南山塔</NormalTxt>
+						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
+					</EachStar>
 				</EachFellow>
 				<EachFellow>
 					<PerStar src={image} />
-					<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
+					<EachStar>
+						<NormalTxt>南山塔</NormalTxt>
+						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
+					</EachStar>
 				</EachFellow>
 			</FellowStar>
 			<TitleText>貢獻過 {contribution} 個景點</TitleText>

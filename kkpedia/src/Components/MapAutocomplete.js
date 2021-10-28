@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import PlacesAutocomplete, {
 	geocodeByAddress,
-	geocodeByPlaceId,
 	getLatLng,
 } from "react-places-autocomplete";
 
@@ -32,9 +31,6 @@ function MapAutocomplete(props) {
 		const placeId = results[0].place_id;
 		setAddress(pickValue);
 		setCoordinates(latLng);
-		// console.log(placeId);
-		// console.log(latLng);
-		// console.log(results);
 		const data = [pickValue, placeId, latLng];
 		props.placeaddress(data);
 	};

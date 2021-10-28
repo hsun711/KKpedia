@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
-import { useParams } from "react-router-dom";
+import { v4 as uuidv4 } from "uuid";
+import firebase from "../utils/firebase";
 import send from "../img/submit.png";
 import good from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
@@ -23,6 +24,7 @@ const Title = styled.p`
 const TextArea = styled.textarea`
 	width: 90%;
 	height: 10vmin;
+	font-size: 2vmin;
 	margin-left: 4vmin;
 	border-radius: 7px;
 	padding: 1vmin;
@@ -52,6 +54,7 @@ const CommentArea = styled.div`
 	flex-direction: column;
 	padding: 3vmin;
 	border-radius: 10px;
+	margin-bottom: 3vmin;
 `;
 
 const PosterDetail = styled.div`
@@ -120,14 +123,126 @@ const Submit = styled(Send)`
 	height: 5vmin;
 `;
 
-function Place() {
-	// let { category } = useParams();
+function Place({ title }) {
+	const [postMsg, setPostMsg] = useState("");
+	const [userName, setUserName] = useState("");
+	const [post, setPost] = useState([]);
+	const db = firebase.firestore();
+	const user = firebase.auth().currentUser;
+	const userId = firebase.auth().currentUser.uid;
+	const docRef = db.collection("users").doc(`${userId}`);
+
+	docRef.get().then((doc) => {
+		if (doc.exists) {
+			setUserName(doc.data().userName);
+		} else {
+			// doc.data() will be undefined in this case
+			console.log("No such document!");
+		}
+	});
+
+	useEffect(() => {
+		db.collection("posts")
+			.where("title", "==", `${title}`)
+			.get()
+			.then((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					// console.log(doc.data());
+					item.push({ data: doc.data() });
+				});
+				setPost(item);
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+	}, []);
+
+	const SendMsg = () => {
+		setPostMsg("");
+		// console.log(postMsg);
+		// console.log(postTime);
+		// console.log(user);
+		// console.log(userName);
+		// console.log(title);
+		const data = {
+			content: postMsg,
+			title: title,
+			postTime: new Date().getTime(),
+			displayName: userName,
+			userId: userId,
+			userMail: user.email,
+		};
+
+		db.collection("posts")
+			.doc()
+			.set(data, { merge: true })
+			.then((docRef) => {
+				// console.log("Document written with ID: ", docRef.id);
+			})
+			.catch((error) => {
+				console.error("Error adding document: ", error);
+			});
+	};
+
 	return (
 		<Container>
 			<Title>Create a Post</Title>
-			<TextArea />
-			<Send />
-			<CommentArea>
+			<TextArea
+				value={postMsg}
+				onChange={(e) => {
+					setPostMsg(e.target.value);
+				}}
+			/>
+			<Send onClick={SendMsg} />
+			{post.map((item) => {
+				const time = item.data.postTime;
+				return (
+					<CommentArea key={uuidv4()}>
+						<PosterDetail>
+							<PosterImage src={idolimage} />
+							<PosterText>
+								<h3>{item.data.displayName}</h3>
+								<p>{new Date(time).toLocaleString()}</p>
+							</PosterText>
+						</PosterDetail>
+						<hr />
+						<Comment>
+							<p>{item.data.content}</p>
+						</Comment>
+						<hr />
+						<Icon>
+							<EachIcon src={good} />
+							<GoodTotal>10</GoodTotal>
+							<EachIcon src={comment} />
+						</Icon>
+						<Recomment>
+							<ReplyImg src={idolimage} />
+							<ReplyComment>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
+									placerat urna, quis tincidunt lectus. Cras id ligula id mauris
+									luctus fermentum. Lorem ipsum dolor sit amet.
+								</p>
+							</ReplyComment>
+						</Recomment>
+						<Recomment>
+							<ReplyImg src={idolimage} />
+							<ReplyComment>
+								<p>
+									Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
+									placerat urna, quis tincidunt lectus. Cras id ligula id mauris
+									luctus fermentum. Lorem ipsum dolor sit amet.
+								</p>
+							</ReplyComment>
+						</Recomment>
+						<InputReply />
+						<Submit />
+					</CommentArea>
+				);
+			})}
+			{/* <CommentArea>
 				<PosterDetail>
 					<PosterImage src={idolimage} />
 					<PosterText>
@@ -171,7 +286,7 @@ function Place() {
 				</Recomment>
 				<InputReply />
 				<Submit />
-			</CommentArea>
+			</CommentArea> */}
 		</Container>
 	);
 }

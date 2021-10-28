@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
-import { useParams } from "react-router-dom";
 
 const Container = styled.div`
 	width: 100%;

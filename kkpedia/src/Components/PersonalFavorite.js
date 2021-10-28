@@ -59,9 +59,7 @@ function PersonalFavorite() {
 
 	return (
 		<ProfileContainer>
-			<MapArea>
-				<Map />
-			</MapArea>
+			<MapArea>{/* <Map /> */}</MapArea>
 			<CollectionArea>
 				<EachPlace>
 					<PlaceImg src={img} />

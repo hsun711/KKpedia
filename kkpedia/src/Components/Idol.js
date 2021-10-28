@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
 import add from "../img/plus.png";
@@ -45,7 +45,7 @@ function Idol() {
 			{popAddOne ? (
 				<div>
 					<Cover onClick={AddSomeOne} />
-					<NewOne topic="idol" />
+					<NewOne topic="idol" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
 				<TopicContainer topic="idol" />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import add from "../img/plus.png";
@@ -70,7 +70,7 @@ const SendBtn = styled.div`
 	}
 `;
 
-function NewOne({ topic }) {
+function NewOne({ topic, setPopAddOne }) {
 	const db = firebase.firestore();
 	const [title, setTitle] = useState();
 	const [ig, setIg] = useState();
@@ -93,8 +93,10 @@ function NewOne({ topic }) {
 				{ merge: true }
 			)
 			.then((docRef) => {
-				console.log("😁😁😁😁");
+				// console.log("😁😁😁😁");
+				alert("新增成功😁😁😁😁");
 			});
+		setPopAddOne(false);
 	};
 
 	return (

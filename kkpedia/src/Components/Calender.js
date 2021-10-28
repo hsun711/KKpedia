@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
-import idolimage from "../img/wanted.png";
-import { useParams } from "react-router-dom";
 import RenderCalender from "./RenderCalender";
 
 const Schedule = styled.div`
@@ -13,8 +11,7 @@ const Schedule = styled.div`
 	align-items: center;
 `;
 
-function Place() {
-	// let { category } = useParams();
+function Calender() {
 	return (
 		<Schedule>
 			<RenderCalender />
@@ -22,4 +19,4 @@ function Place() {
 	);
 }
 
-export default Place;
+export default Calender;
