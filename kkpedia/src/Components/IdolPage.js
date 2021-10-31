@@ -2,20 +2,18 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import {
 	BrowserRouter,
-	HashRouter,
 	Route,
 	Link,
 	Switch,
 	useParams,
 	useRouteMatch,
-	useLocation,
 } from "react-router-dom";
 import Place from "./Place";
 import Picture from "./Picture";
 import Calender from "./Calender";
 import Post from "./Post";
 import EachLocation from "./EachLocation";
-import NewPlace from "./NewPlace.js";
+import firebase from "../utils/firebase";
 import idolimage from "../img/wanted.png";
 import fb from "../img/facebook.png";
 import ig from "../img/instagram.png";
@@ -49,6 +47,7 @@ const Person = styled.div`
 	margin-top: 30px;
 	margin-left: 30px;
 	display: flex;
+	align-items: center;
 `;
 
 const PersonName = styled.p`
@@ -59,8 +58,8 @@ const PersonName = styled.p`
 
 const PersonImage = styled.img`
 	margin-left: 2vmin;
-	width: 5vmin;
-	height: 5vmin;
+	width: 7vmin;
+	height: 7vmin;
 	border-radius: 50%;
 `;
 
@@ -107,37 +106,59 @@ const PlaceContainer = styled.div`
 function IdolPage() {
 	let { path, url } = useRouteMatch();
 	let { title } = useParams();
-	const [facebook, setFb] = useState(
-		"https://www.facebook.com/bangtan.official"
-	);
-	const [instagram, setIg] = useState(
-		"https://www.instagram.com/bts.bighitofficial/"
-	);
-	const [tw, setTwitter] = useState("https://twitter.com/bts_twt");
-	const [yt, setYoutube] = useState("https://www.youtube.com/user/BANGTANTV");
+	const [sns, setSns] = useState([]);
+	const [mainImage, setMainImage] = useState("");
 
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
+	const previewURL = mainImage ? `${mainImage}` : idolimage;
+
+	useEffect(() => {
+		docRef
+			.where("title", "==", `${title}`)
+			.get()
+			.then((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push({ star: doc.data() });
+				});
+				console.log(item[0].star.main_image);
+				setSns(item);
+				setMainImage(item[0].star.main_image);
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+	}, []);
+	// console.log(title);
 	return (
 		<MainContainer>
 			<Container>
 				<BrowserRouter>
 					<Person>
 						<PersonName>{title}</PersonName>
-						<PersonImage src={idolimage} />
+						<PersonImage src={previewURL} />
 					</Person>
-					<SnsIconUl>
-						<SnsLink href={facebook} target="_blank">
-							<SnsImg src={fb} />
-						</SnsLink>
-						<SnsLink href={instagram} target="_blank">
-							<SnsImg src={ig} />
-						</SnsLink>
-						<SnsLink href={tw} target="_blank">
-							<SnsImg src={twitter} />
-						</SnsLink>
-						<SnsLink href={yt} target="_blank">
-							<SnsImg src={youtube} />
-						</SnsLink>
-					</SnsIconUl>
+
+					{sns.map((item) => {
+						return (
+							<SnsIconUl key={item.star.title}>
+								<SnsLink href={item.star.facebook} target="_blank">
+									<SnsImg src={fb} />
+								</SnsLink>
+								<SnsLink href={item.star.instagram} target="_blank">
+									<SnsImg src={ig} />
+								</SnsLink>
+								<SnsLink href={item.star.twitter} target="_blank">
+									<SnsImg src={twitter} />
+								</SnsLink>
+								<SnsLink href={item.star.youtube} target="_blank">
+									<SnsImg src={youtube} />
+								</SnsLink>
+							</SnsIconUl>
+						);
+					})}
 
 					<MenuBar>
 						<MenuLink to={`${url}`}>
@@ -163,16 +184,16 @@ function IdolPage() {
 								<Place title={title} />
 							</Route>
 							<Route exact path={`${path}/picture`}>
-								<Picture />
+								<Picture title={title} />
 							</Route>
 							<Route exact path={`${path}/calender`}>
-								<Calender />
+								<Calender title={title} />
 							</Route>
 							<Route exact path={`${path}/post`}>
-								<Post />
+								<Post title={title} />
 							</Route>
-							<Route exact path={`/place/:location`}>
-								<EachLocation />
+							<Route exact path={`${path}/place/:location`}>
+								<EachLocation title={title} />
 							</Route>
 						</Switch>
 					</PlaceContainer>

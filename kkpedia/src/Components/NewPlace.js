@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
+import cover from "../img/wanted.png";
+import firebase from "../utils/firebase";
 import MapAutocomplete from "./MapAutocomplete";
 
 const Container = styled.div`
 	width: 80vmin;
-	height: 80vh;
 	background-color: beige;
 	position: fixed;
 	top: 50%;
@@ -55,6 +56,12 @@ const Add = styled.div`
 	background-repeat: no-repeat;
 	width: 4vmin;
 	height: 4vmin;
+	cursor: pointer;
+`;
+
+const CoverImage = styled.img`
+	width: 10vmin;
+	margin-left: 3vmin;
 `;
 
 const SendBtn = styled.div`
@@ -72,31 +79,137 @@ const SendBtn = styled.div`
 	}
 `;
 
-function NewPlace({ title }) {
+function NewPlace({ title, setPopAddPlace, setPlaceName }) {
+	const user = firebase.auth().currentUser;
+	const db = firebase.firestore();
+	const userId = user.uid;
+	const docRef = db.collection("users").doc(`${userId}`);
+	const [userName, setUserName] = useState("");
+	const [locationName, setLocationName] = useState("");
+	const [description, setDescription] = useState("");
+	const [address, setAddress] = useState("");
+	const [placeId, setPlaceId] = useState("");
+	const [latitude, setLatitude] = useState({});
+	const [file, setFile] = useState(null);
+	// const [placeImage, setPlaceImage] = useState([]);
+
+	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
+
+	docRef.get().then((doc) => {
+		if (doc.exists) {
+			setUserName(doc.data().userName);
+		} else {
+			// doc.data() will be undefined in this case
+			console.log("No such document!");
+		}
+	});
+
+	// 把從子層 MapAutocomplete 收到的資訊存進 state 裡
+	const GetAddress = (addressdata) => {
+		setAddress(addressdata[0]);
+		setPlaceId(addressdata[1]);
+		setLatitude(addressdata[2]);
+	};
+
+	const AddNewPlace = async () => {
+		const documentRef = db.collection("categories").doc(`${title}`);
+		const fileRef = firebase.storage().ref(`place_images/` + documentRef.id);
+		const metadata = {
+			contentType: file.type,
+		};
+
+		fileRef.put(file, metadata).then(() => {
+			fileRef.getDownloadURL().then((imageUrl) => {
+				const data = {
+					address: address,
+					latitude: latitude,
+					placeId: placeId,
+					description: description,
+					locationName: locationName,
+					postUser: userName,
+					uid: userId,
+					main_image: imageUrl,
+				};
+				documentRef
+					.collection("places")
+					.doc(`${locationName}`)
+					.set(data, { merge: true })
+					.then((docRef) => {
+						alert("新增成功😁😁😁😁");
+						setPopAddPlace(false);
+					});
+			});
+		});
+
+		// const data = {
+		// 	address: address,
+		// 	latitude: latitude,
+		// 	placeId: placeId,
+		// 	description: description,
+		// 	locationName: locationName,
+		// 	postUser: userName,
+		// 	uid: userId,
+		// 	// main_image:
+		// };
+
+		// await db
+		// 	.collection("categories")
+		// 	.doc(`${title}`)
+		// 	.collection("places")
+		// 	.doc(`${locationName}`)
+		// 	.set(data, { merge: true })
+		// 	.then((docRef) => {
+		// 		alert("新增成功😁😁😁😁");
+		// 	});
+
+		setPlaceName(locationName);
+	};
+
 	return (
 		<Container>
 			<InputTitle>藝人 / 戲劇 / 綜藝名稱：{title}</InputTitle>
 			<Title>
-				<ShortTitle>貢獻者暱稱：</ShortTitle>
-				<InputArea />
+				<InputTitle>貢獻者暱稱：{userName}</InputTitle>
 			</Title>
 			<Title>
 				<ShortTitle>景點/餐廳名稱：</ShortTitle>
-				<InputArea />
+				<InputArea
+					value={locationName}
+					onChange={(e) => {
+						setLocationName(e.target.value);
+					}}
+				/>
 			</Title>
 			<Title>
 				<ShortTitle>景點/餐廳描述：</ShortTitle>
-				<InputArea placeholder="ex.哪個藝人po文的、哪個場景出現的" />
+				<InputArea
+					placeholder="ex.哪個藝人po文的、哪個場景出現的"
+					value={description}
+					onChange={(e) => {
+						setDescription(e.target.value);
+					}}
+				/>
 			</Title>
 			<Title>
 				<ShortTitle>詳細地址：</ShortTitle>
-				<MapAutocomplete />
+				<MapAutocomplete placeaddress={GetAddress} />
 			</Title>
 			<Title>
 				<ShortTitle>上傳照片：</ShortTitle>
-				<Add />
+				<Add as="label" htmlFor="postImage" />
+				<input
+					type="file"
+					multiple
+					id="postImage"
+					style={{ display: "none" }}
+					onChange={(e) => {
+						// item.push(e.target.files[0]);
+						setFile(e.target.files[0]);
+					}}
+				/>
+				<CoverImage src={previewURL} />;
 			</Title>
-			<SendBtn />
+			<SendBtn onClick={AddNewPlace} />
 		</Container>
 	);
 }

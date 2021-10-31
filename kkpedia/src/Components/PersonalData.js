@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import firebase from "../utils/firebase";
+import FellowIdol from "./FellowIdol";
 import image from "../img/wanted.png";
-import unlike from "../img/unlike.png";
-import like from "../img/like.png";
 
 const ProfileContainer = styled.div`
 	background-color: #ffeaa7;
@@ -23,19 +23,17 @@ const FellowStar = styled.div`
 `;
 
 const EachFellow = styled.div`
-	margin-right: 2vmin;
+	margin-right: 1vmin;
+	padding: 1vmin;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	/* outline: 1px solid black; */
 `;
 
 const PerStar = styled.img`
 	width: 7vmin;
 	height: 7vmin;
-`;
-
-const LikeIcon = styled.img`
-	width: 2vmin;
-	height: 2vmin;
-	margin-top: 1vmin;
-	cursor: pointer;
 `;
 
 const EachContribution = styled(EachFellow)`
@@ -49,29 +47,18 @@ const NormalTxt = styled.p`
 `;
 
 function PersonalData() {
-	const [favorite, setFavorite] = useState(true);
+	const user = firebase.auth().currentUser;
+	const db = firebase.firestore();
+	const userId = user.uid;
 	const [contribution, setContribution] = useState("2");
 	const [donatePlace, setDonatePlace] = useState("南山塔");
-	const AddtoFavorite = () => {
-		setFavorite(!favorite);
-	};
 
 	return (
 		<ProfileContainer>
 			<TitleText>Fellow</TitleText>
 			<FellowStar>
-				<EachFellow>
-					<PerStar src={image} />
-					<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-				</EachFellow>
-				<EachFellow>
-					<PerStar src={image} />
-					<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-				</EachFellow>
-				<EachFellow>
-					<PerStar src={image} />
-					<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-				</EachFellow>
+				<FellowIdol />
+				<FellowIdol />
 			</FellowStar>
 			<TitleText>貢獻過 {contribution} 個景點</TitleText>
 			<FellowStar>

@@ -6,7 +6,6 @@ import PersonalData from "./PersonalData";
 import PersonalFavorite from "./PersonalFavorite";
 import PersonalPost from "./PersonalPost";
 import userImg from "../img/user.png";
-import personimage from "../img/wanted.png";
 import levelImg from "../img/level-up.png";
 import profile from "../img/resume.png";
 import like from "../img/place.png";
@@ -85,13 +84,11 @@ const MenuImage = styled.img`
 function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
-	const userId = user.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
+	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [userName, setUserName] = useState("");
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
-			console.log(doc.data());
 			setUserName(doc.data().userName);
 		} else {
 			// doc.data() will be undefined in this case

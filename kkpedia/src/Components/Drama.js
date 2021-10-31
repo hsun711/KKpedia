@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
 import add from "../img/plus.png";
@@ -33,7 +33,6 @@ const Cover = styled.div`
 `;
 
 function Idol() {
-	const [titleName, setTitileName] = useState("愛的迫降");
 	const [popAddOne, setPopAddOne] = useState(false);
 
 	const AddSomeOne = () => {
@@ -45,10 +44,10 @@ function Idol() {
 			{popAddOne ? (
 				<div>
 					<Cover onClick={AddSomeOne} />
-					<NewOne topic="drama" />
+					<NewOne topic="drama" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
-				<TopicContainer topic="drama" title={titleName} />
+				<TopicContainer topic="drama" />
 			)}
 		</MainContainer>
 	);

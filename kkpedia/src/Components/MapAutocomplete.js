@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import PlacesAutocomplete, {
 	geocodeByAddress,
-	geocodeByPlaceId,
 	getLatLng,
 } from "react-places-autocomplete";
 
@@ -22,17 +21,22 @@ const Input = styled.input`
 		font-size: 1.5vmin;
 	}
 `;
-function MapAutocomplete() {
+function MapAutocomplete(props) {
 	const [address, setAddress] = useState("");
 	const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
 
 	const handleSelect = async (pickValue) => {
 		const results = await geocodeByAddress(pickValue);
 		const latLng = await getLatLng(results[0]);
+		const placeId = results[0].place_id;
 		setAddress(pickValue);
 		setCoordinates(latLng);
-		console.log(results);
+
+		// 把座標位置和地址、placeId傳回去給父層
+		const data = [pickValue, placeId, latLng];
+		props.placeaddress(data);
 	};
+
 	return (
 		<InputArea>
 			<PlacesAutocomplete

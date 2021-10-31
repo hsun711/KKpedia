@@ -3,7 +3,6 @@ import styled from "styled-components";
 import vedioCover from "../img/StartingSoon.mp4";
 import start from "../img/start-button.png";
 import clickStart from "../img/start-buttonClick.png";
-import ReactCircleModal from "react-circle-modal";
 import LoginPage from "./LoginPage";
 
 const Container = styled.div`
@@ -71,20 +70,6 @@ function LandingPage() {
 					<source src={vedioCover} type="video/mp4" />
 				</LandingVedio>
 			)}
-			{/* <ReactCircleModal
-				backgroundColor="#2d3436"
-				toogleComponent={(StartPage) => <StartBtn onClick={StartPage} />}
-				// Optional fields and their default values
-				offsetX={0}
-				offsetY={0}
-			>
-				{(StartPage) => (
-					<div>
-						<Cover />
-						<LoginPage />
-					</div>
-				)}
-			</ReactCircleModal> */}
 		</Container>
 	);
 }

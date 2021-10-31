@@ -1,13 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import NewPicture from "./NewPicture";
 import idolimage from "../img/wanted.png";
-import { useParams } from "react-router-dom";
+import add from "../img/plus.png";
 
 const Container = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 `;
+
+const Add = styled.div`
+	background-image: url(${add});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 7vmin;
+	height: 7vmin;
+	position: fixed;
+	bottom: 3vmin;
+	right: 3vmin;
+	cursor: pointer;
+`;
+
 const EachPhoto = styled.div`
 	display: flex;
 	flex-direction: column;
@@ -31,21 +45,46 @@ const Photos = styled.img`
 	margin: 2vmin;
 `;
 
-function Place() {
+const Cover = styled.div`
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: black;
+	opacity: 0.8;
+	z-index: 2;
+`;
+
+function Picture({ title }) {
 	// let { category } = useParams();
+	const [popAddPicture, setPopAddPicture] = useState(false);
+	const AddPicture = () => {
+		setPopAddPicture(!popAddPicture);
+	};
 	return (
-		<Container>
-			<EachPhoto>
-				<ImageHolder>UserID</ImageHolder>
-				<PhotosArea>
-					<Photos src={idolimage} />
-					<Photos src={idolimage} />
-					<Photos src={idolimage} />
-					<Photos src={idolimage} />
-				</PhotosArea>
-			</EachPhoto>
-		</Container>
+		<>
+			<Add onClick={AddPicture} topic="Idol" />
+			{popAddPicture ? (
+				<div>
+					<Cover onClick={AddPicture} />
+					<NewPicture title={title} />
+				</div>
+			) : (
+				<Container>
+					<EachPhoto>
+						<ImageHolder>UserID</ImageHolder>
+						<PhotosArea>
+							<Photos src={idolimage} />
+							<Photos src={idolimage} />
+							<Photos src={idolimage} />
+							<Photos src={idolimage} />
+						</PhotosArea>
+					</EachPhoto>
+				</Container>
+			)}
+		</>
 	);
 }
 
-export default Place;
+export default Picture;

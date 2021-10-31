@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import good from "../img/thumbs-up.png";

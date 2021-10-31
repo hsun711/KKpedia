@@ -121,7 +121,7 @@ function Header() {
 				<HeaderNav>
 					<SearchInput />
 					<LinkNav to="/profile">
-						<Member src={user.photoURL || userImg} />
+						{user != null ? <Member src={user.photoURL || userImg} /> : ""}
 					</LinkNav>
 					<Logout
 						onClick={() => {
