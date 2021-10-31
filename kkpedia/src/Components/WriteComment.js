@@ -76,21 +76,42 @@ const SendBtn = styled.div`
 	}
 `;
 
-function WriteComment() {
+function WriteComment({ title, location, setPopUpWriteComment }) {
 	const db = firebase.firestore();
+	const user = firebase.auth().currentUser;
 	const [score, setScore] = useState("0");
+	const [comment, setComment] = useState("");
 
 	const GiveScore = (e) => {
 		setScore(e.target.value);
 	};
 
 	const SendComment = () => {
-		console.log("SendComment");
+		// console.log("SendComment");
+		// console.log(title);
+		// console.log(location);
+		const data = {
+			uid: user.uid,
+			postUserImg: user.photoURL,
+			comment: comment,
+			locationName: location,
+			score: score,
+			timestamp: new Date().getTime(),
+		};
+		db.collection("categories")
+			.doc(`${title}`)
+			.collection("reviews")
+			.doc()
+			.set(data, { merge: true })
+			.then(() => {
+				alert("留言成功👍👌");
+				setPopUpWriteComment(false);
+			});
 	};
 
 	return (
 		<Container>
-			<PlaceName>青瓦臺</PlaceName>
+			<PlaceName>{location}</PlaceName>
 			<Grade>
 				<Score
 					type="range"
@@ -104,7 +125,12 @@ function WriteComment() {
 				<Star />
 				<ScoreNumber>{score}</ScoreNumber>
 			</Grade>
-			<TextArea />
+			<TextArea
+				value={comment}
+				onChange={(e) => {
+					setComment(e.target.value);
+				}}
+			/>
 			<SendBtn onClick={SendComment} />
 		</Container>
 	);

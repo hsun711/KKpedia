@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
-import { Link } from "react-router-dom";
+import { Link, useRouteMatch, useParams } from "react-router-dom";
 import add from "../img/plus.png";
 import NewPlace from "./NewPlace";
 
@@ -70,8 +70,10 @@ const Cover = styled.div`
 `;
 
 function Place({ title }) {
+	let { path, url } = useRouteMatch();
 	const [popAddPlace, setPopAddPlace] = useState(false);
 	const [place, setPlace] = useState([]);
+	const [placeName, setPlaceName] = useState("");
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 
@@ -79,22 +81,23 @@ function Place({ title }) {
 		setPopAddPlace(!popAddPlace);
 	};
 
+	// console.log(placeName);
+
 	useEffect(() => {
 		docRef
 			.doc(`${title}`)
 			.collection("places")
-			.get()
-			.then((snapshot) => {
+			.onSnapshot((snapshot) => {
 				const placeDetail = [];
 				snapshot.forEach((doc) => {
 					// console.log(doc.data());
 					placeDetail.push(doc.data());
 				});
 				setPlace(placeDetail);
-			})
-			.catch((err) => {
-				console.log("Error getting sub-collection documents", err);
 			});
+		// .catch((err) => {
+		// 	console.log("Error getting sub-collection documents", err);
+		// });
 	}, []);
 
 	return (
@@ -103,14 +106,18 @@ function Place({ title }) {
 			{popAddPlace ? (
 				<div>
 					<Cover onClick={AddSomePlace} />
-					<NewPlace title={title} />
+					<NewPlace
+						title={title}
+						setPopAddPlace={setPopAddPlace}
+						setPlaceName={setPlaceName}
+					/>
 				</div>
 			) : (
 				<>
 					{place.map((item) => {
 						return (
 							<Container key={item.locationName}>
-								<PlaceLink to={`/place/${item.locationName}`}>
+								<PlaceLink to={`${url}/place/${item.locationName}`}>
 									<EachPlace>
 										<PlaceImage src={idolimage} />
 										<PlaceText>

@@ -84,8 +84,7 @@ const MenuImage = styled.img`
 function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
-	const userId = user.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
+	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [userName, setUserName] = useState("");
 
 	docRef.get().then((doc) => {

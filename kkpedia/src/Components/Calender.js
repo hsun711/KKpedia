@@ -4,17 +4,18 @@ import RenderCalender from "./RenderCalender";
 
 const Schedule = styled.div`
 	display: flex;
+	width: 100%;
+	height: 70%;
 	background-color: white;
 	padding: 10px 20px;
-	height: 80vh;
 	border-radius: 10px;
 	align-items: center;
 `;
 
-function Calender() {
+function Calender({ title }) {
 	return (
 		<Schedule>
-			<RenderCalender />
+			<RenderCalender title={title} />
 		</Schedule>
 	);
 }

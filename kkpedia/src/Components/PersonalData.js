@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import firebase from "../utils/firebase";
+import FellowIdol from "./FellowIdol";
 import image from "../img/wanted.png";
-import unlike from "../img/unlike.png";
-import like from "../img/like.png";
 
 const ProfileContainer = styled.div`
 	background-color: #ffeaa7;
@@ -31,21 +31,9 @@ const EachFellow = styled.div`
 	/* outline: 1px solid black; */
 `;
 
-const EachStar = styled.div`
-	display: flex;
-	align-items: center;
-`;
-
 const PerStar = styled.img`
 	width: 7vmin;
 	height: 7vmin;
-`;
-
-const LikeIcon = styled.img`
-	width: 2vmin;
-	height: 2vmin;
-	margin-left: 1vmin;
-	cursor: pointer;
 `;
 
 const EachContribution = styled(EachFellow)`
@@ -59,38 +47,18 @@ const NormalTxt = styled.p`
 `;
 
 function PersonalData() {
-	const [favorite, setFavorite] = useState(true);
+	const user = firebase.auth().currentUser;
+	const db = firebase.firestore();
+	const userId = user.uid;
 	const [contribution, setContribution] = useState("2");
 	const [donatePlace, setDonatePlace] = useState("南山塔");
-	const AddtoFavorite = () => {
-		setFavorite(!favorite);
-	};
 
 	return (
 		<ProfileContainer>
 			<TitleText>Fellow</TitleText>
 			<FellowStar>
-				<EachFellow>
-					<PerStar src={image} />
-					<EachStar>
-						<NormalTxt>南山塔</NormalTxt>
-						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-					</EachStar>
-				</EachFellow>
-				<EachFellow>
-					<PerStar src={image} />
-					<EachStar>
-						<NormalTxt>南山塔</NormalTxt>
-						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-					</EachStar>
-				</EachFellow>
-				<EachFellow>
-					<PerStar src={image} />
-					<EachStar>
-						<NormalTxt>南山塔</NormalTxt>
-						<LikeIcon src={favorite ? like : unlike} onClick={AddtoFavorite} />
-					</EachStar>
-				</EachFellow>
+				<FellowIdol />
+				<FellowIdol />
 			</FellowStar>
 			<TitleText>貢獻過 {contribution} 個景點</TitleText>
 			<FellowStar>

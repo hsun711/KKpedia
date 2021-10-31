@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import mainImage from "../img/wanted.png";
+import star from "../img/star.png";
 
 const Container = styled.div`
 	width: 80vmin;
@@ -18,7 +19,7 @@ const Container = styled.div`
 `;
 
 const CommentArea = styled.div`
-	width: 95%;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	margin: 0px auto;
@@ -40,46 +41,74 @@ const CommentUser = styled.img`
 `;
 const CommentTxt = styled.div`
 	padding: 0px 2vmin;
-	position: relative;
+	display: flex;
+	flex-direction: column;
 `;
 
 const NormalTxt = styled.p`
 	font-size: 2vmin;
 `;
-
-const TimeStamp = styled.p`
-	font-size: 1vmin;
-	position: absolute;
-	bottom: -1vmin;
-	right: 0px;
+const Score = styled.div`
+	background-image: url(${star});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 2vmin;
+	height: 2vmin;
+	margin-bottom: 1vmin;
 `;
 
-function LookMore() {
+const ScoreTxt = styled.p`
+	font-size: 2vmin;
+	font-weight: 600;
+	margin-left: 2.3vmin;
+`;
+
+const TimeStamp = styled.div`
+	font-size: 1vmin;
+	margin-top: 1vmin;
+	margin-left: 40vmin;
+`;
+
+function LookMore({ title, location }) {
 	const db = firebase.firestore();
+	const docRef = db.collection("categories");
+	const [comment, setComment] = useState([]);
+
+	useEffect(() => {
+		docRef
+			.doc(`${title}`)
+			.collection("reviews")
+			.where("locationName", "==", `${location}`)
+			.orderBy("timestamp", "desc")
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// console.log(doc.data());
+					item.push(doc.data());
+					// setComment([doc.data()]);
+				});
+				setComment(item);
+			});
+	}, []);
 
 	return (
 		<Container>
 			<CommentArea>
-				<Comment>
-					<CommentUser src={mainImage} />
-					<CommentTxt>
-						<NormalTxt>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-							placerat urna, quis tincidunt lectus.
-						</NormalTxt>
-						<TimeStamp>2021/10/23</TimeStamp>
-					</CommentTxt>
-				</Comment>
-				<Comment>
-					<CommentUser src={mainImage} />
-					<CommentTxt>
-						<NormalTxt>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-							placerat urna, quis tincidunt lectus.
-						</NormalTxt>
-						<TimeStamp>2021/10/23</TimeStamp>
-					</CommentTxt>
-				</Comment>
+				{comment.map((data) => {
+					const time = data.timestamp;
+					return (
+						<Comment>
+							<CommentUser src={data.postUserImg || mainImage} />
+							<CommentTxt>
+								<Score>
+									<ScoreTxt>{data.score}</ScoreTxt>
+								</Score>
+								<NormalTxt>{data.comment}</NormalTxt>
+								<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
+							</CommentTxt>
+						</Comment>
+					);
+				})}
 			</CommentArea>
 		</Container>
 	);

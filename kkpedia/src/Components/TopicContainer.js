@@ -47,7 +47,7 @@ const LinkNav = styled(Link)`
 const IdolImage = styled.img`
 	align-self: center;
 	width: 10vmin;
-	height: 10vmin;
+	/* height: 10vmin; */
 `;
 
 const LinkTxt = styled.p`
@@ -84,11 +84,14 @@ function TopicContainer({ topic }) {
 	return (
 		<Container>
 			{titleName.map((item) => {
+				const previewURL = item.star.main_image
+					? `${item.star.main_image}`
+					: `${idol}`;
 				return (
 					<EachIdol key={item.star.title}>
-						<LinkNav to={item.star.title}>
+						<LinkNav to={`${topic}/${item.star.title}`}>
 							<LinkTxt>{item.star.title}</LinkTxt>
-							<IdolImage src={idol} />
+							<IdolImage src={previewURL} />
 						</LinkNav>
 					</EachIdol>
 				);

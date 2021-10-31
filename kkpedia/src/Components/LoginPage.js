@@ -171,7 +171,7 @@ function LoginPage() {
 				setPassword(password);
 				setUserData(response);
 				setEmail(email);
-				AddtoFirsebase(response);
+				// AddtoFirsebase(response);
 				db.collection("users")
 					.doc(`${response.user.uid}`)
 					.set(

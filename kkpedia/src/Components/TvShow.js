@@ -44,7 +44,7 @@ function Idol() {
 			{popAddOne ? (
 				<div>
 					<Cover onClick={AddSomeOne} />
-					<NewOne topic="tvshow" />
+					<NewOne topic="tvshow" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
 				<TopicContainer topic="tvshow" />

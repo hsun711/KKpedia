@@ -2,20 +2,22 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Popup from "reactjs-popup";
+import { v4 as uuidv4 } from "uuid";
 import Map from "./Map";
 import LookMore from "./LookMore";
 import WriteComment from "./WriteComment";
-import mainImage from "../img/wanted.png";
+import coverImage from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
 import leftarrow from "../img/left-arrow.png";
 import rightarrow from "../img/right-arrow.png";
 import board from "../img/cork-board.png";
+import star from "../img/star.png";
 import { useParams } from "react-router-dom";
 
 const MainContainer = styled.div`
-	/* width: 70%;
-	height: 100%; */
+	width: 70%;
+	/* height: 100%; */
 	/* margin: 20vmin auto; */
 	margin: 0px auto;
 	padding: 5vmin 0px;
@@ -28,7 +30,7 @@ const MainContainer = styled.div`
 `;
 
 const Container = styled.div`
-	/* width: 90%; */
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	background-color: beige;
@@ -42,7 +44,7 @@ const TopDetail = styled.div`
 
 const MainImage = styled.img`
 	width: 20vmin;
-	height: 20vmin;
+	/* height: 20vmin; */
 `;
 
 const LocationDetail = styled.div`
@@ -77,7 +79,7 @@ const SubTitle = styled.p`
 
 const PlaceMap = styled.div`
 	width: 100%;
-	height: 50vmin;
+	height: 20vmin;
 	margin: 1vmin 0px;
 `;
 
@@ -126,11 +128,22 @@ const CommentTxt = styled.div`
 	position: relative;
 `;
 
-const TimeStamp = styled.p`
+const Score = styled.div`
+	background-image: url(${star});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 2vmin;
+	height: 2vmin;
+`;
+
+const ScoreTxt = styled.p`
+	font-size: 2vmin;
+	font-weight: 600;
+	margin-left: 2.3vmin;
+`;
+
+const TimeStamp = styled.div`
 	font-size: 1vmin;
-	position: absolute;
-	bottom: -15px;
-	right: 0px;
 `;
 
 const BottomBtn = styled.div`
@@ -154,35 +167,42 @@ const CheckBtn = styled.div`
 	cursor: pointer;
 `;
 
+const Cover = styled.div`
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	top: 0;
+	left: 0;
+	background-color: black;
+	opacity: 0.8;
+	z-index: 2;
+`;
+
 const StyledPopup = styled(Popup)`
 	/* use your custom style for ".popup-overlay" */
 	&-overlay {
 		background: rgba(0, 0, 0, 0.8);
 	}
-	/* use your custom style for ".popup-content" */
-	/* &-content {
-		margin: auto;
-		width: 700px;
-		display: flex;
-		height: 550px;
-	} */
 `;
 
 function EachLocation({ title }) {
 	const [favorite, setFavorite] = useState(false);
 	const [placeData, setPlaceData] = useState([]);
-
+	const [popUpWriteComment, setPopUpWriteComment] = useState(false);
+	const [comment, setComment] = useState([]);
 	let { location } = useParams();
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
 
-	// const [locationName, setLocationName] = useState(location);
-	const AddtoFavorite = () => {
-		setFavorite(!favorite);
-		console.log(placeData);
-		const locationName = placeData[0].locationName;
+	const PopUp = () => {
+		setPopUpWriteComment(!popUpWriteComment);
+	};
 
+	// console.log(location);
+	// console.log(title);
+	const addToUserData = () => {
+		const locationName = placeData[0].locationName;
 		db.collection("users")
 			.doc(`${user.uid}`)
 			.collection("likes")
@@ -196,6 +216,58 @@ function EachLocation({ title }) {
 			});
 	};
 
+	const removeUserData = () => {
+		db.collection("users")
+			.doc(`${user.uid}`)
+			.collection("likes")
+			.doc(`${location}`)
+			.delete()
+			.then(() => {
+				alert("移出口袋聖地囉😤😤");
+			})
+			.catch((error) => {
+				console.error("Error removing document: ", error);
+			});
+	};
+
+	// 按收藏後把使用者 id 加進景點的 collectedBy
+	const addToPlaceCollectBy = () => {
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.doc(`${location}`)
+			.update({
+				collectedBy: firebase.firestore.FieldValue.arrayUnion(`${user.uid}`),
+			})
+			.then(() => {
+				// console.log(user.uid);
+			});
+	};
+	const removePlaceCollectBy = () => {
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.doc(`${location}`)
+			.update({
+				collectedBy: firebase.firestore.FieldValue.arrayRemove(`${user.uid}`),
+			})
+			.then(() => {
+				// console.log(user.uid);
+			});
+	};
+
+	const AddtoFavorite = () => {
+		setFavorite(!favorite);
+
+		if (favorite === true) {
+			removePlaceCollectBy();
+			removeUserData();
+		} else {
+			addToUserData();
+			addToPlaceCollectBy();
+		}
+	};
+
 	useEffect(() => {
 		docRef
 			.doc(`${title}`)
@@ -205,12 +277,54 @@ function EachLocation({ title }) {
 			.then((querySnapshot) => {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
-					// console.log(doc.data());
 					setPlaceData([doc.data()]);
 				});
 			})
 			.catch((error) => {
 				console.log("Error getting documents: ", error);
+			});
+
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.where("locationName", "==", `${location}`)
+			.where("collectedBy", "array-contains", `${user.uid}`)
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					const collectedBy = doc.data().collectedBy;
+					const favorite = collectedBy.some((item) => {
+						const result = item === user.uid;
+						return result;
+					});
+					if (favorite) {
+						setFavorite(true);
+					} else {
+						// doc.data() will be undefined in this case
+						setFavorite(false);
+					}
+				});
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+
+		// desc 遞減 | asc 遞增
+		docRef
+			.doc(`${title}`)
+			.collection("reviews")
+			.where("locationName", "==", `${location}`)
+			.orderBy("timestamp", "desc")
+			.limit(3)
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// console.log(doc.data());
+					item.push(doc.data());
+					// setComment([doc.data()]);
+				});
+				setComment(item);
 			});
 	}, []);
 
@@ -220,11 +334,23 @@ function EachLocation({ title }) {
 	return (
 		<MainContainer>
 			<Container>
+				{popUpWriteComment ? (
+					<>
+						<Cover onClick={PopUp} />
+						<WriteComment
+							title={title}
+							location={location}
+							setPopUpWriteComment={setPopUpWriteComment}
+						/>
+					</>
+				) : (
+					<></>
+				)}
 				{placeData.map((data) => {
 					return (
 						<div key={data.locationName}>
 							<TopDetail>
-								<MainImage src={mainImage} />
+								<MainImage src={data.main_image || coverImage} />
 								<LocationDetail>
 									<NormalTxt>{data.postUser}</NormalTxt>
 									<TitleName>{data.locationName}</TitleName>
@@ -243,55 +369,43 @@ function EachLocation({ title }) {
 							</PlaceMap>
 							<MoreImage>
 								<Arrow src={leftarrow} />
-								<Images src={mainImage} />
-								<Images src={mainImage} />
-								<Images src={mainImage} />
+								<Images src={coverImage} />
+								<Images src={coverImage} />
+								<Images src={coverImage} />
 								<Arrow src={rightarrow} />
 							</MoreImage>
-							<SubTitle>Review</SubTitle>
-							<CommentArea>
-								<Comment>
-									<CommentUser src={mainImage} />
-									<CommentTxt>
-										<NormalTxt>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											In eu placerat urna, quis tincidunt lectus.
-										</NormalTxt>
-										<TimeStamp>2021/10/23</TimeStamp>
-									</CommentTxt>
-								</Comment>
-								<Comment>
-									<CommentUser src={mainImage} />
-									<CommentTxt>
-										<NormalTxt>
-											Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-											In eu placerat urna, quis tincidunt lectus.
-										</NormalTxt>
-										<TimeStamp>2021/10/23</TimeStamp>
-									</CommentTxt>
-								</Comment>
-							</CommentArea>
-							<BottomBtn>
-								<StyledPopup
-									trigger={<CheckBtn>評論</CheckBtn>}
-									position="center center"
-									modal
-									closeOnDocumentClick
-								>
-									<WriteComment />
-								</StyledPopup>
-								<StyledPopup
-									trigger={<CheckBtn>查看更多</CheckBtn>}
-									position="center center"
-									modal
-									closeOnDocumentClick
-								>
-									<LookMore />
-								</StyledPopup>
-							</BottomBtn>
 						</div>
 					);
 				})}
+				<SubTitle>Review</SubTitle>
+				<CommentArea>
+					{comment.map((data) => {
+						const time = data.timestamp;
+						return (
+							<Comment key={uuidv4()}>
+								<CommentUser src={data.postUserImg || coverImage} />
+								<CommentTxt>
+									<Score>
+										<ScoreTxt>{data.score}</ScoreTxt>
+									</Score>
+									<NormalTxt>{data.comment}</NormalTxt>
+									<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
+								</CommentTxt>
+							</Comment>
+						);
+					})}
+				</CommentArea>
+				<BottomBtn>
+					<CheckBtn onClick={PopUp}>評論</CheckBtn>
+					<StyledPopup
+						trigger={<CheckBtn>查看更多</CheckBtn>}
+						position="center center"
+						modal
+						closeOnDocumentClick
+					>
+						<LookMore title={title} location={location} />
+					</StyledPopup>
+				</BottomBtn>
 			</Container>
 		</MainContainer>
 	);

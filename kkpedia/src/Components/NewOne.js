@@ -3,6 +3,7 @@ import styled from "styled-components";
 import firebase from "../utils/firebase";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
+import cover from "../img/wanted.png";
 
 const Container = styled.div`
 	width: 70vmin;
@@ -11,7 +12,7 @@ const Container = styled.div`
 	top: 50%;
 	left: 50%;
 	margin-left: -35vmin;
-	margin-top: -40vh;
+	margin-top: -44vmin;
 	padding: 5vmin 7vmin;
 	display: flex;
 	flex-direction: column;
@@ -47,21 +48,26 @@ const ShortTitle = styled(InputTitle)`
 	width: 20vmin;
 `;
 
-const Add = styled.div`
+const Add = styled.button`
 	background-image: url(${add});
 	background-size: 100%;
 	background-repeat: no-repeat;
 	width: 5vmin;
 	height: 5vmin;
+	cursor: pointer;
+`;
+
+const CoverImage = styled.img`
+	width: 15vmin;
+	margin-left: 3vmin;
 `;
 
 const SendBtn = styled.div`
 	background-image: url(${send});
-	background-size: 100%;
+	background-size: 95%;
 	background-repeat: no-repeat;
 	width: 10vmin;
-	height: 10vmin;
-	border-radius: 10px;
+	height: 8vmin;
 	margin-left: 45vmin;
 	cursor: pointer;
 	&:hover {
@@ -73,30 +79,43 @@ const SendBtn = styled.div`
 function NewOne({ topic, setPopAddOne }) {
 	const db = firebase.firestore();
 	const [title, setTitle] = useState();
-	const [ig, setIg] = useState();
-	const [fb, setFb] = useState();
-	const [twitter, setTwitter] = useState();
-	const [youtube, setYoutube] = useState();
+	const [ig, setIg] = useState("");
+	const [fb, setFb] = useState("");
+	const [twitter, setTwitter] = useState("");
+	const [youtube, setYoutube] = useState("");
+	const [file, setFile] = useState(null);
+
+	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
 
 	const SendNewOn = () => {
-		db.collection("categories")
-			.doc(`${title}`)
-			.set(
-				{
-					topic: topic,
-					title: title,
-					facebook: fb,
-					instagram: ig,
-					twitter: twitter,
-					youtube: youtube,
-				},
-				{ merge: true }
-			)
-			.then((docRef) => {
-				// console.log("😁😁😁😁");
-				alert("新增成功😁😁😁😁");
+		const documentRef = db.collection("categories").doc(`${title}`);
+		const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
+		const metadata = {
+			contentType: file.type,
+		};
+
+		fileRef.put(file, metadata).then(() => {
+			fileRef.getDownloadURL().then((imageUrl) => {
+				documentRef
+					.set(
+						{
+							topic: topic,
+							title: title,
+							facebook: fb,
+							instagram: ig,
+							twitter: twitter,
+							youtube: youtube,
+							main_image: imageUrl,
+						},
+						{ merge: true }
+					)
+					.then((docRef) => {
+						// console.log("😁😁😁😁");
+						alert("新增成功😁😁😁😁");
+						setPopAddOne(false);
+					});
 			});
-		setPopAddOne(false);
+		});
 	};
 
 	return (
@@ -149,7 +168,16 @@ function NewOne({ topic, setPopAddOne }) {
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>上傳封面圖：</ShortTitle>
-				<Add />
+				<Add as="label" htmlFor="postImage" />
+				<input
+					type="file"
+					id="postImage"
+					style={{ display: "none" }}
+					onChange={(e) => {
+						setFile(e.target.files[0]);
+					}}
+				/>
+				<CoverImage src={previewURL} />
 			</ArtistName>
 			<SendBtn onClick={SendNewOn} />
 		</Container>

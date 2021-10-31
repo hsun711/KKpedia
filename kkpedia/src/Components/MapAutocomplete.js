@@ -31,9 +31,12 @@ function MapAutocomplete(props) {
 		const placeId = results[0].place_id;
 		setAddress(pickValue);
 		setCoordinates(latLng);
+
+		// 把座標位置和地址、placeId傳回去給父層
 		const data = [pickValue, placeId, latLng];
 		props.placeaddress(data);
 	};
+
 	return (
 		<InputArea>
 			<PlacesAutocomplete

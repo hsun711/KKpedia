@@ -58,8 +58,8 @@ const PersonName = styled.p`
 
 const PersonImage = styled.img`
 	margin-left: 2vmin;
-	width: 5vmin;
-	height: 5vmin;
+	width: 7vmin;
+	height: 7vmin;
 	border-radius: 50%;
 `;
 
@@ -107,9 +107,11 @@ function IdolPage() {
 	let { path, url } = useRouteMatch();
 	let { title } = useParams();
 	const [sns, setSns] = useState([]);
+	const [mainImage, setMainImage] = useState("");
 
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
+	const previewURL = mainImage ? `${mainImage}` : idolimage;
 
 	useEffect(() => {
 		docRef
@@ -121,7 +123,9 @@ function IdolPage() {
 					// doc.data() is never undefined for query doc snapshots
 					item.push({ star: doc.data() });
 				});
+				console.log(item[0].star.main_image);
 				setSns(item);
+				setMainImage(item[0].star.main_image);
 			})
 			.catch((error) => {
 				console.log("Error getting documents: ", error);
@@ -134,7 +138,7 @@ function IdolPage() {
 				<BrowserRouter>
 					<Person>
 						<PersonName>{title}</PersonName>
-						<PersonImage src={idolimage} />
+						<PersonImage src={previewURL} />
 					</Person>
 
 					{sns.map((item) => {
@@ -176,19 +180,19 @@ function IdolPage() {
 					</MenuBar>
 					<PlaceContainer>
 						<Switch>
-							<Route exact path={`${url}`}>
+							<Route exact path={`${path}`}>
 								<Place title={title} />
 							</Route>
-							<Route exact path={`${url}/picture`}>
+							<Route exact path={`${path}/picture`}>
 								<Picture title={title} />
 							</Route>
-							<Route exact path={`${url}/calender`}>
+							<Route exact path={`${path}/calender`}>
 								<Calender title={title} />
 							</Route>
-							<Route exact path={`${url}/post`}>
+							<Route exact path={`${path}/post`}>
 								<Post title={title} />
 							</Route>
-							<Route exact path={`/place/:location`}>
+							<Route exact path={`${path}/place/:location`}>
 								<EachLocation title={title} />
 							</Route>
 						</Switch>

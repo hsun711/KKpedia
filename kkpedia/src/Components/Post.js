@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import idolimage from "../img/wanted.png";
-import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
+import RenderPost from "./RenderPost";
 import send from "../img/submit.png";
-import good from "../img/thumbs-up.png";
-import comment from "../img/comment.png";
 
 const Container = styled.div`
 	display: flex;
@@ -46,84 +43,7 @@ const Send = styled.div`
 	}
 `;
 
-const CommentArea = styled.div`
-	width: 80vmin;
-	align-self: center;
-	outline: 1px solid black;
-	display: flex;
-	flex-direction: column;
-	padding: 3vmin;
-	border-radius: 10px;
-	margin-bottom: 3vmin;
-`;
-
-const PosterDetail = styled.div`
-	display: flex;
-	margin-bottom: 1vmin;
-`;
-
-const PosterImage = styled.img`
-	width: 5vmin;
-	height: 5vmin;
-	border-radius: 50%;
-	outline: 1px solid black;
-`;
-
-const PosterText = styled.div`
-	height: 5vmin;
-	margin-left: 0.5vmin;
-`;
-
-const Comment = styled.div`
-	padding: 2vmin;
-`;
-
-const Icon = styled.div`
-	display: flex;
-	padding: 1vmin;
-`;
-
-const EachIcon = styled.img`
-	width: 3vmin;
-	height: 3vmin;
-	cursor: pointer;
-	margin-right: 0.5vmin;
-`;
-
-const GoodTotal = styled.p`
-	font-size: 3vmin;
-	margin-right: 4vmin;
-`;
-
-const Recomment = styled.div`
-	display: flex;
-	padding: 2vmin;
-`;
-
-const ReplyImg = styled(PosterImage)`
-	width: 3vmin;
-	height: 3vmin;
-`;
-
-const ReplyComment = styled.div`
-	padding: 2vmin;
-	background-color: #dfe6e9;
-	margin-left: 1vmin;
-	border-radius: 10px;
-`;
-
-const InputReply = styled.textarea`
-	border-radius: 10px;
-	height: 5vmin;
-	padding: 1vmin;
-`;
-
-const Submit = styled(Send)`
-	width: 6vmin;
-	height: 5vmin;
-`;
-
-function Place({ title }) {
+function Post({ title }) {
 	const [postMsg, setPostMsg] = useState("");
 	const [userName, setUserName] = useState("");
 	const [post, setPost] = useState([]);
@@ -144,28 +64,25 @@ function Place({ title }) {
 	useEffect(() => {
 		db.collection("posts")
 			.where("title", "==", `${title}`)
-			.get()
-			.then((querySnapshot) => {
+			.orderBy("postTime", "desc")
+			.onSnapshot((querySnapshot) => {
 				const item = [];
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
-					// console.log(doc.data());
-					item.push({ data: doc.data() });
+					const data = {
+						data: doc.data(),
+						id: doc.id,
+					};
+					item.push(data);
+					// console.log(doc.id);
 				});
 				setPost(item);
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
 			});
 	}, []);
+	// console.log(post);
 
 	const SendMsg = () => {
 		setPostMsg("");
-		// console.log(postMsg);
-		// console.log(postTime);
-		// console.log(user);
-		// console.log(userName);
-		// console.log(title);
 		const data = {
 			content: postMsg,
 			title: title,
@@ -179,7 +96,7 @@ function Place({ title }) {
 			.doc()
 			.set(data, { merge: true })
 			.then((docRef) => {
-				// console.log("Document written with ID: ", docRef.id);
+				// console.log("Document written with ID: );
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);
@@ -197,50 +114,7 @@ function Place({ title }) {
 			/>
 			<Send onClick={SendMsg} />
 			{post.map((item) => {
-				const time = item.data.postTime;
-				return (
-					<CommentArea key={uuidv4()}>
-						<PosterDetail>
-							<PosterImage src={idolimage} />
-							<PosterText>
-								<h3>{item.data.displayName}</h3>
-								<p>{new Date(time).toLocaleString()}</p>
-							</PosterText>
-						</PosterDetail>
-						<hr />
-						<Comment>
-							<p>{item.data.content}</p>
-						</Comment>
-						<hr />
-						<Icon>
-							<EachIcon src={good} />
-							<GoodTotal>10</GoodTotal>
-							<EachIcon src={comment} />
-						</Icon>
-						<Recomment>
-							<ReplyImg src={idolimage} />
-							<ReplyComment>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-									placerat urna, quis tincidunt lectus. Cras id ligula id mauris
-									luctus fermentum. Lorem ipsum dolor sit amet.
-								</p>
-							</ReplyComment>
-						</Recomment>
-						<Recomment>
-							<ReplyImg src={idolimage} />
-							<ReplyComment>
-								<p>
-									Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-									placerat urna, quis tincidunt lectus. Cras id ligula id mauris
-									luctus fermentum. Lorem ipsum dolor sit amet.
-								</p>
-							</ReplyComment>
-						</Recomment>
-						<InputReply />
-						<Submit />
-					</CommentArea>
-				);
+				return <RenderPost item={item} key={item.id} />;
 			})}
 			{/* <CommentArea>
 				<PosterDetail>
@@ -291,4 +165,4 @@ function Place({ title }) {
 	);
 }
 
-export default Place;
+export default Post;

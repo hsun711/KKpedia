@@ -1,14 +1,11 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
+import interactionPlugin, { Draggle } from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { useState } from "react";
+import firebase from "../utils/firebase";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import "../index.css";
-
-// const initialCalender = JSON.parse(
-// 	window.localStorage.getItem("calender" || [])
-// );
 
 // const items = initialCalender.map((item) => {
 // 	return {
@@ -19,29 +16,32 @@ import "../index.css";
 
 // const INITIAL_EVENTS = items;
 
-// const CalenderArea = styled.div`
-// 	width: 90vmin;
-// 	height: 70vmin;
-// `;
+const CalenderArea = styled.div`
+	width: 100%;
+	/* height: 70vmin; */
+`;
 
-export default function RenderCalender() {
+export default function RenderCalender({ title }) {
+	// console.log(title);
 	const [events, setEvents] = useState([]);
+	const [initial, setInitial] = useState([]);
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
 
-	const items = events.map((item) => {
-		return {
-			title: item.event,
-			date: new Date(item.date + "T00:00:00"),
-		};
-	});
-
-	const INITIAL_EVENTS = items;
-
-	const CalenderArea = styled.div`
-		width: 90vmin;
-		height: 70vmin;
-	`;
-
-	// window.localStorage.setItem("calender", JSON.stringify([]));
+	// console.log(events);
+	useEffect(() => {
+		docRef
+			.doc(`${title}`)
+			.collection("calenders")
+			.onSnapshot((snapshot) => {
+				const enevtDetail = [];
+				snapshot.forEach((doc) => {
+					// console.log(doc.data());
+					enevtDetail.push(doc.data());
+				});
+				setEvents(enevtDetail);
+			});
+	}, []);
 
 	// 設定可拖曳元素，並且設定將元素拖曳到行事曆上之後要顯示的文字
 	// useEffect(() => {
@@ -58,53 +58,57 @@ export default function RenderCalender() {
 
 	const HandleDateClick = (date) => {
 		let event = prompt("Enter the event");
-		let selectedDate = new Date(date.dateStr + "T00:00:00");
+		let selectedDate = date.dateStr;
+		// let selectedDate = new Date(date.dateStr + "T00:00:00");
+		// console.log(selectedDate);
+		const data = {
+			title: event,
+			date: selectedDate,
+		};
 
-		// const calenderEvent = JSON.parse(
-		// 	window.localStorage.getItem("calender" || [])
-		// );
-		setEvents([
-			...events,
-			{
-				title: event,
-				date: selectedDate,
-			},
-		]);
+		docRef
+			.doc(`${title}`)
+			.collection("calenders")
+			.doc()
+			.set(data, { merge: true })
+			.then((docRef) => {
+				setEvents([...events, data]);
+				// alert("新增成功😁😁😁😁");
+			});
+
+		// console.log(events);
 
 		alert("Great. Now, update your database...");
-		console.log(date);
-		console.log(event);
-		// const calenderContent = {
-		// 	date: date.dateStr,
-		// 	event: event,
-		// };
-		// window.localStorage.setItem("calender", JSON.stringify([calenderContent]));
-		// const newCalenderEvent = [...calenderEvent, calenderContent];
-		// window.localStorage.setItem("calender", JSON.stringify(newCalenderEvent));
-		// window.location.reload();
 	};
 
-	const DeletedEvent = (eventInfo) => {
-		console.log(eventInfo);
-		console.log(eventInfo.event.title);
-		// const calenderEvent = JSON.parse(window.localStorage.getItem("calender"));
+	// console.log(events);
 
-		// const newEvent = calenderEvent.filter((obj) => {
-		// 	const result = obj.event !== eventInfo.event.title;
-		// 	return result;
-		// });
-		// window.localStorage.setItem("calender", JSON.stringify(newEvent));
-		// window.location.reload();
+	const DeletedEvent = (eventInfo) => {
+		// console.log(eventInfo);
+		// console.log(eventInfo.event.title);
+		// console.log(eventInfo.event._def.defId);
+		docRef
+			.doc(`${title}`)
+			.collection("calenders")
+			.where("title", "==", `${eventInfo.event.title}`)
+			.where("date", "==", `${eventInfo.event.startStr}`)
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					doc.ref.delete();
+					// console.log(doc.ref);
+				});
+			});
 	};
 
 	return (
 		<CalenderArea>
 			<FullCalendar
 				plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]} //載入外掛
-				initialEvents={INITIAL_EVENTS}
+				// initialEvents={events}
 				selectable
 				// editable // 允許內部拖曳
-				droppable // 允許由外部拖曳
+				// droppable // 允許由外部拖曳
 				dateClick={HandleDateClick}
 				eventClick={DeletedEvent}
 				headerToolbar={{
