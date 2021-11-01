@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
+import {
+	BrowserRouter,
+	Route,
+	Link,
+	Switch,
+	useParams,
+	useRouteMatch,
+} from "react-router-dom";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
 import PersonalFavorite from "./PersonalFavorite";
@@ -82,6 +89,7 @@ const MenuImage = styled.img`
 `;
 
 function Profile() {
+	let { path, url } = useRouteMatch();
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
@@ -109,28 +117,27 @@ function Profile() {
 				</Person>
 				<BrowserRouter>
 					<MenuBar>
-						<MenuLink to="/profile">
+						<MenuLink to={`${url}`}>
 							<MenuImage src={profile} />
 							個人資料
 						</MenuLink>
-						<MenuLink to="/myFavorite">
+						<MenuLink to={`${url}/myFavorite`}>
 							<MenuImage src={like} />
 							收藏景點
 						</MenuLink>
-						<MenuLink to="/myPost">
+						<MenuLink to={`${url}/myPost`}>
 							<MenuImage src={post} />
 							過往PO文
 						</MenuLink>
 					</MenuBar>
-
 					<Switch>
-						<Route exact path="/profile">
+						<Route exact path={`${path}`}>
 							<PersonalData />
 						</Route>
-						<Route exact path="/myFavorite">
+						<Route exact path={`${path}/myFavorite`}>
 							<PersonalFavorite />
 						</Route>
-						<Route exact path="/myPost">
+						<Route exact path={`${path}/myPost`}>
 							<PersonalPost />
 						</Route>
 					</Switch>

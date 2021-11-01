@@ -7,6 +7,8 @@ import TvShow from "./Components/TvShow";
 import LandingPage from "./Components/LandingPage";
 import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
+import PersonalFavorite from "./Components/PersonalFavorite";
+import PersonalPost from "./Components/PersonalPost";
 import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 
 function App() {
@@ -39,7 +41,7 @@ function App() {
 							<Route exact path="/idol" component={Idol}></Route>
 							<Route exact path="/drama" component={Drama}></Route>
 							<Route exact path="/tvshow" component={TvShow}></Route>
-							<Route exact path="/profile" component={Profile}></Route>
+							<Route path="/profile" component={Profile}></Route>
 							<Route path="/idol/:title" component={IdolPage}></Route>
 							<Route path="/tvshow/:title" component={IdolPage}></Route>
 							<Route path="/drama/:title" component={IdolPage}></Route>

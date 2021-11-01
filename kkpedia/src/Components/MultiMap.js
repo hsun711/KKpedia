@@ -16,8 +16,8 @@ const Pin = styled.div`
 	background-image: url(${pin});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	width: 2vmin;
+	height: 2vmin;
 `;
 
 // Map
@@ -81,7 +81,7 @@ SimpleMap.defaultProps = {
 		lat: 25.04,
 		lng: 121.5,
 	},
-	zoom: 4,
+	zoom: 5,
 };
 
 // App

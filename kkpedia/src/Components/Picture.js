@@ -35,6 +35,11 @@ const ImageHolder = styled.p`
 	font-size: 3vmin;
 `;
 
+const ImageDescription = styled.p`
+	font-size: 2vmin;
+	margin-left: 2.5vmin;
+`;
+
 const PhotosArea = styled.div`
 	width: 100%;
 	margin-left: 0.5vmin;
@@ -68,12 +73,13 @@ function Picture({ title }) {
 			{popAddPicture ? (
 				<div>
 					<Cover onClick={AddPicture} />
-					<NewPicture title={title} />
+					<NewPicture title={title} AddPicture={AddPicture} />
 				</div>
 			) : (
 				<Container>
 					<EachPhoto>
 						<ImageHolder>UserID</ImageHolder>
+						<ImageDescription>哈哈哈哈哈哈</ImageDescription>
 						<PhotosArea>
 							<Photos src={idolimage} />
 							<Photos src={idolimage} />

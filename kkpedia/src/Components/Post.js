@@ -90,6 +90,7 @@ function Post({ title }) {
 			displayName: userName,
 			userId: userId,
 			userMail: user.email,
+			likedBy: [],
 		};
 
 		db.collection("posts")
@@ -116,51 +117,6 @@ function Post({ title }) {
 			{post.map((item) => {
 				return <RenderPost item={item} key={item.id} />;
 			})}
-			{/* <CommentArea>
-				<PosterDetail>
-					<PosterImage src={idolimage} />
-					<PosterText>
-						<h3>UserId</h3>
-						<p>2021/10/20</p>
-					</PosterText>
-				</PosterDetail>
-				<hr />
-				<Comment>
-					<p>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-						placerat urna, quis tincidunt lectus. Cras id ligula id mauris
-						luctus fermentum. Lorem ipsum dolor sit amet.
-					</p>
-				</Comment>
-				<hr />
-				<Icon>
-					<EachIcon src={good} />
-					<GoodTotal>10</GoodTotal>
-					<EachIcon src={comment} />
-				</Icon>
-				<Recomment>
-					<ReplyImg src={idolimage} />
-					<ReplyComment>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-							placerat urna, quis tincidunt lectus. Cras id ligula id mauris
-							luctus fermentum. Lorem ipsum dolor sit amet.
-						</p>
-					</ReplyComment>
-				</Recomment>
-				<Recomment>
-					<ReplyImg src={idolimage} />
-					<ReplyComment>
-						<p>
-							Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-							placerat urna, quis tincidunt lectus. Cras id ligula id mauris
-							luctus fermentum. Lorem ipsum dolor sit amet.
-						</p>
-					</ReplyComment>
-				</Recomment>
-				<InputReply />
-				<Submit />
-			</CommentArea> */}
 		</Container>
 	);
 }

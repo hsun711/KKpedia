@@ -58,7 +58,7 @@ const Add = styled.button`
 `;
 
 const CoverImage = styled.img`
-	width: 15vmin;
+	width: 10vmin;
 	margin-left: 3vmin;
 `;
 
@@ -117,6 +117,8 @@ function NewOne({ topic, setPopAddOne }) {
 			});
 		});
 	};
+
+	console.log(file);
 
 	return (
 		<Container>
