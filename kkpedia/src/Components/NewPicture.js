@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import { v4 as uuidv4, v4 } from "uuid";
@@ -80,11 +80,11 @@ const SendBtn = styled.div`
 
 function NewPicture({ title, setPopAddOne, AddPicture }) {
 	const db = firebase.firestore();
-	const [imgfile, setImgFile] = useState([]);
 	const [userName, setUserName] = useState("");
+	const [files, setFiles] = useState([]);
+	const [imgurl, setImgurl] = useState([]);
 	const user = firebase.auth().currentUser;
 	const docRef = db.collection("users").doc(`${user.uid}`);
-	const [files, setFiles] = useState([]);
 	const [imgDescription, setImgDescription] = useState("");
 
 	docRef.get().then((doc) => {
@@ -100,43 +100,81 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 		// Get Files
 		for (let i = 0; i < e.target.files.length; i++) {
 			const newFile = e.target.files[i];
-			// newFile["id"] = Math.random();
+			newFile["id"] = Math.random();
 			setFiles((prevState) => [...prevState, newFile]);
 		}
 	};
+	// console.log(files);
 
-	const UploadMultiImage = (e) => {
+	const handleUpload = () => {
 		const documentRef = db.collection("categories").doc(`${title}`);
-		const item = [];
-		const images = [];
-		files.forEach((file) => {
-			console.log(file);
-			const fileRef = firebase
+		const promises = [];
+		const docid = documentRef.collection("photos").doc().id;
+		const data = {
+			postUser: userName,
+			uid: user.uid,
+			description: imgDescription,
+			postTime: new Date().getTime(),
+			images: [],
+		};
+		documentRef
+			.collection("photos")
+			.doc(`${docid}`)
+			.set(data, { merge: true })
+			.then((docRef) => {
+				alert("新增成功😁😁😁😁");
+			});
+
+		files.map((file) => {
+			// console.log(file);
+			const uploadTask = firebase
 				.storage()
-				.ref("idol_images/" + documentRef.id + uuidv4())
+				.ref(`idol_images/${documentRef.id}/${file.id}`)
 				.put(file);
-			fileRef.on(
-				firebase.storage.TaskEvent.STATE_CHANGED,
-				(snapshot) => {
+			promises.push(uploadTask);
+			uploadTask.on(
+				"state_changed",
+				function progress(snapshot) {
 					const progress =
 						(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 					if (snapshot.state === firebase.storage.TaskState.RUNNING) {
 						console.log(`Progress: ${progress}%`);
 					}
 				},
-				(error) => console.log(error.code),
-				async () => {
-					const downloadURL = await fileRef.snapshot.ref.getDownloadURL();
+				function error(error) {
+					console.log(error);
+				},
+				function complete() {
+					firebase
+						.storage()
+						.ref(`idol_images/${documentRef.id}/`)
+						.child(`${file.id}`)
+						.getDownloadURL()
+						.then((imgUrls) => {
+							// console.log(imgUrls);
+							// console.log(docid);
+							documentRef
+								.collection("photos")
+								.doc(`${docid}`)
+								.update({
+									images: firebase.firestore.FieldValue.arrayUnion(
+										`${imgUrls}`
+									),
+								})
+								.then(() => {
+									// console.log(user.uid);
+								});
+						});
 				}
 			);
+			// console.log(imgurl);
 		});
-
-		Promise.all(images)
+		Promise.all(promises)
 			.then(() => {
-				alert("All files uploaded");
+				alert("All images uploaded");
 				AddPicture(false);
 			})
-			.catch((err) => console.log(err.code));
+			.catch((err) => console.log(err));
 	};
 
 	return (
@@ -157,6 +195,7 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 				<input
 					type="file"
 					id="uploadImage"
+					multiple
 					style={{ display: "none" }}
 					onChange={OnFileChange}
 				/>
@@ -164,7 +203,8 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 					return <CoverImage src={URL.createObjectURL(file)} key={file.id} />;
 				})}
 			</ArtistName>
-			<SendBtn onClick={UploadMultiImage} />
+			<SendBtn onClick={handleUpload} />
+			{/* <SendBtn onClick={UploadMultiImage} /> */}
 		</Container>
 	);
 }

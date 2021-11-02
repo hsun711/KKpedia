@@ -35,19 +35,13 @@ const SimpleMap = (props) => {
 	const docRef = db.collection("users").doc(`${userId}`);
 
 	useEffect(() => {
-		docRef
-			.collection("likes")
-			.get()
-			.then((snapshot) => {
-				const item = [];
-				snapshot.forEach((doc) => {
-					item.push(doc.data().placeData[0]);
-				});
-				setCollectPlace(item);
-			})
-			.catch((err) => {
-				console.log("Error getting sub-collection documents", err);
+		docRef.collection("likes").onSnapshot((snapshot) => {
+			const item = [];
+			snapshot.forEach((doc) => {
+				item.push(doc.data().placeData[0]);
 			});
+			setCollectPlace(item);
+		});
 	}, []);
 
 	return (

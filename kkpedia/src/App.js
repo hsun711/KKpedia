@@ -7,8 +7,6 @@ import TvShow from "./Components/TvShow";
 import LandingPage from "./Components/LandingPage";
 import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
-import PersonalFavorite from "./Components/PersonalFavorite";
-import PersonalPost from "./Components/PersonalPost";
 import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
 
 function App() {

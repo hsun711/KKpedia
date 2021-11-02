@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
-import { Link, useRouteMatch, useParams } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import add from "../img/plus.png";
 import NewPlace from "./NewPlace";
 

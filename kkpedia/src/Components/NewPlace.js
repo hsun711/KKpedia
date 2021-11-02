@@ -92,7 +92,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName }) {
 	const [latitude, setLatitude] = useState({});
 	const [file, setFile] = useState(null);
 	// const [placeImage, setPlaceImage] = useState([]);
-
 	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
 
 	docRef.get().then((doc) => {
@@ -121,6 +120,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName }) {
 		fileRef.put(file, metadata).then(() => {
 			fileRef.getDownloadURL().then((imageUrl) => {
 				const data = {
+					title: title,
 					address: address,
 					latitude: latitude,
 					placeId: placeId,
@@ -140,27 +140,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName }) {
 					});
 			});
 		});
-
-		// const data = {
-		// 	address: address,
-		// 	latitude: latitude,
-		// 	placeId: placeId,
-		// 	description: description,
-		// 	locationName: locationName,
-		// 	postUser: userName,
-		// 	uid: userId,
-		// 	// main_image:
-		// };
-
-		// await db
-		// 	.collection("categories")
-		// 	.doc(`${title}`)
-		// 	.collection("places")
-		// 	.doc(`${locationName}`)
-		// 	.set(data, { merge: true })
-		// 	.then((docRef) => {
-		// 		alert("新增成功😁😁😁😁");
-		// 	});
 
 		setPlaceName(locationName);
 	};

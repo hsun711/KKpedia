@@ -5,12 +5,11 @@ import {
 	Route,
 	Link,
 	Switch,
-	useParams,
 	useRouteMatch,
 } from "react-router-dom";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
-import PersonalFavorite from "./PersonalFavorite";
+import PersonalCollection from "./PersonalCollection";
 import PersonalPost from "./PersonalPost";
 import userImg from "../img/user.png";
 import levelImg from "../img/level-up.png";
@@ -94,6 +93,7 @@ function Profile() {
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [userName, setUserName] = useState("");
+	const [level, setLevel] = useState(0);
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
@@ -112,7 +112,7 @@ function Profile() {
 					<PersonImage src={user.photoURL || userImg} />
 					<LevelTag>
 						<LevelImg src={levelImg} />
-						10
+						{level}
 					</LevelTag>
 				</Person>
 				<BrowserRouter>
@@ -121,7 +121,7 @@ function Profile() {
 							<MenuImage src={profile} />
 							個人資料
 						</MenuLink>
-						<MenuLink to={`${url}/myFavorite`}>
+						<MenuLink to={`${url}/myCollection`}>
 							<MenuImage src={like} />
 							收藏景點
 						</MenuLink>
@@ -132,10 +132,10 @@ function Profile() {
 					</MenuBar>
 					<Switch>
 						<Route exact path={`${path}`}>
-							<PersonalData />
+							<PersonalData setLevel={setLevel} />
 						</Route>
-						<Route exact path={`${path}/myFavorite`}>
-							<PersonalFavorite />
+						<Route exact path={`${path}/myCollection`}>
+							<PersonalCollection />
 						</Route>
 						<Route exact path={`${path}/myPost`}>
 							<PersonalPost />
