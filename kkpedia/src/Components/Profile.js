@@ -1,9 +1,15 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import { BrowserRouter, Route, Link, Switch } from "react-router-dom";
+import {
+	BrowserRouter,
+	Route,
+	Link,
+	Switch,
+	useRouteMatch,
+} from "react-router-dom";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
-import PersonalFavorite from "./PersonalFavorite";
+import PersonalCollection from "./PersonalCollection";
 import PersonalPost from "./PersonalPost";
 import userImg from "../img/user.png";
 import levelImg from "../img/level-up.png";
@@ -82,10 +88,12 @@ const MenuImage = styled.img`
 `;
 
 function Profile() {
+	let { path, url } = useRouteMatch();
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [userName, setUserName] = useState("");
+	const [level, setLevel] = useState(0);
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
@@ -104,33 +112,32 @@ function Profile() {
 					<PersonImage src={user.photoURL || userImg} />
 					<LevelTag>
 						<LevelImg src={levelImg} />
-						10
+						{level}
 					</LevelTag>
 				</Person>
 				<BrowserRouter>
 					<MenuBar>
-						<MenuLink to="/profile">
+						<MenuLink to={`${url}`}>
 							<MenuImage src={profile} />
 							個人資料
 						</MenuLink>
-						<MenuLink to="/myFavorite">
+						<MenuLink to={`${url}/myCollection`}>
 							<MenuImage src={like} />
 							收藏景點
 						</MenuLink>
-						<MenuLink to="/myPost">
+						<MenuLink to={`${url}/myPost`}>
 							<MenuImage src={post} />
 							過往PO文
 						</MenuLink>
 					</MenuBar>
-
 					<Switch>
-						<Route exact path="/profile">
-							<PersonalData />
+						<Route exact path={`${path}`}>
+							<PersonalData setLevel={setLevel} />
 						</Route>
-						<Route exact path="/myFavorite">
-							<PersonalFavorite />
+						<Route exact path={`${path}/myCollection`}>
+							<PersonalCollection />
 						</Route>
-						<Route exact path="/myPost">
+						<Route exact path={`${path}/myPost`}>
 							<PersonalPost />
 						</Route>
 					</Switch>

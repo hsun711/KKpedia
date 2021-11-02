@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
-import { Link, useRouteMatch, useParams } from "react-router-dom";
+import { Link, useRouteMatch } from "react-router-dom";
 import add from "../img/plus.png";
 import NewPlace from "./NewPlace";
 
@@ -90,9 +90,9 @@ function Place({ title }) {
 			.onSnapshot((snapshot) => {
 				const placeDetail = [];
 				snapshot.forEach((doc) => {
-					// console.log(doc.data());
 					placeDetail.push(doc.data());
 				});
+				// console.log(placeDetail);
 				setPlace(placeDetail);
 			});
 		// .catch((err) => {
@@ -119,7 +119,7 @@ function Place({ title }) {
 							<Container key={item.locationName}>
 								<PlaceLink to={`${url}/place/${item.locationName}`}>
 									<EachPlace>
-										<PlaceImage src={idolimage} />
+										<PlaceImage src={item.main_image || idolimage} />
 										<PlaceText>
 											<PlaceTitle>{item.locationName}</PlaceTitle>
 											<PlaceDesp>{item.description}</PlaceDesp>

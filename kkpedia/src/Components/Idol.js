@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import firebase from "../utils/firebase";
 import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
 import add from "../img/plus.png";
+import board from "../img/cork-board.png";
 import NewOne from "./NewOne";
 
 const MainContainer = styled.div`
@@ -33,12 +35,41 @@ const Cover = styled.div`
 	z-index: 2;
 `;
 
+const EachContainer = styled.div`
+	width: 70%;
+	height: 100%;
+	margin: 20vmin auto;
+	padding: 5vmin 0px;
+	background-image: url(${board});
+	display: flex;
+	/* justify-content: center; */
+	flex-wrap: wrap;
+	@media screen and (max-width: 992px) {
+		margin: 90px auto;
+	}
+`;
+
 function Idol() {
 	const [popAddOne, setPopAddOne] = useState(false);
+	const [titleName, setTitileName] = useState([]);
+	const db = firebase.firestore();
+	const docRef = db.collection("categories");
 
 	const AddSomeOne = () => {
 		setPopAddOne(!popAddOne);
 	};
+
+	useEffect(() => {
+		docRef.where("topic", "==", "idol").onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				// doc.data() is never undefined for query doc snapshots
+				item.push({ star: doc.data() });
+			});
+			setTitileName(item);
+		});
+	}, []);
+
 	return (
 		<MainContainer>
 			<Add onClick={AddSomeOne} topic="Idol" />
@@ -48,7 +79,13 @@ function Idol() {
 					<NewOne topic="idol" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
-				<TopicContainer topic="idol" />
+				<EachContainer>
+					{titleName.map((item) => {
+						return (
+							<TopicContainer topic="idol" item={item} key={item.star.title} />
+						);
+					})}
+				</EachContainer>
 			)}
 		</MainContainer>
 	);

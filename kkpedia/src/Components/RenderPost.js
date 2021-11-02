@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
 import send from "../img/submit.png";
-import good from "../img/thumbs-up.png";
+import ungood from "../img/unthumbs-up.png";
+import dogood from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
 import userIcon from "../img/user.png";
 
@@ -50,6 +51,7 @@ const EachIcon = styled.img`
 	height: 3vmin;
 	cursor: pointer;
 	margin-right: 0.5vmin;
+	cursor: pointer;
 `;
 
 const GoodTotal = styled.p`
@@ -117,11 +119,38 @@ function RenderPost({ item }) {
 	const [renderReply, setRenderReply] = useState([]);
 	const [userImg, setUserImg] = useState("");
 	const [userName, setUserName] = useState("");
+	const [good, setGood] = useState(false);
+	const [showComment, setShowComment] = useState(false);
+	const [goodNum, setGoodNum] = useState("");
+	const [commentNum, setCommentNum] = useState("");
 	const db = firebase.firestore();
 	const userId = firebase.auth().currentUser.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
 
 	// console.log(item);
+
+	const AddGood = () => {
+		const liked = db.collection("posts").doc(`${item.id}`);
+		if (good === true) {
+			setGood(false);
+			liked
+				.update({
+					likedBy: firebase.firestore.FieldValue.arrayRemove(`${userId}`),
+				})
+				.then(() => {});
+		} else {
+			setGood(true);
+			liked
+				.update({
+					likedBy: firebase.firestore.FieldValue.arrayUnion(`${userId}`),
+				})
+				.then(() => {});
+		}
+	};
+
+	const RenderComment = () => {
+		setShowComment(!showComment);
+	};
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
@@ -144,13 +173,25 @@ function RenderPost({ item }) {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					item.push(doc.data());
+					// console.log(item);
 				});
 				setRenderReply(item);
+				setCommentNum(item.length);
+			});
+
+		db.collection("posts")
+			.doc(`${item.id}`)
+			.onSnapshot((doc) => {
+				if (doc.data().likedBy.includes(`${userId}`)) {
+					setGood(true);
+				} else {
+					setGood(false);
+				}
+				setGoodNum(doc.data().likedBy.length);
 			});
 	}, []);
 
 	const SendReply = async () => {
-		// console.log(item.id);
 		setReplyComment("");
 		const data = {
 			content: replyComment,
@@ -189,38 +230,34 @@ function RenderPost({ item }) {
 			</Comment>
 			<hr />
 			<Icon>
-				<EachIcon src={good} />
-				<GoodTotal>10</GoodTotal>
-				<EachIcon src={comment} />
+				<EachIcon src={good ? dogood : ungood} onClick={AddGood} />
+				<GoodTotal>{goodNum || 0}</GoodTotal>
+				<EachIcon src={comment} onClick={RenderComment} />
+				<GoodTotal>{commentNum || 0}</GoodTotal>
 			</Icon>
-			{renderReply.map((item) => {
-				return (
-					<Recomment>
-						<ReplyImg src={item.userImg || userIcon} />
-						<ReplyComment>
-							<ReplyText>
-								<SmallTxt>{item.replyUser}</SmallTxt>
-								<SmallTxt>{new Date(item.postTime).toLocaleString()}</SmallTxt>
-							</ReplyText>
-							<Comment>{item.content}</Comment>
-						</ReplyComment>
-					</Recomment>
-				);
-			})}
-			{/* <Recomment>
-				<ReplyImg src={idolimage} />
-				<ReplyComment>
-					<ReplyText>
-						<SmallTxt>333</SmallTxt>
-						<SmallTxt>2021/12/5</SmallTxt>
-					</ReplyText>
-					<p>
-						Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu
-						placerat urna, quis tincidunt lectus. Cras id ligula id mauris
-						luctus fermentum. Lorem ipsum dolor sit amet.
-					</p>
-				</ReplyComment>
-			</Recomment> */}
+			{showComment ? (
+				<>
+					{renderReply.map((item) => {
+						return (
+							<Recomment key={uuidv4()}>
+								<ReplyImg src={item.userImg || userIcon} />
+								<ReplyComment>
+									<ReplyText>
+										<SmallTxt>{item.replyUser}</SmallTxt>
+										<SmallTxt>
+											{new Date(item.postTime).toLocaleString()}
+										</SmallTxt>
+									</ReplyText>
+									<Comment>{item.content}</Comment>
+								</ReplyComment>
+							</Recomment>
+						);
+					})}
+				</>
+			) : (
+				<></>
+			)}
+
 			<TextArea
 				value={replyComment}
 				onChange={(e) => {

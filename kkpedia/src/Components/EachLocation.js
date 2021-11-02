@@ -273,15 +273,11 @@ function EachLocation({ title }) {
 			.doc(`${title}`)
 			.collection("places")
 			.where("locationName", "==", `${location}`)
-			.get()
-			.then((querySnapshot) => {
+			.onSnapshot((querySnapshot) => {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					setPlaceData([doc.data()]);
 				});
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
 			});
 
 		docRef

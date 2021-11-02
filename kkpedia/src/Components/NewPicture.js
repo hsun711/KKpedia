@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import { v4 as uuidv4, v4 } from "uuid";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
+import cover from "../img/wanted.png";
 
 const Container = styled.div`
 	width: 70vmin;
@@ -53,6 +55,12 @@ const Add = styled.div`
 	background-repeat: no-repeat;
 	width: 5vmin;
 	height: 5vmin;
+	cursor: pointer;
+`;
+
+const CoverImage = styled.img`
+	width: 10vmin;
+	margin-left: 3vmin;
 `;
 
 const SendBtn = styled.div`
@@ -70,21 +78,133 @@ const SendBtn = styled.div`
 	}
 `;
 
-function NewPicture({ title, setPopAddOne }) {
+function NewPicture({ title, setPopAddOne, AddPicture }) {
 	const db = firebase.firestore();
+	const [userName, setUserName] = useState("");
+	const [files, setFiles] = useState([]);
+	const [imgurl, setImgurl] = useState([]);
+	const user = firebase.auth().currentUser;
+	const docRef = db.collection("users").doc(`${user.uid}`);
+	const [imgDescription, setImgDescription] = useState("");
+
+	docRef.get().then((doc) => {
+		if (doc.exists) {
+			setUserName(doc.data().userName);
+		} else {
+			// doc.data() will be undefined in this case
+			console.log("No such document!");
+		}
+	});
+
+	const OnFileChange = (e) => {
+		// Get Files
+		for (let i = 0; i < e.target.files.length; i++) {
+			const newFile = e.target.files[i];
+			newFile["id"] = Math.random();
+			setFiles((prevState) => [...prevState, newFile]);
+		}
+	};
+	// console.log(files);
+
+	const handleUpload = () => {
+		const documentRef = db.collection("categories").doc(`${title}`);
+		const promises = [];
+		const docid = documentRef.collection("photos").doc().id;
+		const data = {
+			postUser: userName,
+			uid: user.uid,
+			description: imgDescription,
+			postTime: new Date().getTime(),
+			images: [],
+		};
+		documentRef
+			.collection("photos")
+			.doc(`${docid}`)
+			.set(data, { merge: true })
+			.then((docRef) => {
+				alert("新增成功😁😁😁😁");
+			});
+
+		files.map((file) => {
+			// console.log(file);
+			const uploadTask = firebase
+				.storage()
+				.ref(`idol_images/${documentRef.id}/${file.id}`)
+				.put(file);
+			promises.push(uploadTask);
+			uploadTask.on(
+				"state_changed",
+				function progress(snapshot) {
+					const progress =
+						(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+						console.log(`Progress: ${progress}%`);
+					}
+				},
+				function error(error) {
+					console.log(error);
+				},
+				function complete() {
+					firebase
+						.storage()
+						.ref(`idol_images/${documentRef.id}/`)
+						.child(`${file.id}`)
+						.getDownloadURL()
+						.then((imgUrls) => {
+							// console.log(imgUrls);
+							// console.log(docid);
+							documentRef
+								.collection("photos")
+								.doc(`${docid}`)
+								.update({
+									images: firebase.firestore.FieldValue.arrayUnion(
+										`${imgUrls}`
+									),
+								})
+								.then(() => {
+									// console.log(user.uid);
+								});
+						});
+				}
+			);
+			// console.log(imgurl);
+		});
+		Promise.all(promises)
+			.then(() => {
+				alert("All images uploaded");
+				AddPicture(false);
+			})
+			.catch((err) => console.log(err));
+	};
 
 	return (
 		<Container>
 			<InputTitle>藝人 / 戲劇 / 綜藝名稱：{title}</InputTitle>
 			<ArtistName>
 				<ShortTitle>照片簡述：</ShortTitle>
-				<InputArea />
+				<InputArea
+					value={imgDescription}
+					onChange={(e) => {
+						setImgDescription(e.target.value);
+					}}
+				/>
 			</ArtistName>
 			<ArtistName>
 				<ShortTitle>上傳照片：</ShortTitle>
-				<Add />
+				<Add as="label" htmlFor="uploadImage" />
+				<input
+					type="file"
+					id="uploadImage"
+					multiple
+					style={{ display: "none" }}
+					onChange={OnFileChange}
+				/>
+				{files.map((file) => {
+					return <CoverImage src={URL.createObjectURL(file)} key={file.id} />;
+				})}
 			</ArtistName>
-			<SendBtn />
+			<SendBtn onClick={handleUpload} />
+			{/* <SendBtn onClick={UploadMultiImage} /> */}
 		</Container>
 	);
 }
