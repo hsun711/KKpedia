@@ -114,6 +114,7 @@ const SmallTxt = styled.p`
 `;
 
 function RenderPost({ item }) {
+	// console.log(item);
 	const time = item.data.postTime;
 	const [replyComment, setReplyComment] = useState("");
 	const [renderReply, setRenderReply] = useState([]);

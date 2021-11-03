@@ -69,7 +69,7 @@ const Cover = styled.div`
 	z-index: 2;
 `;
 
-function Place({ title }) {
+function Place({ title, topic }) {
 	let { path, url } = useRouteMatch();
 	const [popAddPlace, setPopAddPlace] = useState(false);
 	const [place, setPlace] = useState([]);
@@ -95,11 +95,7 @@ function Place({ title }) {
 				// console.log(placeDetail);
 				setPlace(placeDetail);
 			});
-		// .catch((err) => {
-		// 	console.log("Error getting sub-collection documents", err);
-		// });
 	}, []);
-
 	return (
 		<>
 			<Add onClick={AddSomePlace} topic="Idol" />
@@ -107,6 +103,7 @@ function Place({ title }) {
 				<div>
 					<Cover onClick={AddSomePlace} />
 					<NewPlace
+						topic={topic}
 						title={title}
 						setPopAddPlace={setPopAddPlace}
 						setPlaceName={setPlaceName}
@@ -119,7 +116,7 @@ function Place({ title }) {
 							<Container key={item.locationName}>
 								<PlaceLink to={`${url}/place/${item.locationName}`}>
 									<EachPlace>
-										<PlaceImage src={item.main_image || idolimage} />
+										<PlaceImage src={item.images[0] || idolimage} />
 										<PlaceText>
 											<PlaceTitle>{item.locationName}</PlaceTitle>
 											<PlaceDesp>{item.description}</PlaceDesp>

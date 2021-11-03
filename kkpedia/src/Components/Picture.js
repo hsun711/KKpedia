@@ -97,9 +97,6 @@ function Picture({ title }) {
 			) : (
 				<Container>
 					{photos.map((item) => {
-						{
-							/* console.log(item); */
-						}
 						return (
 							<EachPhoto>
 								<ImageHolder>{item.postUser}</ImageHolder>

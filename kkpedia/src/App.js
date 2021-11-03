@@ -7,7 +7,7 @@ import TvShow from "./Components/TvShow";
 import LandingPage from "./Components/LandingPage";
 import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
-import { BrowserRouter, Route, Switch, useHistory } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 function App() {
 	const [user, setUser] = useState(null);
@@ -40,9 +40,15 @@ function App() {
 							<Route exact path="/drama" component={Drama}></Route>
 							<Route exact path="/tvshow" component={TvShow}></Route>
 							<Route path="/profile" component={Profile}></Route>
-							<Route path="/idol/:title" component={IdolPage}></Route>
-							<Route path="/tvshow/:title" component={IdolPage}></Route>
-							<Route path="/drama/:title" component={IdolPage}></Route>
+							<Route path="/idol/:title">
+								<IdolPage topic="idol" />
+							</Route>
+							<Route path="/tvshow/:title">
+								<IdolPage topic="tvshow" />
+							</Route>
+							<Route path="/drama/:title">
+								<IdolPage topic="drama" />
+							</Route>
 						</Switch>
 					</>
 				) : (

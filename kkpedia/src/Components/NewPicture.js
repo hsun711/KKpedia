@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
-import { v4 as uuidv4, v4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 import cover from "../img/wanted.png";
@@ -100,7 +100,8 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 		// Get Files
 		for (let i = 0; i < e.target.files.length; i++) {
 			const newFile = e.target.files[i];
-			newFile["id"] = Math.random();
+			const id = uuidv4();
+			newFile["id"] = id;
 			setFiles((prevState) => [...prevState, newFile]);
 		}
 	};
@@ -151,8 +152,6 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 						.child(`${file.id}`)
 						.getDownloadURL()
 						.then((imgUrls) => {
-							// console.log(imgUrls);
-							// console.log(docid);
 							documentRef
 								.collection("photos")
 								.doc(`${docid}`)
@@ -167,7 +166,6 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 						});
 				}
 			);
-			// console.log(imgurl);
 		});
 		Promise.all(promises)
 			.then(() => {
@@ -204,7 +202,6 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 				})}
 			</ArtistName>
 			<SendBtn onClick={handleUpload} />
-			{/* <SendBtn onClick={UploadMultiImage} /> */}
 		</Container>
 	);
 }

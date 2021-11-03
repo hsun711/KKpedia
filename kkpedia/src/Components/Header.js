@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import algolia from "../utils/algolia";
 import menu from "../img/burgerMenu.png";
 import userImg from "../img/user.png";
 import logo from "../img/logo1.png";
@@ -104,9 +105,15 @@ const Logout = styled.div`
 
 function Header() {
 	const [sideBar, setSideBar] = useState(true);
+	const [inputSearch, setInputSearch] = useState("");
+	const [results, setResults] = useState([]);
 	const user = firebase.auth().currentUser;
 	const showSidebar = () => {
 		setSideBar(!sideBar);
+	};
+
+	const SearchChange = (e) => {
+		setInputSearch(e.target.value);
 	};
 
 	return (
@@ -119,7 +126,7 @@ function Header() {
 					</LinkNav>
 				</HeaderNav>
 				<HeaderNav>
-					<SearchInput />
+					<SearchInput value={inputSearch} onChange={SearchChange} />
 					<LinkNav to="/profile">
 						{user != null ? <Member src={user.photoURL || userImg} /> : ""}
 					</LinkNav>

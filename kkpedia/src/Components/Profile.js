@@ -16,6 +16,9 @@ import levelImg from "../img/level-up.png";
 import profile from "../img/resume.png";
 import like from "../img/place.png";
 import post from "../img/comment.png";
+import check from "../img/checked.png";
+import changeimg from "../img/camera.png";
+import edit from "../img/pencil.png";
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -41,19 +44,55 @@ const Person = styled.div`
 	margin-left: 30px;
 	display: flex;
 `;
+const EditArea = styled.div`
+	display: flex;
+	align-items: center;
+`;
 
-const PersonName = styled.p`
+const PersonName = styled.input`
+	border: none;
+	background-color: beige;
+	width: 20vmin;
+	padding-right: 1vmin;
 	font-size: 4vmin;
-	text-align: center;
+	text-align: end;
 	align-self: center;
+`;
+
+const EditIcon = styled.img`
+	width: 2vmin;
+	height: 2vmin;
+	cursor: pointer;
+	margin-right: 1vmin;
+`;
+
+const Photo = styled.div`
+	display: flex;
+	position: relative;
 `;
 
 const PersonImage = styled.img`
 	margin-left: 2vmin;
-	width: 5vmin;
-	height: 5vmin;
+	width: 10vmin;
+	height: 10vmin;
 	border-radius: 50%;
 	cursor: pointer;
+`;
+const PhotoChange = styled.div`
+	background-image: url(${changeimg});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 3vmin;
+	height: 3vmin;
+	cursor: pointer;
+	margin-right: 1vmin;
+	position: absolute;
+	bottom: -10px;
+	right: -20px;
+`;
+
+const PhotoCheck = styled(PhotoChange)`
+	background-image: url(${check});
 `;
 
 const LevelTag = styled.p`
@@ -92,8 +131,12 @@ function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
+	const [readOnly, setReadOnly] = useState(true);
 	const [userName, setUserName] = useState("");
 	const [level, setLevel] = useState(0);
+	const [photoChange, setPhotoChange] = useState(false);
+	const [file, setFile] = useState(null);
+	const previewURL = file ? URL.createObjectURL(file) : userImg;
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
@@ -104,12 +147,70 @@ function Profile() {
 		}
 	});
 
+	const ChangeOk = () => {
+		setPhotoChange(false);
+		const fileRef = firebase.storage().ref(`users_images/${user.uid}`);
+		const metadata = {
+			contentType: file.type,
+		};
+		fileRef.put(file, metadata).then(() => {
+			fileRef.getDownloadURL().then((imageUrl) => {
+				docRef.update({
+					userImage: `${imageUrl}`,
+				});
+			});
+		});
+		alert("更新成功🎊🎊");
+	};
+
+	const ChangePhoto = () => {
+		setPhotoChange(true);
+	};
+
+	const Editable = () => {
+		if (readOnly === false) {
+			setReadOnly(true);
+			// console.log(editText);
+			docRef.update({
+				userName: `${userName}`,
+			});
+		} else {
+			setReadOnly(false);
+		}
+	};
+
 	return (
 		<MainContainer>
 			<Container>
 				<Person>
-					<PersonName>{user.displayName || userName}</PersonName>
-					<PersonImage src={user.photoURL || userImg} />
+					<EditArea>
+						<PersonName
+							readOnly={readOnly}
+							value={userName}
+							onChange={(e) => {
+								setUserName(e.target.value);
+							}}
+						/>
+						<EditIcon src={readOnly ? edit : check} onClick={Editable} />
+					</EditArea>
+					<Photo>
+						<PersonImage src={previewURL} />
+						{photoChange ? (
+							<PhotoCheck as="label" htmlFor="uploadImage" onClick={ChangeOk} />
+						) : (
+							<PhotoChange as="label" htmlFor="uploadImage" />
+						)}
+						<input
+							type="file"
+							id="uploadImage"
+							style={{ display: "none" }}
+							onChange={(e) => {
+								setFile(e.target.files[0]);
+								ChangePhoto();
+							}}
+						/>
+					</Photo>
+
 					<LevelTag>
 						<LevelImg src={levelImg} />
 						{level}

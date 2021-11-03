@@ -24,7 +24,8 @@ import pin from "../img/pin-map.png";
 import pictures from "../img/pictures.png";
 import schedule from "../img/schedule.png";
 import comment from "../img/comment.png";
-import add from "../img/plus.png";
+import check from "../img/checked.png";
+import changeimg from "../img/camera.png";
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -55,12 +56,33 @@ const PersonName = styled.p`
 	text-align: center;
 	align-self: center;
 `;
+const Photo = styled.div`
+	display: flex;
+	position: relative;
+`;
 
 const PersonImage = styled.img`
 	margin-left: 2vmin;
 	width: 7vmin;
 	height: 7vmin;
 	border-radius: 50%;
+`;
+
+const PhotoChange = styled.div`
+	background-image: url(${changeimg});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 3vmin;
+	height: 3vmin;
+	cursor: pointer;
+	margin-right: 1vmin;
+	position: absolute;
+	bottom: -10px;
+	right: -20px;
+`;
+
+const PhotoCheck = styled(PhotoChange)`
+	background-image: url(${check});
 `;
 
 const SnsIconUl = styled.ul`
@@ -103,15 +125,16 @@ const PlaceContainer = styled.div`
 	padding: 4vmin;
 `;
 
-function IdolPage() {
+function IdolPage({ topic }) {
 	let { path, url } = useRouteMatch();
 	let { title } = useParams();
 	const [sns, setSns] = useState([]);
 	const [mainImage, setMainImage] = useState("");
-
+	const [photoChange, setPhotoChange] = useState(false);
+	const [file, setFile] = useState(null);
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
-	const previewURL = mainImage ? `${mainImage}` : idolimage;
+	const previewURL = file ? URL.createObjectURL(file) : mainImage;
 
 	useEffect(() => {
 		docRef
@@ -123,7 +146,7 @@ function IdolPage() {
 					// doc.data() is never undefined for query doc snapshots
 					item.push({ star: doc.data() });
 				});
-				console.log(item[0].star.main_image);
+				// console.log(item[0].star.main_image);
 				setSns(item);
 				setMainImage(item[0].star.main_image);
 			})
@@ -132,13 +155,54 @@ function IdolPage() {
 			});
 	}, []);
 	// console.log(title);
+
+	const ChangeOk = () => {
+		setPhotoChange(false);
+		const fileRef = firebase.storage().ref(`cover_images/${title}`);
+		const metadata = {
+			contentType: file.type,
+		};
+		fileRef.put(file, metadata).then(() => {
+			fileRef.getDownloadURL().then((imageUrl) => {
+				docRef.doc(`${title}`).update({
+					main_image: `${imageUrl}`,
+				});
+			});
+		});
+		alert("更新成功🎊🎊");
+	};
+
+	const ChangePhoto = () => {
+		setPhotoChange(true);
+	};
+
 	return (
 		<MainContainer>
 			<Container>
 				<BrowserRouter>
 					<Person>
 						<PersonName>{title}</PersonName>
-						<PersonImage src={previewURL} />
+						<Photo>
+							<PersonImage src={previewURL} />
+							{photoChange ? (
+								<PhotoCheck
+									as="label"
+									htmlFor="uploadImage"
+									onClick={ChangeOk}
+								/>
+							) : (
+								<PhotoChange as="label" htmlFor="uploadImage" />
+							)}
+							<input
+								type="file"
+								id="uploadImage"
+								style={{ display: "none" }}
+								onChange={(e) => {
+									setFile(e.target.files[0]);
+									ChangePhoto();
+								}}
+							/>
+						</Photo>
 					</Person>
 
 					{sns.map((item) => {
@@ -181,7 +245,7 @@ function IdolPage() {
 					<PlaceContainer>
 						<Switch>
 							<Route exact path={`${path}`}>
-								<Place title={title} />
+								<Place title={title} topic={topic} />
 							</Route>
 							<Route exact path={`${path}/picture`}>
 								<Picture title={title} />
