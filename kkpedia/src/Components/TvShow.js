@@ -47,6 +47,10 @@ const EachContainer = styled.div`
 		margin: 90px auto;
 	}
 `;
+const TopicTitle = styled.p`
+	font-size: 3vmin;
+	font-weight: 600;
+`;
 
 function TvShow() {
 	const [popAddOne, setPopAddOne] = useState(false);
@@ -78,6 +82,7 @@ function TvShow() {
 				</div>
 			) : (
 				<EachContainer>
+					<TopicTitle>TV Show</TopicTitle>
 					{titleName.map((item) => {
 						return (
 							<TopicContainer

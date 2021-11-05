@@ -49,6 +49,11 @@ const EachContainer = styled.div`
 	}
 `;
 
+const TopicTitle = styled.p`
+	font-size: 3vmin;
+	font-weight: 600;
+`;
+
 function Idol() {
 	const [popAddOne, setPopAddOne] = useState(false);
 	const [titleName, setTitileName] = useState([]);
@@ -80,6 +85,7 @@ function Idol() {
 				</div>
 			) : (
 				<EachContainer>
+					<TopicTitle>Idol</TopicTitle>
 					{titleName.map((item) => {
 						return (
 							<TopicContainer topic="idol" item={item} key={item.star.title} />

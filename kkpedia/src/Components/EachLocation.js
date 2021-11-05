@@ -13,6 +13,8 @@ import leftarrow from "../img/left-arrow.png";
 import rightarrow from "../img/right-arrow.png";
 import board from "../img/cork-board.png";
 import star from "../img/star.png";
+import edit from "../img/pencil.png";
+import check from "../img/checked.png";
 import { useParams } from "react-router-dom";
 
 const MainContainer = styled.div`
@@ -42,6 +44,11 @@ const TopDetail = styled.div`
 	display: flex;
 `;
 
+const Photo = styled.div`
+	display: flex;
+	position: relative;
+`;
+
 const MainImage = styled.img`
 	width: 20vmin;
 	/* height: 20vmin; */
@@ -52,15 +59,39 @@ const LocationDetail = styled.div`
 	flex-direction: column;
 	padding-left: 3vmin;
 `;
-const TitleName = styled.p`
+
+const TitleName = styled.path`
 	font-size: 4vmin;
 	font-weight: 600;
-	margin-top: 2vmin;
-	margin-bottom: 1vmin;
+	margin-top: 1vmin;
+	margin-bottom: 2vmin;
+`;
+
+const EditIcon = styled.img`
+	width: 2vmin;
+	height: 2vmin;
+	cursor: pointer;
+	margin-right: 1vmin;
+`;
+
+const EditArea = styled.div`
+	display: flex;
+`;
+
+const Description = styled.textarea`
+	border: ${(props) => (props.edit ? "none" : "1px solid black")};
+	font-size: 2vmin;
+	width: 100%;
+	height: 10vmin;
+	border-radius: 10px;
+	background-color: beige;
+	color: grey;
+	resize: none;
 `;
 
 const NormalTxt = styled.p`
 	font-size: 2vmin;
+	margin-top: 2vmin;
 `;
 
 const LikeIcon = styled.img`
@@ -190,6 +221,9 @@ function EachLocation({ title }) {
 	const [placeData, setPlaceData] = useState([]);
 	const [popUpWriteComment, setPopUpWriteComment] = useState(false);
 	const [comment, setComment] = useState([]);
+	const [readOnly, setReadOnly] = useState(true);
+	const [editText, setEditText] = useState("");
+	const [file, setFile] = useState(null);
 	let { location } = useParams();
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
@@ -277,6 +311,7 @@ function EachLocation({ title }) {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					setPlaceData([doc.data()]);
+					setEditText(doc.data().description);
 				});
 			});
 
@@ -327,6 +362,22 @@ function EachLocation({ title }) {
 	// console.log(title);
 	// console.log(placeData);
 
+	const Editable = () => {
+		if (readOnly === false) {
+			setReadOnly(true);
+			// console.log(editText);
+			docRef
+				.doc(`${title}`)
+				.collection("places")
+				.doc(`${location}`)
+				.update({
+					description: `${editText}`,
+				});
+		} else {
+			setReadOnly(false);
+		}
+	};
+
 	return (
 		<MainContainer>
 			<Container>
@@ -346,12 +397,28 @@ function EachLocation({ title }) {
 					return (
 						<div key={data.locationName}>
 							<TopDetail>
-								<MainImage src={data.main_image || coverImage} />
-								<LocationDetail>
-									<NormalTxt>{data.postUser}</NormalTxt>
-									<TitleName>{data.locationName}</TitleName>
-									<NormalTxt>{data.description}</NormalTxt>
+								<Photo>
+									<MainImage src={data.images[0] || coverImage} />
+								</Photo>
 
+								<LocationDetail>
+									<NormalTxt>貢獻者：{data.postUser}</NormalTxt>
+									<NormalTxt>{data.title}</NormalTxt>
+									<TitleName>{data.locationName}</TitleName>
+									<EditArea>
+										<EditIcon
+											src={readOnly ? edit : check}
+											onClick={Editable}
+										/>
+										<Description
+											edit={readOnly}
+											readOnly={readOnly}
+											value={editText}
+											onChange={(e) => {
+												setEditText(e.target.value);
+											}}
+										/>
+									</EditArea>
 									<LikeIcon
 										src={favorite ? like : unlike}
 										onClick={AddtoFavorite}
@@ -365,9 +432,9 @@ function EachLocation({ title }) {
 							</PlaceMap>
 							<MoreImage>
 								<Arrow src={leftarrow} />
-								<Images src={coverImage} />
-								<Images src={coverImage} />
-								<Images src={coverImage} />
+								{data.images.map((image) => {
+									return <Images src={image || coverImage} key={uuidv4()} />;
+								})}
 								<Arrow src={rightarrow} />
 							</MoreImage>
 						</div>

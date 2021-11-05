@@ -79,8 +79,21 @@ const SendBtn = styled.div`
 function WriteComment({ title, location, setPopUpWriteComment }) {
 	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
+	const [userImg, setUserImg] = useState("");
 	const [score, setScore] = useState("0");
 	const [comment, setComment] = useState("");
+
+	db.collection("users")
+		.doc(`${user.uid}`)
+		.get()
+		.then((doc) => {
+			if (doc.exists) {
+				setUserImg(doc.data().userImage);
+			} else {
+				// doc.data() will be undefined in this case
+				console.log("No such document!");
+			}
+		});
 
 	const GiveScore = (e) => {
 		setScore(e.target.value);
@@ -92,7 +105,7 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 		// console.log(location);
 		const data = {
 			uid: user.uid,
-			postUserImg: user.photoURL,
+			postUserImg: userImg,
 			comment: comment,
 			locationName: location,
 			score: score,

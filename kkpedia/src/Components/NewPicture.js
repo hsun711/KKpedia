@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
-import { v4 as uuidv4, v4 } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 import cover from "../img/wanted.png";
@@ -78,9 +78,10 @@ const SendBtn = styled.div`
 	}
 `;
 
-function NewPicture({ title, setPopAddOne, AddPicture }) {
+function NewPicture({ title, AddPicture }) {
 	const db = firebase.firestore();
 	const [userName, setUserName] = useState("");
+	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
 	const [imgurl, setImgurl] = useState([]);
 	const user = firebase.auth().currentUser;
@@ -90,6 +91,12 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 	docRef.get().then((doc) => {
 		if (doc.exists) {
 			setUserName(doc.data().userName);
+			// setUserLevel(doc.data().userLevel);
+			if (doc.data().userLevel === undefined) {
+				setUserLevel(0);
+			} else {
+				setUserLevel(doc.data().userLevel);
+			}
 		} else {
 			// doc.data() will be undefined in this case
 			console.log("No such document!");
@@ -100,9 +107,15 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 		// Get Files
 		for (let i = 0; i < e.target.files.length; i++) {
 			const newFile = e.target.files[i];
-			newFile["id"] = Math.random();
+			const id = uuidv4();
+			newFile["id"] = id;
 			setFiles((prevState) => [...prevState, newFile]);
 		}
+	};
+	const UpdateLevel = () => {
+		docRef.update({
+			userLevel: userLevel + 7,
+		});
 	};
 	// console.log(files);
 
@@ -122,7 +135,7 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 			.doc(`${docid}`)
 			.set(data, { merge: true })
 			.then((docRef) => {
-				alert("新增成功😁😁😁😁");
+				UpdateLevel();
 			});
 
 		files.map((file) => {
@@ -151,8 +164,6 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 						.child(`${file.id}`)
 						.getDownloadURL()
 						.then((imgUrls) => {
-							// console.log(imgUrls);
-							// console.log(docid);
 							documentRef
 								.collection("photos")
 								.doc(`${docid}`)
@@ -167,11 +178,10 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 						});
 				}
 			);
-			// console.log(imgurl);
 		});
 		Promise.all(promises)
 			.then(() => {
-				alert("All images uploaded");
+				alert("新增成功😁😁😁😁");
 				AddPicture(false);
 			})
 			.catch((err) => console.log(err));
@@ -204,7 +214,6 @@ function NewPicture({ title, setPopAddOne, AddPicture }) {
 				})}
 			</ArtistName>
 			<SendBtn onClick={handleUpload} />
-			{/* <SendBtn onClick={UploadMultiImage} /> */}
 		</Container>
 	);
 }

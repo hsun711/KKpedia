@@ -47,6 +47,9 @@ function PersonalCollection() {
 			<CollectionArea>
 				{collectPlace.map((item) => {
 					const data = item.placeData[0];
+					{
+						/* console.log(data); */
+					}
 					return <CollectPlace data={data} key={data.locationName} />;
 				})}
 			</CollectionArea>

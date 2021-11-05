@@ -90,12 +90,13 @@ function NewOne({ topic, setPopAddOne }) {
 	const SendNewOn = () => {
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
-		const metadata = {
-			contentType: file.type,
-		};
+		// const metadata = {
+		// 	contentType: file.type,
+		// };
 
-		fileRef.put(file, metadata).then(() => {
+		fileRef.put(file).then(() => {
 			fileRef.getDownloadURL().then((imageUrl) => {
+				const mainimage = file ? imageUrl : "";
 				documentRef
 					.set(
 						{
@@ -105,20 +106,17 @@ function NewOne({ topic, setPopAddOne }) {
 							instagram: ig,
 							twitter: twitter,
 							youtube: youtube,
-							main_image: imageUrl,
+							main_image: mainimage,
 						},
 						{ merge: true }
 					)
 					.then((docRef) => {
-						// console.log("😁😁😁😁");
 						alert("新增成功😁😁😁😁");
 						setPopAddOne(false);
 					});
 			});
 		});
 	};
-
-	console.log(file);
 
 	return (
 		<Container>

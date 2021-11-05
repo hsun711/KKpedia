@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import { v4 as uuidv4 } from "uuid";
 import FollowIdol from "./FollowIdol";
 import image from "../img/wanted.png";
+import { Link, Switch, Route, Redirect, useHistory } from "react-router-dom";
+import EachLocation from "./EachLocation";
 
 const ProfileContainer = styled.div`
 	background-color: #ffeaa7;
@@ -23,13 +26,16 @@ const FollowStar = styled.div`
 	margin-left: 1.5vmin;
 `;
 
-const EachFellow = styled.div`
+const EachFeolowLink = styled.a`
+	width: 20vmin;
+	text-decoration: none;
 	margin-right: 1vmin;
 	padding: 1vmin;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	/* outline: 1px solid black; */
+	color: black;
+	cursor: pointer;
 `;
 
 const PerStar = styled.img`
@@ -37,19 +43,13 @@ const PerStar = styled.img`
 	height: 7vmin;
 `;
 
-const EachContribution = styled(EachFellow)`
-	display: flex;
-	width: 20vmin;
-	flex-direction: column;
-	align-items: center;
-`;
-
 const NormalTxt = styled.p`
 	font-size: 2vmin;
 	text-align: center;
 `;
 
-function PersonalData({ setLevel }) {
+function PersonalData() {
+	const history = useHistory();
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;
@@ -67,7 +67,6 @@ function PersonalData({ setLevel }) {
 					item.push(doc.data());
 				});
 				setContribution(item);
-				setLevel(item.length);
 			});
 
 		db.collection("users")
@@ -87,17 +86,28 @@ function PersonalData({ setLevel }) {
 			<TitleText>Follow</TitleText>
 			<FollowStar>
 				{follow.map((data) => {
-					return <FollowIdol title={data.title} image={data.main_image} />;
+					return (
+						<FollowIdol
+							title={data.title}
+							topic={data.topic}
+							image={data.main_image}
+							key={uuidv4()}
+						/>
+					);
 				})}
 			</FollowStar>
 			<TitleText>貢獻過 {contribution.length} 個景點</TitleText>
 			<FollowStar>
 				{contribution.map((item) => {
 					return (
-						<EachContribution key={item.locationName}>
-							<PerStar src={item.main_image || image} />
+						<EachFeolowLink
+							href={`/${item.topic}/${item.title}/${item.locationName}`}
+							key={uuidv4()}
+						>
+							<PerStar src={item.images[0] || image} />
+							<NormalTxt>{item.title}</NormalTxt>
 							<NormalTxt>{item.locationName}</NormalTxt>
-						</EachContribution>
+						</EachFeolowLink>
 					);
 				})}
 			</FollowStar>

@@ -8,6 +8,8 @@ import ungood from "../img/unthumbs-up.png";
 import dogood from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
 import userIcon from "../img/user.png";
+import edit from "../img/pencil.png";
+import check from "../img/checked.png";
 
 const CommentArea = styled.div`
 	width: 80vmin;
@@ -113,7 +115,20 @@ const SmallTxt = styled.p`
 	margin-right: 1.3vmin;
 `;
 
+const EditIcon = styled.img`
+	width: 2vmin;
+	height: 2vmin;
+	cursor: pointer;
+	margin-right: 1vmin;
+`;
+
+const EditArea = styled.div`
+	display: flex;
+	align-items: center;
+`;
+
 function RenderPost({ item }) {
+	// console.log(item);
 	const time = item.data.postTime;
 	const [replyComment, setReplyComment] = useState("");
 	const [renderReply, setRenderReply] = useState([]);
@@ -126,6 +141,7 @@ function RenderPost({ item }) {
 	const db = firebase.firestore();
 	const userId = firebase.auth().currentUser.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
+	const [readOnly, setReadOnly] = useState(true);
 
 	// console.log(item);
 
@@ -182,12 +198,12 @@ function RenderPost({ item }) {
 		db.collection("posts")
 			.doc(`${item.id}`)
 			.onSnapshot((doc) => {
-				if (doc.data().likedBy.includes(`${userId}`)) {
+				if (doc.data()?.likedBy.includes(`${userId}`)) {
 					setGood(true);
 				} else {
 					setGood(false);
 				}
-				setGoodNum(doc.data().likedBy.length);
+				setGoodNum(doc.data()?.likedBy.length);
 			});
 	}, []);
 
@@ -215,6 +231,15 @@ function RenderPost({ item }) {
 			});
 	};
 
+	const Editable = () => {
+		if (readOnly === false) {
+			setReadOnly(true);
+			// console.log(editText);
+		} else {
+			setReadOnly(false);
+		}
+	};
+
 	return (
 		<CommentArea>
 			<PosterDetail>
@@ -225,9 +250,13 @@ function RenderPost({ item }) {
 				</PosterText>
 			</PosterDetail>
 			<hr />
-			<Comment>
-				<p>{item.data.content}</p>
-			</Comment>
+			<EditArea>
+				<Comment>
+					{/* <EditIcon src={readOnly ? edit : check} onClick={Editable} /> */}
+					<p>{item.data.content}</p>
+				</Comment>
+			</EditArea>
+
 			<hr />
 			<Icon>
 				<EachIcon src={good ? dogood : ungood} onClick={AddGood} />

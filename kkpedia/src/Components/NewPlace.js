@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 import cover from "../img/wanted.png";
@@ -59,9 +60,21 @@ const Add = styled.div`
 	cursor: pointer;
 `;
 
+const AddImages = styled(Add)``;
+
 const CoverImage = styled.img`
 	width: 10vmin;
 	margin-left: 3vmin;
+`;
+
+const MultiImgs = styled.div`
+	display: flex;
+`;
+
+const Images = styled.img`
+	width: 7vmin;
+	margin-left: 3vmin;
+	margin-top: 2vmin;
 `;
 
 const SendBtn = styled.div`
@@ -79,29 +92,46 @@ const SendBtn = styled.div`
 	}
 `;
 
-function NewPlace({ title, setPopAddPlace, setPlaceName }) {
+function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
+	const [userLevel, setUserLevel] = useState(0);
+	const [followUsers, setFollowUsers] = useState([]);
 	const [userName, setUserName] = useState("");
 	const [locationName, setLocationName] = useState("");
 	const [description, setDescription] = useState("");
 	const [address, setAddress] = useState("");
 	const [placeId, setPlaceId] = useState("");
 	const [latitude, setLatitude] = useState({});
-	const [file, setFile] = useState(null);
-	// const [placeImage, setPlaceImage] = useState([]);
-	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
+	const [files, setFiles] = useState([]);
+
+	useEffect(() => {
+		db.collection("categories")
+			.doc(`${title}`)
+			.get()
+			.then((doc) => {
+				// console.log(doc.data().followedBy);
+				setFollowUsers(doc.data().followedBy);
+			});
+	}, []);
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
 			setUserName(doc.data().userName);
+			if (doc.data().userLevel === undefined) {
+				setUserLevel(0);
+			} else {
+				setUserLevel(doc.data().userLevel);
+			}
+			// console.log(doc.data());
 		} else {
 			// doc.data() will be undefined in this case
 			console.log("No such document!");
 		}
 	});
+	// console.log(userLevel);
 
 	// 把從子層 MapAutocomplete 收到的資訊存進 state 裡
 	const GetAddress = (addressdata) => {
@@ -110,40 +140,122 @@ function NewPlace({ title, setPopAddPlace, setPlaceName }) {
 		setLatitude(addressdata[2]);
 	};
 
-	const AddNewPlace = async () => {
-		const documentRef = db.collection("categories").doc(`${title}`);
-		const fileRef = firebase.storage().ref(`place_images/` + documentRef.id);
-		const metadata = {
-			contentType: file.type,
-		};
-
-		fileRef.put(file, metadata).then(() => {
-			fileRef.getDownloadURL().then((imageUrl) => {
-				const data = {
-					title: title,
-					address: address,
-					latitude: latitude,
-					placeId: placeId,
-					description: description,
-					locationName: locationName,
-					postUser: userName,
-					uid: userId,
-					main_image: imageUrl,
-				};
-				documentRef
-					.collection("places")
-					.doc(`${locationName}`)
-					.set(data, { merge: true })
-					.then((docRef) => {
-						alert("新增成功😁😁😁😁");
-						setPopAddPlace(false);
-					});
-			});
-		});
-
-		setPlaceName(locationName);
+	const OnFileChange = (e) => {
+		// Get Files
+		for (let i = 0; i < e.target.files.length; i++) {
+			const newFile = e.target.files[i];
+			const id = uuidv4();
+			newFile["id"] = id;
+			setFiles((prevState) => [...prevState, newFile]);
+		}
 	};
 
+	const UpdateLevel = () => {
+		docRef.update({
+			userLevel: userLevel + 5,
+		});
+	};
+
+	const SendAlert = () => {
+		const docid = db
+			.collection("users")
+			.doc(`${user}`)
+			.collection("news")
+			.doc().id;
+
+		const otherFollower = followUsers.filter((follower) => {
+			return follower !== user.uid;
+		});
+
+		otherFollower.forEach((user) => {
+			db.collection("users")
+				.doc(`${user}`)
+				.collection("news")
+				.doc(docid)
+				.set(
+					{
+						title: title,
+						topic: topic,
+						docid: docid,
+					},
+					{ merge: true }
+				)
+				.then(() => {});
+		});
+	};
+
+	const AddNewPlace = () => {
+		const documentRef = db.collection("categories").doc(`${title}`);
+		const promises = [];
+		const data = {
+			topic: topic,
+			title: title,
+			address: address,
+			latitude: latitude,
+			placeId: placeId,
+			description: description,
+			locationName: locationName,
+			postUser: userName,
+			uid: userId,
+			images: [],
+		};
+		documentRef
+			.collection("places")
+			.doc(`${locationName}`)
+			.set(data, { merge: true })
+			.then((docRef) => {
+				UpdateLevel();
+				SendAlert();
+				// alert("新增成功😁😁😁😁");
+			});
+		files.map((file) => {
+			// console.log(file);
+			const uploadTask = firebase
+				.storage()
+				.ref(`place_images/${documentRef.id}/${file.id}`)
+				.put(file);
+			promises.push(uploadTask);
+			uploadTask.on(
+				"state_changed",
+				function progress(snapshot) {
+					const progress =
+						(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+					if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+						console.log(`Progress: ${progress}%`);
+					}
+				},
+				function error(error) {
+					console.log(error);
+				},
+				function complete() {
+					firebase
+						.storage()
+						.ref(`place_images/${documentRef.id}/`)
+						.child(`${file.id}`)
+						.getDownloadURL()
+						.then((imgUrls) => {
+							documentRef
+								.collection("places")
+								.doc(`${locationName}`)
+								.update({
+									images: firebase.firestore.FieldValue.arrayUnion(
+										`${imgUrls}`
+									),
+								})
+								.then(() => {
+									// console.log(user.uid);
+								});
+						});
+				}
+			);
+		});
+		Promise.all(promises)
+			.then(() => {
+				alert("新增成功😁😁😁😁");
+				setPopAddPlace(false);
+			})
+			.catch((err) => console.log(err));
+	};
 	return (
 		<Container>
 			<InputTitle>藝人 / 戲劇 / 綜藝名稱：{title}</InputTitle>
@@ -175,19 +287,20 @@ function NewPlace({ title, setPopAddPlace, setPlaceName }) {
 			</Title>
 			<Title>
 				<ShortTitle>上傳照片：</ShortTitle>
-				<Add as="label" htmlFor="postImage" />
+				<AddImages as="label" htmlFor="postImages" />
 				<input
 					type="file"
 					multiple
-					id="postImage"
+					id="postImages"
 					style={{ display: "none" }}
-					onChange={(e) => {
-						// item.push(e.target.files[0]);
-						setFile(e.target.files[0]);
-					}}
+					onChange={OnFileChange}
 				/>
-				<CoverImage src={previewURL} />;
 			</Title>
+			<MultiImgs>
+				{files.map((file) => {
+					return <Images src={URL.createObjectURL(file)} key={file.id} />;
+				})}
+			</MultiImgs>
 			<SendBtn onClick={AddNewPlace} />
 		</Container>
 	);

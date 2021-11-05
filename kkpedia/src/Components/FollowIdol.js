@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import cover from "../img/wanted.png";
-import unlike from "../img/unlike.png";
 import like from "../img/like.png";
+import { Link, Switch, Route } from "react-router-dom";
 
 const EachFollow = styled.div`
 	margin-right: 1vmin;
@@ -12,6 +12,10 @@ const EachFollow = styled.div`
 	flex-direction: column;
 	align-items: center;
 	/* outline: 1px solid black; */
+`;
+
+const FollowLink = styled.a`
+	text-decoration: none;
 `;
 
 const EachStar = styled.div`
@@ -34,7 +38,7 @@ const NormalTxt = styled.p`
 	font-size: 2vmin;
 `;
 
-function FellowIdol({ title, image }) {
+function FellowIdol({ title, image, topic }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
@@ -68,7 +72,9 @@ function FellowIdol({ title, image }) {
 	};
 	return (
 		<EachFollow>
-			<PerStar src={image || cover} />
+			<FollowLink href={`/${topic}/${title}`}>
+				<PerStar src={image || cover} />
+			</FollowLink>
 			<EachStar>
 				<NormalTxt>{title}</NormalTxt>
 				<LikeIcon src={like} onClick={ToggleFollow} />

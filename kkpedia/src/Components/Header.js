@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import algolia from "../utils/algolia";
 import menu from "../img/burgerMenu.png";
-import userImg from "../img/user.png";
+import userIcon from "../img/user.png";
 import logo from "../img/logo1.png";
 import search from "../img/search.png";
 import SideMenu from "./SideMenu";
-import { Link } from "react-router-dom";
+import Notification from "./Notification";
+import { Link, useHistory } from "react-router-dom";
 import logout from "../img/logout.png";
+import bell from "../img/bell.png";
 
 const HeaderContent = styled.div`
 	background-color: #fff;
@@ -58,17 +61,18 @@ const Member = styled.img`
 	cursor: pointer;
 `;
 
+const Search = styled.div`
+	display: flex;
+	position: relative;
+`;
+
 const SearchInput = styled.input`
 	border-radius: 20px;
 	width: 20vmin;
 	height: 4vmin;
-	background-image: url(${search});
-	background-repeat: no-repeat;
-	background-position: right center;
-	background-size: 4vmin;
 	padding: 8px 48px 8px 20px;
 	outline: none;
-
+	font-size: 2vmin;
 	/* @media screen and (max-width: 1280px){
         width: 0;
         padding: 20px;
@@ -86,10 +90,46 @@ const SearchInput = styled.input`
     } */
 `;
 
+const InputBtn = styled(Link)`
+	background-image: url(${search});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 4vmin;
+	height: 4vmin;
+	position: absolute;
+	right: 0px;
+	cursor: pointer;
+`;
+
 const LinkNav = styled(Link)`
 	&:hover {
 		cursor: pointer;
 	}
+`;
+
+const Bell = styled.div`
+	background-image: url(${bell});
+	background-repeat: no-repeat;
+	background-size: 100%;
+	width: 3vmin;
+	height: 3vmin;
+	margin-left: 2vmin;
+	cursor: pointer;
+	position: relative;
+`;
+
+const AlertNum = styled.div`
+	font-size: 1.75vmin;
+	font-weight: 600;
+	background-color: red;
+	width: 2vmin;
+	height: 2vmin;
+	border-radius: 50%;
+	border: 1px solid black;
+	text-align: center;
+	position: absolute;
+	bottom: -5px;
+	right: -10px;
 `;
 
 const Logout = styled.div`
@@ -102,11 +142,55 @@ const Logout = styled.div`
 	cursor: pointer;
 `;
 
+const Notify = styled.div`
+	border: 1px solid #dfe6e9;
+	box-shadow: 1px 1px 3px #95a5a6;
+	width: 30vmin;
+	position: absolute;
+	right: 0px;
+	top: 7vmin;
+`;
+
 function Header() {
-	const [sideBar, setSideBar] = useState(true);
+	const [sideBar, setSideBar] = useState(false);
+	const [inputSearch, setInputSearch] = useState("");
+	const [userData, setUserData] = useState({});
+	const [newAlert, setNewAlert] = useState(0);
+	const [newsData, setNewsData] = useState([]);
+	const [renderNews, setRenderNews] = useState(false);
+	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
 	const showSidebar = () => {
 		setSideBar(!sideBar);
+	};
+
+	const SearchChange = (e) => {
+		setInputSearch(e.target.value);
+	};
+
+	useEffect(() => {
+		db.collection("users")
+			.doc(`${user.uid}`)
+			.onSnapshot((doc) => {
+				setUserData(doc.data());
+			});
+		db.collection("users")
+			.doc(`${user.uid}`)
+			.collection("news")
+			.onSnapshot((querySnapshot) => {
+				setNewAlert(querySnapshot.docs.length);
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					item.push(doc.data());
+				});
+				setNewsData(item);
+			});
+	}, []);
+
+	const showNewAlert = () => {
+		setRenderNews(!renderNews);
+		// setNewAlert(0);
+		// console.log(newsData);
 	};
 
 	return (
@@ -114,14 +198,22 @@ function Header() {
 			<HeaderContent>
 				<HeaderNav>
 					<BurgerMenu onClick={showSidebar} />
-					<LinkNav to="/">
+					<LinkNav to="/idol">
 						<Logo />
 					</LinkNav>
 				</HeaderNav>
 				<HeaderNav>
-					<SearchInput />
+					<Search>
+						<SearchInput value={inputSearch} onChange={SearchChange} />
+						<InputBtn to={`/search/${inputSearch}`} />
+					</Search>
+					<Bell onClick={showNewAlert}>
+						{newAlert !== 0 ? <AlertNum>{newAlert}</AlertNum> : <></>}
+					</Bell>
 					<LinkNav to="/profile">
-						{user != null ? <Member src={user.photoURL || userImg} /> : ""}
+						<Member
+							src={userData.userImage !== null ? userData.userImage : userIcon}
+						/>
 					</LinkNav>
 					<Logout
 						onClick={() => {
@@ -129,6 +221,15 @@ function Header() {
 						}}
 					/>
 				</HeaderNav>
+				{renderNews ? (
+					<Notify>
+						{newsData.map((data) => {
+							return <Notification data={data} key={data.docid} />;
+						})}
+					</Notify>
+				) : (
+					<></>
+				)}
 			</HeaderContent>
 			{sideBar ? <SideMenu /> : <div></div>}
 		</>
