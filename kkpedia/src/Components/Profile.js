@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import {
 	BrowserRouter,
@@ -6,12 +6,14 @@ import {
 	Link,
 	Switch,
 	useRouteMatch,
+	HashRouter,
+	useParams,
 } from "react-router-dom";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
 import PersonalCollection from "./PersonalCollection";
 import PersonalPost from "./PersonalPost";
-import userImg from "../img/user.png";
+import userIcon from "../img/user.png";
 import levelImg from "../img/level-up.png";
 import profile from "../img/resume.png";
 import like from "../img/place.png";
@@ -50,12 +52,12 @@ const EditArea = styled.div`
 `;
 
 const PersonName = styled.input`
-	border: none;
+	border: ${(props) => (props.edit ? "none" : "1px solid black")};
+	border-radius: 10px;
+	width: 30vmin;
 	background-color: beige;
-	width: 20vmin;
 	padding-right: 1vmin;
 	font-size: 4vmin;
-	text-align: end;
 	align-self: center;
 `;
 
@@ -87,8 +89,8 @@ const PhotoChange = styled.div`
 	cursor: pointer;
 	margin-right: 1vmin;
 	position: absolute;
-	bottom: -10px;
-	right: -20px;
+	bottom: -5px;
+	right: -15px;
 `;
 
 const PhotoCheck = styled(PhotoChange)`
@@ -133,19 +135,20 @@ function Profile() {
 	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [readOnly, setReadOnly] = useState(true);
 	const [userName, setUserName] = useState("");
+	const [userImg, setUserImg] = useState("");
 	const [level, setLevel] = useState(0);
 	const [photoChange, setPhotoChange] = useState(false);
 	const [file, setFile] = useState(null);
 	const previewURL = file ? URL.createObjectURL(file) : userImg;
 
-	docRef.get().then((doc) => {
-		if (doc.exists) {
+	useEffect(() => {
+		docRef.onSnapshot((doc) => {
+			console.log(doc.data());
 			setUserName(doc.data().userName);
-		} else {
-			// doc.data() will be undefined in this case
-			console.log("No such document!");
-		}
-	});
+			setUserImg(doc.data().userImage);
+			setLevel(doc.data().userLevel);
+		});
+	}, []);
 
 	const ChangeOk = () => {
 		setPhotoChange(false);
@@ -184,17 +187,18 @@ function Profile() {
 			<Container>
 				<Person>
 					<EditArea>
+						<EditIcon src={readOnly ? edit : check} onClick={Editable} />
 						<PersonName
+							edit={readOnly}
 							readOnly={readOnly}
 							value={userName}
 							onChange={(e) => {
 								setUserName(e.target.value);
 							}}
 						/>
-						<EditIcon src={readOnly ? edit : check} onClick={Editable} />
 					</EditArea>
 					<Photo>
-						<PersonImage src={previewURL} />
+						<PersonImage src={previewURL || userIcon} />
 						{photoChange ? (
 							<PhotoCheck as="label" htmlFor="uploadImage" onClick={ChangeOk} />
 						) : (
@@ -217,31 +221,33 @@ function Profile() {
 					</LevelTag>
 				</Person>
 				<BrowserRouter>
-					<MenuBar>
-						<MenuLink to={`${url}`}>
-							<MenuImage src={profile} />
-							個人資料
-						</MenuLink>
-						<MenuLink to={`${url}/myCollection`}>
-							<MenuImage src={like} />
-							收藏景點
-						</MenuLink>
-						<MenuLink to={`${url}/myPost`}>
-							<MenuImage src={post} />
-							過往PO文
-						</MenuLink>
-					</MenuBar>
-					<Switch>
-						<Route exact path={`${path}`}>
-							<PersonalData setLevel={setLevel} />
-						</Route>
-						<Route exact path={`${path}/myCollection`}>
-							<PersonalCollection />
-						</Route>
-						<Route exact path={`${path}/myPost`}>
-							<PersonalPost />
-						</Route>
-					</Switch>
+					<>
+						<MenuBar>
+							<MenuLink to={`${url}`}>
+								<MenuImage src={profile} />
+								個人資料
+							</MenuLink>
+							<MenuLink to="/myCollection">
+								<MenuImage src={like} />
+								收藏景點
+							</MenuLink>
+							<MenuLink to="/myPost">
+								<MenuImage src={post} />
+								過往PO文
+							</MenuLink>
+						</MenuBar>
+						<Switch>
+							<Route exact path={`${url}`}>
+								<PersonalData />
+							</Route>
+							<Route exact path="/myCollection">
+								<PersonalCollection />
+							</Route>
+							<Route exact path="/myPost">
+								<PersonalPost />
+							</Route>
+						</Switch>
+					</>
 				</BrowserRouter>
 			</Container>
 		</MainContainer>

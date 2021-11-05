@@ -4,7 +4,8 @@ import firebase from "../utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import FollowIdol from "./FollowIdol";
 import image from "../img/wanted.png";
-import { Link } from "react-router-dom";
+import { Link, Switch, Route, Redirect, useHistory } from "react-router-dom";
+import EachLocation from "./EachLocation";
 
 const ProfileContainer = styled.div`
 	background-color: #ffeaa7;
@@ -25,7 +26,8 @@ const FollowStar = styled.div`
 	margin-left: 1.5vmin;
 `;
 
-const EachFellow = styled(Link)`
+const EachFeolowLink = styled.a`
+	width: 20vmin;
 	text-decoration: none;
 	margin-right: 1vmin;
 	padding: 1vmin;
@@ -33,7 +35,7 @@ const EachFellow = styled(Link)`
 	flex-direction: column;
 	align-items: center;
 	color: black;
-	/* outline: 1px solid black; */
+	cursor: pointer;
 `;
 
 const PerStar = styled.img`
@@ -41,19 +43,13 @@ const PerStar = styled.img`
 	height: 7vmin;
 `;
 
-const EachContribution = styled(EachFellow)`
-	display: flex;
-	width: 20vmin;
-	flex-direction: column;
-	align-items: center;
-`;
-
 const NormalTxt = styled.p`
 	font-size: 2vmin;
 	text-align: center;
 `;
 
-function PersonalData({ setLevel }) {
+function PersonalData() {
+	const history = useHistory();
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;
@@ -71,7 +67,6 @@ function PersonalData({ setLevel }) {
 					item.push(doc.data());
 				});
 				setContribution(item);
-				setLevel(item.length);
 			});
 
 		db.collection("users")
@@ -94,6 +89,7 @@ function PersonalData({ setLevel }) {
 					return (
 						<FollowIdol
 							title={data.title}
+							topic={data.topic}
 							image={data.main_image}
 							key={uuidv4()}
 						/>
@@ -104,13 +100,14 @@ function PersonalData({ setLevel }) {
 			<FollowStar>
 				{contribution.map((item) => {
 					return (
-						<EachContribution
-							to={`${item.topic}/${item.title}/place/${item.locationName}`}
-							key={item.locationName}
+						<EachFeolowLink
+							href={`/${item.topic}/${item.title}/${item.locationName}`}
+							key={uuidv4()}
 						>
 							<PerStar src={item.images[0] || image} />
+							<NormalTxt>{item.title}</NormalTxt>
 							<NormalTxt>{item.locationName}</NormalTxt>
-						</EachContribution>
+						</EachFeolowLink>
 					);
 				})}
 			</FollowStar>

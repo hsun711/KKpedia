@@ -15,6 +15,7 @@ const Container = styled.div`
 	border-radius: 10px;
 	align-items: center;
 	margin-left: 3vmin;
+	margin-bottom: 3vmin;
 `;
 
 const PlaceLink = styled(Link)`
@@ -77,11 +78,11 @@ function Place({ title, topic }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 
+	// console.log(topic);
+
 	const AddSomePlace = () => {
 		setPopAddPlace(!popAddPlace);
 	};
-
-	// console.log(placeName);
 
 	useEffect(() => {
 		docRef
@@ -114,7 +115,7 @@ function Place({ title, topic }) {
 					{place.map((item) => {
 						return (
 							<Container key={item.locationName}>
-								<PlaceLink to={`${url}/place/${item.locationName}`}>
+								<PlaceLink to={`${url}/${item.locationName}`}>
 									<EachPlace>
 										<PlaceImage src={item.images[0] || idolimage} />
 										<PlaceText>

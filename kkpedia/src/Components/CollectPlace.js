@@ -32,7 +32,7 @@ const TitleTxt = styled.p`
 
 const NormalTxt = styled.p`
 	font-size: 1vmin;
-	margin-top: 1.5vmin;
+	margin-top: 1vmin;
 `;
 const LikeIcon = styled.img`
 	width: 2vmin;
@@ -87,6 +87,7 @@ function CollectPlace({ data }) {
 					<TitleTxt>{data.locationName}</TitleTxt>
 					<LikeIcon src={like} onClick={ToggleCollect} />
 				</Title>
+				<NormalTxt>{data.title}</NormalTxt>
 				<NormalTxt>{data.description}</NormalTxt>
 			</PlaceTxt>
 		</EachPlace>

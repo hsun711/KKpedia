@@ -143,20 +143,20 @@ function LoginPage() {
 		history.push("/idol");
 	};
 
-	const AddtoFirsebase = async (data) => {
-		db.collection("users")
-			.doc(`${data.uid}`)
-			.set({
-				email: data.email,
-				password: password,
-				userImage: data.photoURL,
-				userName: data.displayName,
-				userId: data.uid,
-			})
-			.then((docRef) => {
-				console.log("😁😁😁😁");
-			});
-	};
+	// const AddtoFirsebase = async (data) => {
+	// 	db.collection("users")
+	// 		.doc(`${data.uid}`)
+	// 		.set({
+	// 			email: data.email,
+	// 			password: password,
+	// 			userImage: data.photoURL,
+	// 			userName: data.displayName,
+	// 			userId: data.uid,
+	// 		})
+	// 		.then((docRef) => {
+	// 			console.log("😁😁😁😁");
+	// 		});
+	// };
 
 	const Register = () => {
 		setLoading(true);
@@ -181,6 +181,7 @@ function LoginPage() {
 							userImage: response.user.photoURL,
 							userName: userName,
 							userId: response.user.uid,
+							userLevel: 0,
 						},
 						{ merge: true }
 					)
@@ -209,7 +210,7 @@ function LoginPage() {
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.then((resp) => {
-				history.push("/");
+				history.push("/idol");
 				setLoading(false);
 			})
 			.catch((error) => {

@@ -15,7 +15,6 @@ import board from "../img/cork-board.png";
 import star from "../img/star.png";
 import edit from "../img/pencil.png";
 import check from "../img/checked.png";
-import changeimg from "../img/camera.png";
 import { useParams } from "react-router-dom";
 
 const MainContainer = styled.div`
@@ -64,8 +63,8 @@ const LocationDetail = styled.div`
 const TitleName = styled.path`
 	font-size: 4vmin;
 	font-weight: 600;
-	margin-top: 2vmin;
-	margin-bottom: 1vmin;
+	margin-top: 1vmin;
+	margin-bottom: 2vmin;
 `;
 
 const EditIcon = styled.img`
@@ -79,15 +78,20 @@ const EditArea = styled.div`
 	display: flex;
 `;
 
-const Description = styled.input`
+const Description = styled.textarea`
+	border: ${(props) => (props.edit ? "none" : "1px solid black")};
 	font-size: 2vmin;
-	border: none;
+	width: 100%;
+	height: 10vmin;
+	border-radius: 10px;
 	background-color: beige;
 	color: grey;
+	resize: none;
 `;
 
 const NormalTxt = styled.p`
 	font-size: 2vmin;
+	margin-top: 2vmin;
 `;
 
 const LikeIcon = styled.img`
@@ -219,7 +223,6 @@ function EachLocation({ title }) {
 	const [comment, setComment] = useState([]);
 	const [readOnly, setReadOnly] = useState(true);
 	const [editText, setEditText] = useState("");
-	const [photoChange, setPhotoChange] = useState(false);
 	const [file, setFile] = useState(null);
 	let { location } = useParams();
 	const db = firebase.firestore();
@@ -400,21 +403,22 @@ function EachLocation({ title }) {
 
 								<LocationDetail>
 									<NormalTxt>貢獻者：{data.postUser}</NormalTxt>
+									<NormalTxt>{data.title}</NormalTxt>
 									<TitleName>{data.locationName}</TitleName>
 									<EditArea>
+										<EditIcon
+											src={readOnly ? edit : check}
+											onClick={Editable}
+										/>
 										<Description
+											edit={readOnly}
 											readOnly={readOnly}
 											value={editText}
 											onChange={(e) => {
 												setEditText(e.target.value);
 											}}
 										/>
-										<EditIcon
-											src={readOnly ? edit : check}
-											onClick={Editable}
-										/>
 									</EditArea>
-
 									<LikeIcon
 										src={favorite ? like : unlike}
 										onClick={AddtoFavorite}

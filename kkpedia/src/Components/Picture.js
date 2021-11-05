@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import NewPicture from "./NewPicture";
+import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 
 const Container = styled.div`
@@ -67,8 +68,10 @@ function Picture({ title }) {
 	const db = firebase.firestore();
 	const [popAddPicture, setPopAddPicture] = useState(false);
 	const [photos, setPhotos] = useState([]);
+
 	const AddPicture = () => {
 		setPopAddPicture(!popAddPicture);
+		console.log("picture area");
 	};
 
 	useEffect(() => {
@@ -98,12 +101,13 @@ function Picture({ title }) {
 				<Container>
 					{photos.map((item) => {
 						return (
-							<EachPhoto>
+							<EachPhoto key={uuidv4()}>
 								<ImageHolder>{item.postUser}</ImageHolder>
 								<ImageDescription>{item.description}</ImageDescription>
 								<PhotosArea>
 									{item.images.map((img) => {
-										return <Photos src={img} />;
+										console.log(img);
+										return <Photos src={img} key={uuidv4()} />;
 									})}
 								</PhotosArea>
 							</EachPhoto>

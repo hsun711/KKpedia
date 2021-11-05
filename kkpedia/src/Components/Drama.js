@@ -47,7 +47,12 @@ const EachContainer = styled.div`
 	}
 `;
 
-function Idol() {
+const TopicTitle = styled.p`
+	font-size: 3vmin;
+	font-weight: 600;
+`;
+
+function Drama() {
 	const [popAddOne, setPopAddOne] = useState(false);
 	const [titleName, setTitileName] = useState([]);
 	const db = firebase.firestore();
@@ -78,6 +83,7 @@ function Idol() {
 				</div>
 			) : (
 				<EachContainer>
+					<TopicTitle>Drama</TopicTitle>
 					{titleName.map((item) => {
 						return (
 							<TopicContainer topic="drama" item={item} key={item.star.title} />
@@ -89,4 +95,4 @@ function Idol() {
 	);
 }
 
-export default Idol;
+export default Drama;

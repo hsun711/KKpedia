@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
@@ -97,25 +97,41 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 	const db = firebase.firestore();
 	const userId = user.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
+	const [userLevel, setUserLevel] = useState(0);
+	const [followUsers, setFollowUsers] = useState([]);
 	const [userName, setUserName] = useState("");
 	const [locationName, setLocationName] = useState("");
 	const [description, setDescription] = useState("");
 	const [address, setAddress] = useState("");
 	const [placeId, setPlaceId] = useState("");
 	const [latitude, setLatitude] = useState({});
-	const [file, setFile] = useState(null);
 	const [files, setFiles] = useState([]);
-	// const [placeImage, setPlaceImage] = useState([]);
-	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
+
+	useEffect(() => {
+		db.collection("categories")
+			.doc(`${title}`)
+			.get()
+			.then((doc) => {
+				// console.log(doc.data().followedBy);
+				setFollowUsers(doc.data().followedBy);
+			});
+	}, []);
 
 	docRef.get().then((doc) => {
 		if (doc.exists) {
 			setUserName(doc.data().userName);
+			if (doc.data().userLevel === undefined) {
+				setUserLevel(0);
+			} else {
+				setUserLevel(doc.data().userLevel);
+			}
+			// console.log(doc.data());
 		} else {
 			// doc.data() will be undefined in this case
 			console.log("No such document!");
 		}
 	});
+	// console.log(userLevel);
 
 	// 把從子層 MapAutocomplete 收到的資訊存進 state 裡
 	const GetAddress = (addressdata) => {
@@ -132,6 +148,40 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 			newFile["id"] = id;
 			setFiles((prevState) => [...prevState, newFile]);
 		}
+	};
+
+	const UpdateLevel = () => {
+		docRef.update({
+			userLevel: userLevel + 5,
+		});
+	};
+
+	const SendAlert = () => {
+		const docid = db
+			.collection("users")
+			.doc(`${user}`)
+			.collection("news")
+			.doc().id;
+
+		const otherFollower = followUsers.filter((follower) => {
+			return follower !== user.uid;
+		});
+
+		otherFollower.forEach((user) => {
+			db.collection("users")
+				.doc(`${user}`)
+				.collection("news")
+				.doc(docid)
+				.set(
+					{
+						title: title,
+						topic: topic,
+						docid: docid,
+					},
+					{ merge: true }
+				)
+				.then(() => {});
+		});
 	};
 
 	const AddNewPlace = () => {
@@ -154,7 +204,9 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 			.doc(`${locationName}`)
 			.set(data, { merge: true })
 			.then((docRef) => {
-				alert("新增成功😁😁😁😁");
+				UpdateLevel();
+				SendAlert();
+				// alert("新增成功😁😁😁😁");
 			});
 		files.map((file) => {
 			// console.log(file);
@@ -199,47 +251,11 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 		});
 		Promise.all(promises)
 			.then(() => {
-				alert("All images uploaded");
+				alert("新增成功😁😁😁😁");
 				setPopAddPlace(false);
 			})
 			.catch((err) => console.log(err));
 	};
-
-	// const AddNewPlace = async () => {
-	// 	const documentRef = db.collection("categories").doc(`${title}`);
-	// 	const fileRef = firebase.storage().ref(`place_cover/${locationName}`);
-	// 	const metadata = {
-	// 		contentType: file.type,
-	// 	};
-
-	// 	fileRef.put(file, metadata).then(() => {
-	// 		fileRef.getDownloadURL().then((imageUrl) => {
-	// 			const data = {
-	// 				title: title,
-	// 				address: address,
-	// 				latitude: latitude,
-	// 				placeId: placeId,
-	// 				description: description,
-	// 				locationName: locationName,
-	// 				postUser: userName,
-	// 				uid: userId,
-	// 				main_image: imageUrl,
-	// 				images: [],
-	// 			};
-	// 			documentRef
-	// 				.collection("places")
-	// 				.doc(`${locationName}`)
-	// 				.set(data, { merge: true })
-	// 				.then((docRef) => {
-	// 					alert("新增成功😁😁😁😁");
-	// 					setPopAddPlace(false);
-	// 				});
-	// 		});
-	// 	});
-
-	// 	setPlaceName(locationName);
-	// };
-
 	return (
 		<Container>
 			<InputTitle>藝人 / 戲劇 / 綜藝名稱：{title}</InputTitle>
@@ -269,20 +285,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 				<ShortTitle>詳細地址：</ShortTitle>
 				<MapAutocomplete placeaddress={GetAddress} />
 			</Title>
-			{/* <Title>
-				<ShortTitle>上傳封面照片：</ShortTitle>
-				<Add as="label" htmlFor="postImage" />
-				<input
-					type="file"
-					id="postImage"
-					style={{ display: "none" }}
-					onChange={(e) => {
-						// item.push(e.target.files[0]);
-						setFile(e.target.files[0]);
-					}}
-				/>
-				<CoverImage src={previewURL} />;
-			</Title> */}
 			<Title>
 				<ShortTitle>上傳照片：</ShortTitle>
 				<AddImages as="label" htmlFor="postImages" />

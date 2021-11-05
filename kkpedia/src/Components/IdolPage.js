@@ -121,6 +121,7 @@ const MenuLink = styled(Link)`
 const PlaceContainer = styled.div`
 	background-image: url(${board});
 	display: flex;
+	flex-wrap: wrap;
 	margin-top: 5vmin;
 	padding: 4vmin;
 `;
@@ -172,95 +173,93 @@ function IdolPage({ topic }) {
 		alert("更新成功🎊🎊");
 	};
 
-	const ChangePhoto = () => {
-		setPhotoChange(true);
-	};
-
 	return (
 		<MainContainer>
 			<Container>
 				<BrowserRouter>
-					<Person>
-						<PersonName>{title}</PersonName>
-						<Photo>
-							<PersonImage src={previewURL} />
-							{photoChange ? (
-								<PhotoCheck
-									as="label"
-									htmlFor="uploadImage"
-									onClick={ChangeOk}
+					<>
+						<Person>
+							<PersonName>{title}</PersonName>
+							<Photo>
+								<PersonImage src={previewURL} />
+								{photoChange ? (
+									<PhotoCheck
+										as="label"
+										htmlFor="uploadCover"
+										onClick={ChangeOk}
+									/>
+								) : (
+									<PhotoChange as="label" htmlFor="uploadCover" />
+								)}
+								<input
+									type="file"
+									id="uploadCover"
+									style={{ display: "none" }}
+									onChange={(e) => {
+										setFile(e.target.files[0]);
+										setPhotoChange(true);
+									}}
 								/>
-							) : (
-								<PhotoChange as="label" htmlFor="uploadImage" />
-							)}
-							<input
-								type="file"
-								id="uploadImage"
-								style={{ display: "none" }}
-								onChange={(e) => {
-									setFile(e.target.files[0]);
-									ChangePhoto();
-								}}
-							/>
-						</Photo>
-					</Person>
+							</Photo>
+						</Person>
 
-					{sns.map((item) => {
-						return (
-							<SnsIconUl key={item.star.title}>
-								<SnsLink href={item.star.facebook} target="_blank">
-									<SnsImg src={fb} />
-								</SnsLink>
-								<SnsLink href={item.star.instagram} target="_blank">
-									<SnsImg src={ig} />
-								</SnsLink>
-								<SnsLink href={item.star.twitter} target="_blank">
-									<SnsImg src={twitter} />
-								</SnsLink>
-								<SnsLink href={item.star.youtube} target="_blank">
-									<SnsImg src={youtube} />
-								</SnsLink>
-							</SnsIconUl>
-						);
-					})}
+						{sns.map((item) => {
+							return (
+								<SnsIconUl key={item.star.title}>
+									<SnsLink href={item.star.facebook} target="_blank">
+										<SnsImg src={fb} />
+									</SnsLink>
+									<SnsLink href={item.star.instagram} target="_blank">
+										<SnsImg src={ig} />
+									</SnsLink>
+									<SnsLink href={item.star.twitter} target="_blank">
+										<SnsImg src={twitter} />
+									</SnsLink>
+									<SnsLink href={item.star.youtube} target="_blank">
+										<SnsImg src={youtube} />
+									</SnsLink>
+								</SnsIconUl>
+							);
+						})}
 
-					<MenuBar>
-						<MenuLink to={`${url}`}>
-							<MenuImage src={pin} />
-							聖地
-						</MenuLink>
-						<MenuLink to={`${url}/picture`}>
-							<MenuImage src={pictures} />
-							圖片區
-						</MenuLink>
-						<MenuLink to={`${url}/calender`}>
-							<MenuImage src={schedule} />
-							日程表
-						</MenuLink>
-						<MenuLink to={`${url}/post`}>
-							<MenuImage src={comment} />
-							留言區
-						</MenuLink>
-					</MenuBar>
-					<PlaceContainer>
-						<Switch>
-							<Route exact path={`${path}`}>
-								<Place title={title} topic={topic} />
-							</Route>
-							<Route exact path={`${path}/picture`}>
-								<Picture title={title} />
-							</Route>
-							<Route exact path={`${path}/calender`}>
-								<Calender title={title} />
-							</Route>
-							<Route exact path={`${path}/post`}>
-								<Post title={title} />
-							</Route>
-							<Route exact path={`${path}/place/:location`}>
-								<EachLocation title={title} />
-							</Route>
-						</Switch>
-					</PlaceContainer>
+						<MenuBar>
+							<MenuLink to={`${url}`}>
+								<MenuImage src={pin} />
+								聖地
+							</MenuLink>
+							<MenuLink to={`${url}/picture`}>
+								<MenuImage src={pictures} />
+								圖片區
+							</MenuLink>
+							<MenuLink to={`${url}/calender`}>
+								<MenuImage src={schedule} />
+								日程表
+							</MenuLink>
+							<MenuLink to={`${url}/post`}>
+								<MenuImage src={comment} />
+								留言區
+							</MenuLink>
+						</MenuBar>
+						<PlaceContainer>
+							<Switch>
+								<Route exact path={`${url}`}>
+									<Place title={title} topic={topic} />
+								</Route>
+								<Route exact path={`${url}/picture`}>
+									<Picture title={title} />
+								</Route>
+								<Route exact path={`${url}/calender`}>
+									<Calender title={title} />
+								</Route>
+								<Route exact path={`${url}/post`}>
+									<Post title={title} />
+								</Route>
+								<Route path={`${url}/:location`}>
+									<EachLocation title={title} />
+								</Route>
+							</Switch>
+						</PlaceContainer>
+					</>
 				</BrowserRouter>
 			</Container>
 		</MainContainer>
