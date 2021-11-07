@@ -66,12 +66,13 @@ const Cover = styled.div`
 function Picture({ title }) {
 	// let { category } = useParams();
 	const db = firebase.firestore();
+	const user = firebase.auth().currentUser;
 	const [popAddPicture, setPopAddPicture] = useState(false);
 	const [photos, setPhotos] = useState([]);
+	const [userLevel, setUserLevel] = useState(0);
 
 	const AddPicture = () => {
 		setPopAddPicture(!popAddPicture);
-		console.log("picture area");
 	};
 
 	useEffect(() => {
@@ -87,6 +88,12 @@ function Picture({ title }) {
 				});
 				setPhotos(item);
 			});
+		db.collection("users")
+			.doc(`${user.uid}`)
+			.get()
+			.then((doc) => {
+				setUserLevel(doc.data().userLevel);
+			});
 	}, []);
 
 	return (
@@ -99,20 +106,27 @@ function Picture({ title }) {
 				</div>
 			) : (
 				<Container>
-					{photos.map((item) => {
-						return (
-							<EachPhoto key={uuidv4()}>
-								<ImageHolder>{item.postUser}</ImageHolder>
-								<ImageDescription>{item.description}</ImageDescription>
-								<PhotosArea>
-									{item.images.map((img) => {
-										console.log(img);
-										return <Photos src={img} key={uuidv4()} />;
-									})}
-								</PhotosArea>
-							</EachPhoto>
-						);
-					})}
+					{userLevel <= 20 ? (
+						<EachPhoto>
+							<p>貢獻聖地解鎖更多美圖唷🤪🤪</p>
+						</EachPhoto>
+					) : (
+						<>
+							{photos.map((item) => {
+								return (
+									<EachPhoto key={uuidv4()}>
+										<ImageHolder>{item.postUser}</ImageHolder>
+										<ImageDescription>{item.description}</ImageDescription>
+										<PhotosArea>
+											{item.images.map((img) => {
+												return <Photos src={img} key={uuidv4()} />;
+											})}
+										</PhotosArea>
+									</EachPhoto>
+								);
+							})}
+						</>
+					)}
 				</Container>
 			)}
 		</>

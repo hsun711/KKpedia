@@ -4,16 +4,18 @@ import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
 import { Link, useRouteMatch } from "react-router-dom";
 import add from "../img/plus.png";
+import sticker from "../img/sticker4.png";
 import NewPlace from "./NewPlace";
 
 const Container = styled.div`
 	display: flex;
 	background-color: beige;
-	padding: 10px;
-	width: 25vmin;
-	height: 13vmin;
+	padding: 1vmin;
+	width: 30vmin;
+	min-height: 20vmin;
 	border-radius: 10px;
 	align-items: center;
+	justify-content: center;
 	margin-left: 3vmin;
 	margin-bottom: 3vmin;
 `;
@@ -26,16 +28,31 @@ const PlaceLink = styled(Link)`
 const EachPlace = styled.div`
 	width: 100%;
 	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+`;
+
+const ImgContainer = styled.div`
+	/* background-image: url(${sticker});
+	background-repeat: no-repeat;
+	background-size: 100%; */
+	width: 20vmin;
+	height: 20vmin;
+	display: flex;
+	justify-content: center;
 `;
 
 const PlaceImage = styled.img`
-	width: 10vmin;
-	height: 10vmin;
+	max-width: 100%;
+	max-height: 100%;
 `;
 
 const PlaceText = styled.div`
-	height: 10vmin;
-	margin-left: 0.5vmin;
+	min-width: 20vmin;
+	min-height: 7vmin;
+	text-align: center;
+	padding-top: 2vmin;
 `;
 
 const PlaceTitle = styled.p`
@@ -117,7 +134,9 @@ function Place({ title, topic }) {
 							<Container key={item.locationName}>
 								<PlaceLink to={`${url}/${item.locationName}`}>
 									<EachPlace>
-										<PlaceImage src={item.images[0] || idolimage} />
+										<ImgContainer>
+											<PlaceImage src={item.images[0] || idolimage} />
+										</ImgContainer>
 										<PlaceText>
 											<PlaceTitle>{item.locationName}</PlaceTitle>
 											<PlaceDesp>{item.description}</PlaceDesp>

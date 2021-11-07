@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
-import sticker from "../img/sticker.png";
+import sticker from "../img/sticker2.png";
 import idol from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
@@ -10,32 +10,41 @@ import { Link } from "react-router-dom";
 const EachIdol = styled.div`
 	background-image: url(${sticker});
 	background-size: 100%;
-	width: 20vmin;
-	height: 20vmin;
+	width: 30vmin;
+	height: 30vmin;
 	margin: 4vmin 5vmin;
 	padding: 0px 3vmin;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	position: relative;
+	@media screen and (max-width: 992px) {
+		width: 35vmin;
+		height: 35vmin;
+	}
 `;
 
 const LinkNav = styled(Link)`
+	height: 30vmin;
 	text-decoration: none;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+`;
+
+const IdolImage = styled.img`
+	max-width: 15vmin;
+	height: 15vmin;
+	margin-top: 6.5vmin;
+	margin-left: 4vmin;
 	&:hover {
 		transform: scale(1.1);
 		transition: all 0.3s;
 		cursor: pointer;
 	}
-`;
-
-const IdolImage = styled.img`
-	align-self: center;
-	width: 10vmin;
-	/* height: 10vmin; */
+	@media screen and (max-width: 992px) {
+		margin-top: 6.5vmin;
+		margin-left: 6.5vmin;
+	}
 `;
 
 const LinkTxt = styled.p`
@@ -43,16 +52,20 @@ const LinkTxt = styled.p`
 	text-align: center;
 	font-size: 2.5vmin;
 	font-weight: 600;
+	margin-top: 2vmin;
+	@media screen and (max-width: 992px) {
+		margin-top: 3.5vmin;
+	}
 `;
 
 const LikeIcon = styled.img`
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 	margin-top: 1vmin;
 	cursor: pointer;
 	position: absolute;
 	bottom: 0.75vmin;
-	right: 0.75vmin;
+	right: 3vmin;
 `;
 
 function TopicContainer({ topic, item }) {
@@ -157,8 +170,8 @@ function TopicContainer({ topic, item }) {
 	return (
 		<EachIdol>
 			<LinkNav to={`${topic}/${item.star.title}`}>
-				<LinkTxt>{item.star.title}</LinkTxt>
 				<IdolImage src={previewURL} />
+				<LinkTxt>{item.star.title}</LinkTxt>
 			</LinkNav>
 			<LikeIcon src={follow ? like : unlike} onClick={ToggleFollow} />
 		</EachIdol>

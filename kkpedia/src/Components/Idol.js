@@ -6,11 +6,11 @@ import add from "../img/plus.png";
 import board from "../img/cork-board.png";
 import NewOne from "./NewOne";
 
-const MainContainer = styled.div`
-	width: 100%;
-	display: flex;
-	flex-direction: column;
-`;
+// const MainContainer = styled.div`
+// 	width: 100%;
+// 	display: flex;
+// 	flex-direction: column;
+// `;
 
 const Add = styled.div`
 	background-image: url(${add});
@@ -42,10 +42,10 @@ const EachContainer = styled.div`
 	padding: 5vmin 0px;
 	background-image: url(${board});
 	display: flex;
-	/* justify-content: center; */
 	flex-wrap: wrap;
 	@media screen and (max-width: 992px) {
 		margin: 90px auto;
+		justify-content: center;
 	}
 `;
 
@@ -76,7 +76,7 @@ function Idol() {
 	}, []);
 
 	return (
-		<MainContainer>
+		<>
 			<Add onClick={AddSomeOne} topic="Idol" />
 			{popAddOne ? (
 				<div>
@@ -85,7 +85,6 @@ function Idol() {
 				</div>
 			) : (
 				<EachContainer>
-					<TopicTitle>Idol</TopicTitle>
 					{titleName.map((item) => {
 						return (
 							<TopicContainer topic="idol" item={item} key={item.star.title} />
@@ -93,7 +92,7 @@ function Idol() {
 					})}
 				</EachContainer>
 			)}
-		</MainContainer>
+		</>
 	);
 }
 

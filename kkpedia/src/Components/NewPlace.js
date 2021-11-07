@@ -156,6 +156,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 		});
 	};
 
+	// 傳送通知給有追蹤的使用者
 	const SendAlert = () => {
 		const docid = db
 			.collection("users")

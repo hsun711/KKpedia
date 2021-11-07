@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Popup from "reactjs-popup";
+import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
 import Map from "./Map";
 import LookMore from "./LookMore";
@@ -9,8 +10,6 @@ import WriteComment from "./WriteComment";
 import coverImage from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
-import leftarrow from "../img/left-arrow.png";
-import rightarrow from "../img/right-arrow.png";
 import board from "../img/cork-board.png";
 import star from "../img/star.png";
 import edit from "../img/pencil.png";
@@ -18,17 +17,12 @@ import check from "../img/checked.png";
 import { useParams } from "react-router-dom";
 
 const MainContainer = styled.div`
-	width: 70%;
-	/* height: 100%; */
-	/* margin: 20vmin auto; */
+	width: 100%;
 	margin: 0px auto;
 	padding: 5vmin 0px;
 	background-image: url(${board});
 	display: flex;
 	justify-content: center;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
-	}
 `;
 
 const Container = styled.div`
@@ -42,6 +36,9 @@ const Container = styled.div`
 const TopDetail = styled.div`
 	width: 100%;
 	display: flex;
+	@media screen and (max-width: 992px) {
+		flex-direction: column;
+	}
 `;
 
 const Photo = styled.div`
@@ -52,6 +49,9 @@ const Photo = styled.div`
 const MainImage = styled.img`
 	width: 20vmin;
 	/* height: 20vmin; */
+	@media screen and (max-width: 992px) {
+		width: 100%;
+	}
 `;
 
 const LocationDetail = styled.div`
@@ -119,18 +119,23 @@ const MoreImage = styled.div`
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
+	justify-content: center;
 	margin-top: 3vmin;
 `;
 
-const Images = styled.img`
-	width: 10vmin;
-	height: 10vmin;
+const Images = styled.div`
+	width: 90%;
 `;
 
-const Arrow = styled.img`
-	width: 7vmin;
-	height: 7vmin;
-	cursor: pointer;
+const Image = styled.img`
+	max-width: 20vmin;
+	height: 25vmin;
+	margin: 2vmin;
+`;
+
+const SingleImg = styled.div`
+	display: flex;
+	justify-content: center;
 `;
 
 const CommentArea = styled.div`
@@ -431,11 +436,21 @@ function EachLocation({ title }) {
 								<Map latitude={data.latitude} placeId={data.placeId} />
 							</PlaceMap>
 							<MoreImage>
-								<Arrow src={leftarrow} />
-								{data.images.map((image) => {
-									return <Images src={image || coverImage} key={uuidv4()} />;
-								})}
-								<Arrow src={rightarrow} />
+								<Images>
+									{data.images.length < 3 ? (
+										<>
+											{data.images.map((image) => {
+												return (
+													<SingleImg>
+														<Image src={image} />
+													</SingleImg>
+												);
+											})}
+										</>
+									) : (
+										<ImageCarousel images={data.images} />
+									)}
+								</Images>
 							</MoreImage>
 						</div>
 					);

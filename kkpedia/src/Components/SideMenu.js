@@ -11,9 +11,7 @@ const MenuBar = styled.div`
 	box-shadow: 1px 1px 3px #95a5a6;
 	padding-top: 20vmin;
 	position: fixed;
-	/* @media screen and (max-width: 992px) {
-		display: none;
-	} */
+	z-index: 2;
 `;
 
 const Topic = styled.div`
@@ -43,9 +41,9 @@ function SideMenu() {
 	return (
 		<MenuBar>
 			<Topic>
-				<LinkNav to="/idol">Idol</LinkNav>
-				<LinkNav to="/drama">Drama</LinkNav>
-				<LinkNav to="/tvshow">TV Show</LinkNav>
+				<LinkNav to="/idol">藝人</LinkNav>
+				<LinkNav to="/drama">戲劇</LinkNav>
+				<LinkNav to="/tvshow">綜藝</LinkNav>
 			</Topic>
 		</MenuBar>
 	);

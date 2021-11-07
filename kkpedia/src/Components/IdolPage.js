@@ -26,22 +26,22 @@ import schedule from "../img/schedule.png";
 import comment from "../img/comment.png";
 import check from "../img/checked.png";
 import changeimg from "../img/camera.png";
-
-const MainContainer = styled.div`
-	width: 100%;
-	display: flex;
-`;
+import add from "../img/add.png";
 
 const Container = styled.div`
-	width: 90%;
+	width: 70%;
 	height: 100%;
-	margin-top: 100px;
-	margin-left: 30vmin;
-	margin-right: 90px;
+	margin: 10vmin auto;
 	padding-bottom: 7vmin;
 	@media screen and (max-width: 992px) {
 		margin: 90px auto;
 	}
+`;
+
+const ColumnDiv = styled.div`
+	min-width: 20vmin;
+	display: flex;
+	flex-direction: column;
 `;
 
 const Person = styled.div`
@@ -55,17 +55,44 @@ const PersonName = styled.p`
 	font-size: 4vmin;
 	text-align: center;
 	align-self: center;
+	@media screen and (max-width: 992px) {
+		font-size: 5vmin;
+	}
 `;
+const SnsLink = styled.a`
+	/* margin-left: 2.5vmin; */
+	list-style: none;
+	margin-top: 2.5vmin;
+	cursor: pointer;
+`;
+
+const SnsImg = styled.img`
+	width: 3vmin;
+`;
+
+const Edit = styled.div`
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+`;
+
+const EditIcon = styled.img`
+	width: 3vmin;
+	margin-top: 2vmin;
+	cursor: pointer;
+`;
+
 const Photo = styled.div`
 	display: flex;
 	position: relative;
+	height: 15vmin;
 `;
 
 const PersonImage = styled.img`
 	margin-left: 2vmin;
-	width: 7vmin;
-	height: 7vmin;
-	border-radius: 50%;
+	max-width: 100%;
+	max-height: 100%;
+	border-radius: 10%;
 `;
 
 const PhotoChange = styled.div`
@@ -77,28 +104,12 @@ const PhotoChange = styled.div`
 	cursor: pointer;
 	margin-right: 1vmin;
 	position: absolute;
-	bottom: -10px;
-	right: -20px;
+	bottom: -1vmin;
+	right: -2vmin;
 `;
 
 const PhotoCheck = styled(PhotoChange)`
 	background-image: url(${check});
-`;
-
-const SnsIconUl = styled.ul`
-	display: flex;
-	margin-left: 10px;
-`;
-
-const SnsLink = styled.a`
-	margin-left: 2.5vmin;
-	list-style: none;
-	margin-top: 2.5vmin;
-	cursor: pointer;
-`;
-
-const SnsImg = styled.img`
-	width: 2.3vmin;
 `;
 
 const MenuBar = styled.div`
@@ -132,27 +143,28 @@ function IdolPage({ topic }) {
 	const [sns, setSns] = useState([]);
 	const [mainImage, setMainImage] = useState("");
 	const [photoChange, setPhotoChange] = useState(false);
+	const [followUsers, setFollowUsers] = useState([]);
 	const [file, setFile] = useState(null);
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const previewURL = file ? URL.createObjectURL(file) : mainImage;
 
 	useEffect(() => {
-		docRef
-			.where("title", "==", `${title}`)
+		docRef.where("title", "==", `${title}`).onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				// doc.data() is never undefined for query doc snapshots
+				item.push({ star: doc.data() });
+			});
+			setSns(item);
+			setMainImage(item[0].star.main_image);
+		});
+
+		db.collection("categories")
+			.doc(`${title}`)
 			.get()
-			.then((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					item.push({ star: doc.data() });
-				});
-				// console.log(item[0].star.main_image);
-				setSns(item);
-				setMainImage(item[0].star.main_image);
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
+			.then((doc) => {
+				setFollowUsers(doc.data().followedBy);
 			});
 	}, []);
 	// console.log(title);
@@ -168,20 +180,129 @@ function IdolPage({ topic }) {
 				docRef.doc(`${title}`).update({
 					main_image: `${imageUrl}`,
 				});
+
+				followUsers.forEach((user) => {
+					db.collection("users")
+						.doc(`${user}`)
+						.collection("follows")
+						.doc(`${title}`)
+						.update({
+							main_image: `${imageUrl}`,
+						});
+				});
 			});
 		});
 		alert("更新成功🎊🎊");
 	};
 
+	const AddSns = (sns) => {
+		if (sns === "facebook") {
+			const url = prompt(`請輸入${sns}網址`);
+			if (url === null) {
+				url = "";
+			} else {
+				docRef.doc(`${title}`).update({
+					facebook: `${url}`,
+				});
+			}
+		} else if (sns === "instagram") {
+			const url = prompt(`請輸入${sns}網址`);
+			if (url === null) {
+				url = "";
+			} else {
+				docRef.doc(`${title}`).update({
+					instagram: `${url}`,
+				});
+			}
+		} else if (sns === "twitter") {
+			const url = prompt(`請輸入${sns}網址`);
+			if (url === null) {
+				url = "";
+			} else {
+				docRef.doc(`${title}`).update({
+					twitter: `${url}`,
+				});
+			}
+		} else if (sns === "youtube") {
+			const url = prompt(`請輸入${sns}網址`);
+			if (url === null) {
+				url = "";
+			} else {
+				docRef.doc(`${title}`).update({
+					youtube: `${url}`,
+				});
+			}
+		}
+	};
+
 	return (
-		<MainContainer>
+		<>
 			<Container>
 				<BrowserRouter>
 					<>
 						<Person>
-							<PersonName>{title}</PersonName>
+							<ColumnDiv>
+								<PersonName>{title}</PersonName>
+								<>
+									{sns.map((item) => {
+										return (
+											<Edit key={item.star.title}>
+												{item.star.facebook === "" ? (
+													<EditIcon
+														src={add}
+														onClick={() => {
+															AddSns("facebook");
+														}}
+													/>
+												) : (
+													<SnsLink href={item.star.facebook} target="_blank">
+														<SnsImg src={fb} />
+													</SnsLink>
+												)}
+												{item.star.instagram === "" ? (
+													<EditIcon
+														src={add}
+														onClick={() => {
+															AddSns("instagram");
+														}}
+													/>
+												) : (
+													<SnsLink href={item.star.instagram} target="_blank">
+														<SnsImg src={ig} />
+													</SnsLink>
+												)}
+												{item.star.twitter === "" ? (
+													<EditIcon
+														src={add}
+														onClick={() => {
+															AddSns("twitter");
+														}}
+													/>
+												) : (
+													<SnsLink href={item.star.twitter} target="_blank">
+														<SnsImg src={twitter} />
+													</SnsLink>
+												)}
+												{item.star.youtube === "" ? (
+													<EditIcon
+														src={add}
+														onClick={() => {
+															AddSns("youtube");
+														}}
+													/>
+												) : (
+													<SnsLink href={item.star.youtube} target="_blank">
+														<SnsImg src={youtube} onClick={AddSns} />
+													</SnsLink>
+												)}
+											</Edit>
+										);
+									})}
+								</>
+							</ColumnDiv>
+
 							<Photo>
-								<PersonImage src={previewURL} />
+								<PersonImage src={previewURL || idolimage} />
 								{photoChange ? (
 									<PhotoCheck
 										as="label"
@@ -202,25 +323,6 @@ function IdolPage({ topic }) {
 								/>
 							</Photo>
 						</Person>
-
-						{sns.map((item) => {
-							return (
-								<SnsIconUl key={item.star.title}>
-									<SnsLink href={item.star.facebook} target="_blank">
-										<SnsImg src={fb} />
-									</SnsLink>
-									<SnsLink href={item.star.instagram} target="_blank">
-										<SnsImg src={ig} />
-									</SnsLink>
-									<SnsLink href={item.star.twitter} target="_blank">
-										<SnsImg src={twitter} />
-									</SnsLink>
-									<SnsLink href={item.star.youtube} target="_blank">
-										<SnsImg src={youtube} />
-									</SnsLink>
-								</SnsIconUl>
-							);
-						})}
 
 						<MenuBar>
 							<MenuLink to={`${url}`}>
@@ -262,7 +364,7 @@ function IdolPage({ topic }) {
 					</>
 				</BrowserRouter>
 			</Container>
-		</MainContainer>
+		</>
 	);
 }
 

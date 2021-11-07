@@ -2,5 +2,9 @@
 	box-sizing: border-box;
 	margin: 0px;
 	padding: 0px;
-	/* font-family: "Josefin Sans", sans-serif; */
+	/* font-family: "cwTeXYen", cursive; */
+}
+
+body {
+	/* background-image: url("./img/lined_paper.png"); */
 }

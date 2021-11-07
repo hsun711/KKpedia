@@ -140,7 +140,7 @@ function LoginPage() {
 
 	const HandleLogin = async (provider) => {
 		const res = await socialMediaAuth(provider);
-		history.push("/idol");
+		history.push("/");
 	};
 
 	// const AddtoFirsebase = async (data) => {
@@ -165,7 +165,7 @@ function LoginPage() {
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
 			.then((response) => {
-				history.push("/idol");
+				history.push("/");
 				setLoading(false);
 				setUserName(userName);
 				setPassword(password);
@@ -210,7 +210,7 @@ function LoginPage() {
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.then((resp) => {
-				history.push("/idol");
+				history.push("/");
 				setLoading(false);
 			})
 			.catch((error) => {

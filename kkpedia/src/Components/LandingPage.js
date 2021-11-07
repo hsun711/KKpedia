@@ -13,12 +13,10 @@ const Container = styled.div`
 	left: 0;
 	bottom: 0;
 	z-index: 3;
-	/* position: relative; */
 `;
 
 const LandingVedio = styled.video`
 	width: 100vmax;
-	/* height: 100vh; */
 `;
 
 const StartBtn = styled.div`

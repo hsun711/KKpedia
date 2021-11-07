@@ -5,7 +5,7 @@ import styled from "styled-components";
 import board from "../img/cork-board.png";
 import sticker from "../img/sticker.png";
 import idol from "../img/wanted.png";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useHistory } from "react-router-dom";
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -39,8 +39,18 @@ const EachIdol = styled.div`
 	justify-content: center;
 `;
 
-const LinkNav = styled(Link)`
-	text-decoration: none;
+// const LinkNav = styled(Link)`
+// 	text-decoration: none;
+// 	display: flex;
+// 	flex-direction: column;
+// 	justify-content: center;
+// 	&:hover {
+// 		transform: scale(1.1);
+// 		transition: all 0.3s;
+// 		cursor: pointer;
+// 	}
+// `;
+const LinkNav = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -65,29 +75,64 @@ const LinkTxt = styled.p`
 `;
 
 function SearchResult() {
+	const db = firebase.firestore();
+	const history = useHistory();
 	const { search } = useParams();
-	const [searchReasult, setSearchReasult] = useState([]);
+	const [resultData, setResultData] = useState([]);
 
 	useEffect(() => {
 		algolia.search(search).then((result) => {
-			// console.log(result);
-			const searchReasults = result.hits.map((hit) => {
-				return {
-					title: hit.title,
-					objectId: hit.objectID,
-					main_image: hit.main_image,
-				};
+			// console.log(result.hits);
+			const item = [];
+			result.hits.forEach((hit) => {
+				// console.log(hit);
+				db.collection("categories")
+					.doc(`${hit.title}`)
+					.get()
+					.then((doc) => {
+						// console.log(doc.data());
+						// setResultData(doc.data())
+						item.push(doc.data());
+					})
+					.catch((error) => {
+						console.log("Error getting document:", error);
+					});
 			});
-			setSearchReasult(searchReasults);
+			setResultData(item);
+			// const searchReasults = result.hits.map((hit) => {
+			// 	const item = [];
+			// 	db.collection("categories")
+			// 		.doc(`${hit.title}`)
+			// 		.get()
+			// 		.then((doc) => {
+			// 			console.log(doc.data());
+			// 			item.push(doc.data());
+			// 		})
+			// 		.catch((error) => {
+			// 			console.log("Error getting document:", error);
+			// 		});
+			// 	return {
+			// 		title: hit.title,
+			// 		objectId: hit.objectID,
+			// 		main_image: resultImg,
+			// 		topic: resultTopic,
+			// 	};
+			// });
+			// setSearchResult(searchReasults);
 		});
 	}, []);
+
 	return (
 		<MainContainer>
 			<Container>
-				{searchReasult.map((item) => {
+				{resultData.map((item) => {
 					return (
-						<EachIdol key={item.objectId}>
-							<LinkNav>
+						<EachIdol key={item.title}>
+							<LinkNav
+								onClick={() => {
+									history.push(`/${item.topic}/${item.title}`);
+								}}
+							>
 								<LinkTxt>{item.title}</LinkTxt>
 								<IdolImage src={item.main_image || idol} />
 							</LinkNav>
