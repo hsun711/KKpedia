@@ -6,10 +6,10 @@ import add from "../img/plus.png";
 import board from "../img/cork-board.png";
 import NewOne from "./NewOne";
 
-const MainContainer = styled.div`
-	width: 100%;
-	display: flex;
-`;
+// const MainContainer = styled.div`
+// 	width: 100%;
+// 	display: flex;
+// `;
 
 const Add = styled.div`
 	background-image: url(${add});
@@ -74,7 +74,7 @@ function Drama() {
 	}, []);
 
 	return (
-		<MainContainer>
+		<>
 			<Add onClick={AddSomeOne} />
 			{popAddOne ? (
 				<div>
@@ -91,7 +91,7 @@ function Drama() {
 					})}
 				</EachContainer>
 			)}
-		</MainContainer>
+		</>
 	);
 }
 

@@ -49,7 +49,6 @@ const NormalTxt = styled.p`
 `;
 
 function PersonalData() {
-	const history = useHistory();
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;

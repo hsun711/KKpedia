@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import NewPicture from "./NewPicture";
+import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 
@@ -43,12 +44,19 @@ const ImageDescription = styled.p`
 `;
 
 const PhotosArea = styled.div`
-	width: 100%;
-	margin-left: 0.5vmin;
+	width: 90%;
+	margin: 0vmin auto;
+	/* margin-left: 0.5vmin; */
 `;
+const NoCarouselImg = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+`;
+
 const Photos = styled.img`
-	width: 10vmin;
-	height: 10vmin;
+	max-width: 20vmin;
+	max-height: 20vmin;
 	margin: 2vmin;
 `;
 
@@ -66,12 +74,13 @@ const Cover = styled.div`
 function Picture({ title }) {
 	// let { category } = useParams();
 	const db = firebase.firestore();
+	const user = firebase.auth().currentUser;
 	const [popAddPicture, setPopAddPicture] = useState(false);
 	const [photos, setPhotos] = useState([]);
+	const [userLevel, setUserLevel] = useState(0);
 
 	const AddPicture = () => {
 		setPopAddPicture(!popAddPicture);
-		console.log("picture area");
 	};
 
 	useEffect(() => {
@@ -87,6 +96,12 @@ function Picture({ title }) {
 				});
 				setPhotos(item);
 			});
+		db.collection("users")
+			.doc(`${user.uid}`)
+			.get()
+			.then((doc) => {
+				setUserLevel(doc.data().userLevel);
+			});
 	}, []);
 
 	return (
@@ -99,20 +114,33 @@ function Picture({ title }) {
 				</div>
 			) : (
 				<Container>
-					{photos.map((item) => {
-						return (
-							<EachPhoto key={uuidv4()}>
-								<ImageHolder>{item.postUser}</ImageHolder>
-								<ImageDescription>{item.description}</ImageDescription>
-								<PhotosArea>
-									{item.images.map((img) => {
-										console.log(img);
-										return <Photos src={img} key={uuidv4()} />;
-									})}
-								</PhotosArea>
-							</EachPhoto>
-						);
-					})}
+					{userLevel <= 20 ? (
+						<EachPhoto>
+							<p>請再加把勁，貢獻聖地解鎖圖片區唷🤪🤪</p>
+						</EachPhoto>
+					) : (
+						<>
+							{photos.map((item) => {
+								return (
+									<EachPhoto key={uuidv4()}>
+										<ImageHolder>{item.postUser}</ImageHolder>
+										<ImageDescription>{item.description}</ImageDescription>
+										<PhotosArea>
+											{item.images.length < 4 ? (
+												<NoCarouselImg>
+													{item.images.map((img) => {
+														return <Photos src={img} key={uuidv4()} />;
+													})}
+												</NoCarouselImg>
+											) : (
+												<ImageCarousel images={item.images} showNum={4} />
+											)}
+										</PhotosArea>
+									</EachPhoto>
+								);
+							})}
+						</>
+					)}
 				</Container>
 			)}
 		</>

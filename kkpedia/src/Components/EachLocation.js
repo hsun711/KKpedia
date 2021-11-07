@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Popup from "reactjs-popup";
+import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
 import Map from "./Map";
 import LookMore from "./LookMore";
@@ -9,8 +10,6 @@ import WriteComment from "./WriteComment";
 import coverImage from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
-import leftarrow from "../img/left-arrow.png";
-import rightarrow from "../img/right-arrow.png";
 import board from "../img/cork-board.png";
 import star from "../img/star.png";
 import edit from "../img/pencil.png";
@@ -18,17 +17,12 @@ import check from "../img/checked.png";
 import { useParams } from "react-router-dom";
 
 const MainContainer = styled.div`
-	width: 70%;
-	/* height: 100%; */
-	/* margin: 20vmin auto; */
+	width: 100%;
 	margin: 0px auto;
 	padding: 5vmin 0px;
 	background-image: url(${board});
 	display: flex;
 	justify-content: center;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
-	}
 `;
 
 const Container = styled.div`
@@ -42,6 +36,9 @@ const Container = styled.div`
 const TopDetail = styled.div`
 	width: 100%;
 	display: flex;
+	@media screen and (max-width: 992px) {
+		flex-direction: column;
+	}
 `;
 
 const Photo = styled.div`
@@ -52,6 +49,9 @@ const Photo = styled.div`
 const MainImage = styled.img`
 	width: 20vmin;
 	/* height: 20vmin; */
+	@media screen and (max-width: 992px) {
+		width: 100%;
+	}
 `;
 
 const LocationDetail = styled.div`
@@ -119,18 +119,23 @@ const MoreImage = styled.div`
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
+	justify-content: center;
 	margin-top: 3vmin;
 `;
 
-const Images = styled.img`
-	width: 10vmin;
-	height: 10vmin;
+const Images = styled.div`
+	width: 90%;
 `;
 
-const Arrow = styled.img`
-	width: 7vmin;
-	height: 7vmin;
-	cursor: pointer;
+const Image = styled.img`
+	max-width: 20vmin;
+	height: 25vmin;
+	margin: 2vmin;
+`;
+
+const SingleImg = styled.div`
+	display: flex;
+	justify-content: center;
 `;
 
 const CommentArea = styled.div`
@@ -223,11 +228,70 @@ function EachLocation({ title }) {
 	const [comment, setComment] = useState([]);
 	const [readOnly, setReadOnly] = useState(true);
 	const [editText, setEditText] = useState("");
-	const [file, setFile] = useState(null);
+	const [collectUser, setCollectUser] = useState([]);
 	let { location } = useParams();
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
+
+	useEffect(() => {
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.where("locationName", "==", `${location}`)
+			.onSnapshot((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					setPlaceData([doc.data()]);
+					setEditText(doc.data().description);
+				});
+			});
+
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.where("locationName", "==", `${location}`)
+			.where("collectedBy", "array-contains", `${user.uid}`)
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					const collectedBy = doc.data().collectedBy;
+					// item.push(collectedBy);
+					setCollectUser(collectedBy);
+					const favorite = collectedBy.some((item) => {
+						const result = item === user.uid;
+						return result;
+					});
+					if (favorite) {
+						setFavorite(true);
+					} else {
+						// doc.data() will be undefined in this case
+						setFavorite(false);
+					}
+				});
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+
+		// desc 遞減 | asc 遞增
+		docRef
+			.doc(`${title}`)
+			.collection("reviews")
+			.where("locationName", "==", `${location}`)
+			.orderBy("timestamp", "desc")
+			.limit(3)
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// console.log(doc.data());
+					item.push(doc.data());
+					// setComment([doc.data()]);
+				});
+				setComment(item);
+			});
+	}, []);
 
 	const PopUp = () => {
 		setPopUpWriteComment(!popUpWriteComment);
@@ -241,7 +305,7 @@ function EachLocation({ title }) {
 			.doc(`${user.uid}`)
 			.collection("likes")
 			.doc(`${locationName}`)
-			.set({ placeData })
+			.set(placeData[0])
 			.then(() => {
 				alert("收藏進口袋聖地囉🎉🎊");
 			})
@@ -302,66 +366,6 @@ function EachLocation({ title }) {
 		}
 	};
 
-	useEffect(() => {
-		docRef
-			.doc(`${title}`)
-			.collection("places")
-			.where("locationName", "==", `${location}`)
-			.onSnapshot((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					setPlaceData([doc.data()]);
-					setEditText(doc.data().description);
-				});
-			});
-
-		docRef
-			.doc(`${title}`)
-			.collection("places")
-			.where("locationName", "==", `${location}`)
-			.where("collectedBy", "array-contains", `${user.uid}`)
-			.get()
-			.then((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					const collectedBy = doc.data().collectedBy;
-					const favorite = collectedBy.some((item) => {
-						const result = item === user.uid;
-						return result;
-					});
-					if (favorite) {
-						setFavorite(true);
-					} else {
-						// doc.data() will be undefined in this case
-						setFavorite(false);
-					}
-				});
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
-			});
-
-		// desc 遞減 | asc 遞增
-		docRef
-			.doc(`${title}`)
-			.collection("reviews")
-			.where("locationName", "==", `${location}`)
-			.orderBy("timestamp", "desc")
-			.limit(3)
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					// console.log(doc.data());
-					item.push(doc.data());
-					// setComment([doc.data()]);
-				});
-				setComment(item);
-			});
-	}, []);
-
-	// console.log(title);
-	// console.log(placeData);
-
 	const Editable = () => {
 		if (readOnly === false) {
 			setReadOnly(true);
@@ -373,6 +377,15 @@ function EachLocation({ title }) {
 				.update({
 					description: `${editText}`,
 				});
+			collectUser.forEach((user) => {
+				db.collection("users")
+					.doc(`${user}`)
+					.collection("likes")
+					.doc(`${location}`)
+					.update({
+						description: `${editText}`,
+					});
+			});
 		} else {
 			setReadOnly(false);
 		}
@@ -431,11 +444,21 @@ function EachLocation({ title }) {
 								<Map latitude={data.latitude} placeId={data.placeId} />
 							</PlaceMap>
 							<MoreImage>
-								<Arrow src={leftarrow} />
-								{data.images.map((image) => {
-									return <Images src={image || coverImage} key={uuidv4()} />;
-								})}
-								<Arrow src={rightarrow} />
+								<Images>
+									{data.images.length < 3 ? (
+										<>
+											{data.images.map((image) => {
+												return (
+													<SingleImg key={uuidv4()}>
+														<Image src={image} />
+													</SingleImg>
+												);
+											})}
+										</>
+									) : (
+										<ImageCarousel images={data.images} showNum={3} />
+									)}
+								</Images>
 							</MoreImage>
 						</div>
 					);

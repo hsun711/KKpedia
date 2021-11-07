@@ -143,7 +143,6 @@ function Profile() {
 
 	useEffect(() => {
 		docRef.onSnapshot((doc) => {
-			console.log(doc.data());
 			setUserName(doc.data().userName);
 			setUserImg(doc.data().userImage);
 			setLevel(doc.data().userLevel);

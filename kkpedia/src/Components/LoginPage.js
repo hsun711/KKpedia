@@ -140,23 +140,8 @@ function LoginPage() {
 
 	const HandleLogin = async (provider) => {
 		const res = await socialMediaAuth(provider);
-		history.push("/idol");
+		history.push("/");
 	};
-
-	// const AddtoFirsebase = async (data) => {
-	// 	db.collection("users")
-	// 		.doc(`${data.uid}`)
-	// 		.set({
-	// 			email: data.email,
-	// 			password: password,
-	// 			userImage: data.photoURL,
-	// 			userName: data.displayName,
-	// 			userId: data.uid,
-	// 		})
-	// 		.then((docRef) => {
-	// 			console.log("😁😁😁😁");
-	// 		});
-	// };
 
 	const Register = () => {
 		setLoading(true);
@@ -165,7 +150,7 @@ function LoginPage() {
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
 			.then((response) => {
-				history.push("/idol");
+				history.push("/");
 				setLoading(false);
 				setUserName(userName);
 				setPassword(password);
@@ -210,7 +195,7 @@ function LoginPage() {
 			.auth()
 			.signInWithEmailAndPassword(email, password)
 			.then((resp) => {
-				history.push("/idol");
+				history.push("/");
 				setLoading(false);
 			})
 			.catch((error) => {

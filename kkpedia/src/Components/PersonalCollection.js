@@ -45,11 +45,7 @@ function PersonalCollection() {
 				<MultiMap />
 			</MapArea>
 			<CollectionArea>
-				{collectPlace.map((item) => {
-					const data = item.placeData[0];
-					{
-						/* console.log(data); */
-					}
+				{collectPlace.map((data) => {
 					return <CollectPlace data={data} key={data.locationName} />;
 				})}
 			</CollectionArea>

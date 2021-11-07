@@ -50,8 +50,6 @@ function PersonalPost() {
 	}, []);
 
 	const handleDelete = (e) => {
-		console.log("trash");
-		console.log(e.target.dataset.id);
 		db.collection("posts")
 			.doc(`${e.target.dataset.id}`)
 			.delete()

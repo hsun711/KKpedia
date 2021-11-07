@@ -198,7 +198,7 @@ function Header() {
 			<HeaderContent>
 				<HeaderNav>
 					<BurgerMenu onClick={showSidebar} />
-					<LinkNav to="/idol">
+					<LinkNav to="/">
 						<Logo />
 					</LinkNav>
 				</HeaderNav>

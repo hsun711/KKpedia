@@ -4,6 +4,7 @@ import firebase from "../utils/firebase";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 import cover from "../img/wanted.png";
+import Loading from "./Loading";
 
 const Container = styled.div`
 	width: 70vmin;
@@ -78,6 +79,7 @@ const SendBtn = styled.div`
 
 function NewOne({ topic, setPopAddOne }) {
 	const db = firebase.firestore();
+	const [loading, setLoading] = useState(false);
 	const [title, setTitle] = useState();
 	const [ig, setIg] = useState("");
 	const [fb, setFb] = useState("");
@@ -88,6 +90,7 @@ function NewOne({ topic, setPopAddOne }) {
 	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
 
 	const SendNewOn = () => {
+		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
 		// const metadata = {
@@ -111,6 +114,7 @@ function NewOne({ topic, setPopAddOne }) {
 						{ merge: true }
 					)
 					.then((docRef) => {
+						setLoading(false);
 						alert("新增成功😁😁😁😁");
 						setPopAddOne(false);
 					});
@@ -180,6 +184,7 @@ function NewOne({ topic, setPopAddOne }) {
 				<CoverImage src={previewURL} />
 			</ArtistName>
 			<SendBtn onClick={SendNewOn} />
+			{loading && <Loading />}
 		</Container>
 	);
 }
