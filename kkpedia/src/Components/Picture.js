@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import NewPicture from "./NewPicture";
+import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 
@@ -43,12 +44,19 @@ const ImageDescription = styled.p`
 `;
 
 const PhotosArea = styled.div`
-	width: 100%;
-	margin-left: 0.5vmin;
+	width: 90%;
+	margin: 0vmin auto;
+	/* margin-left: 0.5vmin; */
 `;
+const NoCarouselImg = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+`;
+
 const Photos = styled.img`
-	width: 10vmin;
-	height: 10vmin;
+	max-width: 20vmin;
+	max-height: 20vmin;
 	margin: 2vmin;
 `;
 
@@ -108,7 +116,7 @@ function Picture({ title }) {
 				<Container>
 					{userLevel <= 20 ? (
 						<EachPhoto>
-							<p>貢獻聖地解鎖更多美圖唷🤪🤪</p>
+							<p>請再加把勁，貢獻聖地解鎖圖片區唷🤪🤪</p>
 						</EachPhoto>
 					) : (
 						<>
@@ -118,9 +126,15 @@ function Picture({ title }) {
 										<ImageHolder>{item.postUser}</ImageHolder>
 										<ImageDescription>{item.description}</ImageDescription>
 										<PhotosArea>
-											{item.images.map((img) => {
-												return <Photos src={img} key={uuidv4()} />;
-											})}
+											{item.images.length < 4 ? (
+												<NoCarouselImg>
+													{item.images.map((img) => {
+														return <Photos src={img} key={uuidv4()} />;
+													})}
+												</NoCarouselImg>
+											) : (
+												<ImageCarousel images={item.images} showNum={4} />
+											)}
 										</PhotosArea>
 									</EachPhoto>
 								);

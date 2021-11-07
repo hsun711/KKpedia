@@ -10,8 +10,12 @@ import rightarrow from "../img/right-arrow.png";
 
 const Image = styled.img`
 	max-width: 20vmin;
-	height: 25vmin;
+	height: 20vmin;
 	margin: 2vmin;
+	@media screen and (max-width: 992px) {
+		max-width: 10vmin;
+		height: 10vmin;
+	}
 `;
 const Arrow = styled.img`
 	width: 7vmin;
@@ -19,11 +23,11 @@ const Arrow = styled.img`
 	cursor: pointer;
 `;
 
-export default function ImageCarousel({ images }) {
+export default function ImageCarousel({ images, showNum }) {
 	const settings = {
 		infinite: true,
 		dots: false,
-		slidesToShow: 3,
+		slidesToShow: showNum,
 		slidesToScroll: 1,
 		lazyLoad: true,
 		nextArrow: <Arrow src={rightarrow} />,

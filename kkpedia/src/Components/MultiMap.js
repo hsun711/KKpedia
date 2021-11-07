@@ -28,7 +28,6 @@ const SimpleMap = (props) => {
 	};
 
 	const [collectPlace, setCollectPlace] = useState([]);
-
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;
@@ -38,12 +37,11 @@ const SimpleMap = (props) => {
 		docRef.collection("likes").onSnapshot((snapshot) => {
 			const item = [];
 			snapshot.forEach((doc) => {
-				item.push(doc.data().placeData[0]);
+				item.push(doc.data());
 			});
 			setCollectPlace(item);
 		});
 	}, []);
-
 	return (
 		// Important! Always set the container height explicitly
 		<Container>

@@ -61,7 +61,6 @@ function CollectPlace({ data }) {
 	};
 
 	const RemoveCollectedBy = () => {
-		console.log(data);
 		docRef
 			.doc(`${data.title}`)
 			.collection("places")

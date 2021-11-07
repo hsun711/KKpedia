@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 import cover from "../img/wanted.png";
+import Loading from "./Loading";
 
 const Container = styled.div`
 	width: 70vmin;
@@ -58,9 +59,20 @@ const Add = styled.div`
 	cursor: pointer;
 `;
 
-const CoverImage = styled.img`
+const MultiImgs = styled.div`
+	display: flex;
+	flex-wrap: wrap;
+`;
+
+const CoverImges = styled.div`
 	width: 10vmin;
-	margin-left: 3vmin;
+	height: 10vmin;
+	margin: 3vmin;
+`;
+
+const CoverImage = styled.img`
+	max-width: 100%;
+	max-heigh: 100%;
 `;
 
 const SendBtn = styled.div`
@@ -80,6 +92,7 @@ const SendBtn = styled.div`
 
 function NewPicture({ title, AddPicture }) {
 	const db = firebase.firestore();
+	const [loading, setLoading] = useState(false);
 	const [userName, setUserName] = useState("");
 	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
@@ -120,6 +133,7 @@ function NewPicture({ title, AddPicture }) {
 	// console.log(files);
 
 	const handleUpload = () => {
+		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const promises = [];
 		const docid = documentRef.collection("photos").doc().id;
@@ -181,6 +195,7 @@ function NewPicture({ title, AddPicture }) {
 		});
 		Promise.all(promises)
 			.then(() => {
+				setLoading(false);
 				alert("新增成功😁😁😁😁");
 				AddPicture(false);
 			})
@@ -209,11 +224,18 @@ function NewPicture({ title, AddPicture }) {
 					style={{ display: "none" }}
 					onChange={OnFileChange}
 				/>
-				{files.map((file) => {
-					return <CoverImage src={URL.createObjectURL(file)} key={file.id} />;
-				})}
 			</ArtistName>
+			<MultiImgs>
+				{files.map((file) => {
+					return (
+						<CoverImges>
+							<CoverImage src={URL.createObjectURL(file)} key={file.id} />
+						</CoverImges>
+					);
+				})}
+			</MultiImgs>
 			<SendBtn onClick={handleUpload} />
+			{loading && <Loading />}
 		</Container>
 	);
 }

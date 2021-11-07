@@ -6,6 +6,7 @@ import send from "../img/submit.png";
 import cover from "../img/wanted.png";
 import firebase from "../utils/firebase";
 import MapAutocomplete from "./MapAutocomplete";
+import Loading from "./Loading";
 
 const Container = styled.div`
 	width: 80vmin;
@@ -97,6 +98,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 	const db = firebase.firestore();
 	const userId = user.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
+	const [loading, setLoading] = useState(false);
 	const [userLevel, setUserLevel] = useState(0);
 	const [followUsers, setFollowUsers] = useState([]);
 	const [userName, setUserName] = useState("");
@@ -186,6 +188,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 	};
 
 	const AddNewPlace = () => {
+		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const promises = [];
 		const data = {
@@ -252,6 +255,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 		});
 		Promise.all(promises)
 			.then(() => {
+				setLoading(false);
 				alert("新增成功😁😁😁😁");
 				setPopAddPlace(false);
 			})
@@ -303,6 +307,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 				})}
 			</MultiImgs>
 			<SendBtn onClick={AddNewPlace} />
+			{loading && <Loading />}
 		</Container>
 	);
 }

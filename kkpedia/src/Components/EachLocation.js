@@ -228,11 +228,70 @@ function EachLocation({ title }) {
 	const [comment, setComment] = useState([]);
 	const [readOnly, setReadOnly] = useState(true);
 	const [editText, setEditText] = useState("");
-	const [file, setFile] = useState(null);
+	const [collectUser, setCollectUser] = useState([]);
 	let { location } = useParams();
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
+
+	useEffect(() => {
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.where("locationName", "==", `${location}`)
+			.onSnapshot((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					setPlaceData([doc.data()]);
+					setEditText(doc.data().description);
+				});
+			});
+
+		docRef
+			.doc(`${title}`)
+			.collection("places")
+			.where("locationName", "==", `${location}`)
+			.where("collectedBy", "array-contains", `${user.uid}`)
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					const collectedBy = doc.data().collectedBy;
+					// item.push(collectedBy);
+					setCollectUser(collectedBy);
+					const favorite = collectedBy.some((item) => {
+						const result = item === user.uid;
+						return result;
+					});
+					if (favorite) {
+						setFavorite(true);
+					} else {
+						// doc.data() will be undefined in this case
+						setFavorite(false);
+					}
+				});
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+
+		// desc 遞減 | asc 遞增
+		docRef
+			.doc(`${title}`)
+			.collection("reviews")
+			.where("locationName", "==", `${location}`)
+			.orderBy("timestamp", "desc")
+			.limit(3)
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// console.log(doc.data());
+					item.push(doc.data());
+					// setComment([doc.data()]);
+				});
+				setComment(item);
+			});
+	}, []);
 
 	const PopUp = () => {
 		setPopUpWriteComment(!popUpWriteComment);
@@ -246,7 +305,7 @@ function EachLocation({ title }) {
 			.doc(`${user.uid}`)
 			.collection("likes")
 			.doc(`${locationName}`)
-			.set({ placeData })
+			.set(placeData[0])
 			.then(() => {
 				alert("收藏進口袋聖地囉🎉🎊");
 			})
@@ -307,66 +366,6 @@ function EachLocation({ title }) {
 		}
 	};
 
-	useEffect(() => {
-		docRef
-			.doc(`${title}`)
-			.collection("places")
-			.where("locationName", "==", `${location}`)
-			.onSnapshot((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					setPlaceData([doc.data()]);
-					setEditText(doc.data().description);
-				});
-			});
-
-		docRef
-			.doc(`${title}`)
-			.collection("places")
-			.where("locationName", "==", `${location}`)
-			.where("collectedBy", "array-contains", `${user.uid}`)
-			.get()
-			.then((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					const collectedBy = doc.data().collectedBy;
-					const favorite = collectedBy.some((item) => {
-						const result = item === user.uid;
-						return result;
-					});
-					if (favorite) {
-						setFavorite(true);
-					} else {
-						// doc.data() will be undefined in this case
-						setFavorite(false);
-					}
-				});
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
-			});
-
-		// desc 遞減 | asc 遞增
-		docRef
-			.doc(`${title}`)
-			.collection("reviews")
-			.where("locationName", "==", `${location}`)
-			.orderBy("timestamp", "desc")
-			.limit(3)
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					// console.log(doc.data());
-					item.push(doc.data());
-					// setComment([doc.data()]);
-				});
-				setComment(item);
-			});
-	}, []);
-
-	// console.log(title);
-	// console.log(placeData);
-
 	const Editable = () => {
 		if (readOnly === false) {
 			setReadOnly(true);
@@ -378,6 +377,15 @@ function EachLocation({ title }) {
 				.update({
 					description: `${editText}`,
 				});
+			collectUser.forEach((user) => {
+				db.collection("users")
+					.doc(`${user}`)
+					.collection("likes")
+					.doc(`${location}`)
+					.update({
+						description: `${editText}`,
+					});
+			});
 		} else {
 			setReadOnly(false);
 		}
@@ -441,14 +449,14 @@ function EachLocation({ title }) {
 										<>
 											{data.images.map((image) => {
 												return (
-													<SingleImg>
+													<SingleImg key={uuidv4()}>
 														<Image src={image} />
 													</SingleImg>
 												);
 											})}
 										</>
 									) : (
-										<ImageCarousel images={data.images} />
+										<ImageCarousel images={data.images} showNum={3} />
 									)}
 								</Images>
 							</MoreImage>

@@ -143,21 +143,6 @@ function LoginPage() {
 		history.push("/");
 	};
 
-	// const AddtoFirsebase = async (data) => {
-	// 	db.collection("users")
-	// 		.doc(`${data.uid}`)
-	// 		.set({
-	// 			email: data.email,
-	// 			password: password,
-	// 			userImage: data.photoURL,
-	// 			userName: data.displayName,
-	// 			userId: data.uid,
-	// 		})
-	// 		.then((docRef) => {
-	// 			console.log("😁😁😁😁");
-	// 		});
-	// };
-
 	const Register = () => {
 		setLoading(true);
 		setErrorMsg("");

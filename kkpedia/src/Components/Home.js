@@ -4,15 +4,8 @@ import styled from "styled-components";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import footer from "../img/b_illust_24_2L.png";
 import sticker from "../img/sticker3.png";
 import { Link } from "react-router-dom";
-import b1 from "../img/banner/1.png";
-import b2 from "../img/banner/2.png";
-import b3 from "../img/banner/3.png";
-import b4 from "../img/banner/4.png";
-import b5 from "../img/banner/5.png";
-import b6 from "../img/banner/6.png";
 
 const BannerContainer = styled.div`
 	width: 100%;
@@ -67,63 +60,19 @@ const TopicLink = styled(Link)`
 	}
 `;
 
-const Bottom = styled.div`
-	background-image: url(${footer});
-	background-size: 100% 9vmin;
-	width: 100%;
-	height: 9vmin;
-	position: absolute;
-	bottom: 0px;
-`;
-
 function Home() {
 	return (
-		<>
-			{/* <Slider
-				nextArrow={<></>}
-				prevArrow={<></>}
-				dots={true}
-				slidesToShow={1}
-				slidesToScroll={1}
-				autoplay={true}
-				autoplaySpeed={5000}
-				variableWidth={false}
-				swipeToSlide={true}
-				edgeFriction={1}
-			>
-				<BannerContainer>
-					<Banner src={b1} />
-				</BannerContainer>
-				<BannerContainer>
-					<Banner src={b2} />
-				</BannerContainer>
-				<BannerContainer>
-					<Banner src={b3} />
-				</BannerContainer>
-				<BannerContainer>
-					<Banner src={b4} />
-				</BannerContainer>
-				<BannerContainer>
-					<Banner src={b5} />
-				</BannerContainer>
-				<BannerContainer>
-					<Banner src={b6} />
-				</BannerContainer>
-			</Slider> */}
-
-			<EachContainer>
-				<EachTopic>
-					<TopicLink to="/idol">藝人</TopicLink>
-				</EachTopic>
-				<EachTopic>
-					<TopicLink to="/drama">戲劇</TopicLink>
-				</EachTopic>
-				<EachTopic>
-					<TopicLink to="/tvshow">綜藝</TopicLink>
-				</EachTopic>
-			</EachContainer>
-			{/* <Bottom /> */}
-		</>
+		<EachContainer>
+			<EachTopic>
+				<TopicLink to="/idol">藝人</TopicLink>
+			</EachTopic>
+			<EachTopic>
+				<TopicLink to="/drama">戲劇</TopicLink>
+			</EachTopic>
+			<EachTopic>
+				<TopicLink to="/tvshow">綜藝</TopicLink>
+			</EachTopic>
+		</EachContainer>
 	);
 }
 
