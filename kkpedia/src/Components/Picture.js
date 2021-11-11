@@ -106,20 +106,20 @@ function Picture({ title }) {
 
 	return (
 		<>
-			<Add onClick={AddPicture} topic="Idol" />
-			{popAddPicture ? (
-				<div>
-					<Cover onClick={AddPicture} />
-					<NewPicture title={title} AddPicture={AddPicture} />
-				</div>
+			{userLevel <= 20 ? (
+				<EachPhoto>
+					<p>請再加把勁，貢獻聖地解鎖圖片區唷🤪🤪</p>
+				</EachPhoto>
 			) : (
-				<Container>
-					{userLevel <= 20 ? (
-						<EachPhoto>
-							<p>請再加把勁，貢獻聖地解鎖圖片區唷🤪🤪</p>
-						</EachPhoto>
+				<>
+					<Add onClick={AddPicture} topic="Idol" />
+					{popAddPicture ? (
+						<div>
+							<Cover onClick={AddPicture} />
+							<NewPicture title={title} AddPicture={AddPicture} />
+						</div>
 					) : (
-						<>
+						<Container>
 							{photos.map((item) => {
 								return (
 									<EachPhoto key={uuidv4()}>
@@ -139,9 +139,10 @@ function Picture({ title }) {
 									</EachPhoto>
 								);
 							})}
-						</>
+							)
+						</Container>
 					)}
-				</Container>
+				</>
 			)}
 		</>
 	);

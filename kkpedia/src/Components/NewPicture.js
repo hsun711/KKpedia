@@ -96,7 +96,6 @@ function NewPicture({ title, AddPicture }) {
 	const [userName, setUserName] = useState("");
 	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
-	const [imgurl, setImgurl] = useState([]);
 	const user = firebase.auth().currentUser;
 	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [imgDescription, setImgDescription] = useState("");
@@ -196,7 +195,6 @@ function NewPicture({ title, AddPicture }) {
 		Promise.all(promises)
 			.then(() => {
 				setLoading(false);
-				alert("新增成功😁😁😁😁");
 				AddPicture(false);
 			})
 			.catch((err) => console.log(err));

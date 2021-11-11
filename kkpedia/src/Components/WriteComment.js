@@ -1,36 +1,65 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
-import send from "../img/submit.png";
 import star from "../img/star.png";
+import paper from "../img/rm429-013.png";
+// import paper from "../img/rm429-016.png";
 
 const Container = styled.div`
-	width: 70vmin;
-	background-color: beige;
+	width: 50vmin;
+	height: 70vmin;
+	background-image: url(${paper});
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	margin-left: -35vmin;
-	margin-top: -40vh;
-	padding: 5vmin 7vmin;
+	margin-left: -25vmin;
+	margin-top: -35vh;
+	padding: 3vmin;
 	display: flex;
 	flex-direction: column;
+	/* justify-content: center; */
 	z-index: 5;
+	/* outline: 5px solid blue; */
+`;
+
+const Comment = styled.div`
+	margin-top: 10vmin;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	/* outline: 5px solid black; */
 `;
 
 const Grade = styled.div`
 	display: flex;
 	justify-content: center;
 	margin-bottom: 2vmin;
+	@media screen and (max-width: 1200px) {
+		flex-direction: column;
+		align-items: center;
+	}
 `;
 
-const Score = styled.input`
+const ScoreInput = styled.input`
+	width: 15vmin;
 	margin-right: 2vmin;
 	/* &::-webkit-slider-runnable-track {
 		width: 100%;
 		height: 1vmin;
 		background: black;
 	} */
+
+	@media screen and (max-width: 1200px) {
+		width: 20vmin;
+		margin-right: 0vmin;
+		margin-bottom: 2vmin;
+	}
+`;
+
+const Score = styled.div`
+	display: flex;
 `;
 
 const Star = styled.div`
@@ -39,40 +68,73 @@ const Star = styled.div`
 	background-size: 100%;
 	width: 3vmin;
 	height: 3vmin;
+	@media screen and (max-width: 1200px) {
+		width: 4vmin;
+		height: 4vmin;
+	}
 `;
 
 const ScoreNumber = styled.p`
 	font-size: 3vmin;
 	margin-left: 0.5vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 4vmin;
+	}
 `;
 
 const PlaceName = styled.p`
 	font-size: 3.5vmin;
 	font-weight: 600;
 	text-align: center;
-	margin-bottom: 2vmin;
+	margin-bottom: 3vmin;
 `;
 
 const TextArea = styled.textarea`
 	width: 90%;
-	height: 10vmin;
-	margin-left: 4vmin;
+	min-height: 20vmin;
 	border-radius: 7px;
 	padding: 1vmin;
 	align-self: center;
+	font-size: 3vmin;
 `;
 
 const SendBtn = styled.div`
-	background-image: url(${send});
-	background-size: 100%;
-	background-repeat: no-repeat;
-	width: 10vmin;
-	height: 10vmin;
-	margin-left: 43vmin;
+	width: 90%;
+	margin: 5vmin auto;
+	background-color: transparent;
+	background-image: linear-gradient(to bottom, #9c8879, #482307);
+	border: 0 solid #e5e7eb;
+	border-radius: 0.5rem;
+	box-sizing: border-box;
+	color: #f8eedb;
+	column-gap: 1rem;
 	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	font-family: ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	font-size: 2vmin;
+	font-weight: 700;
+	line-height: 2vmin;
+	outline: 2px solid transparent;
+	padding: 1.3vmin 2.3vmin;
+	text-transform: none;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	box-shadow: 6px 8px 10px rgba(81, 41, 10, 0.1),
+		0px 2px 2px rgba(81, 41, 10, 0.2);
 	&:hover {
-		background-position-x: 1px;
-		background-position-y: 1px;
+		background-color: #f3f4f6;
+		box-shadow: 1px 2px 5px rgba(81, 41, 10, 0.15),
+			0px 1px 1px rgba(81, 41, 10, 0.15);
+		transform: translateY(0.125rem);
+	}
+
+	@media screen and (max-width: 550px) {
+		padding: 2.5vmin 3.2vmin;
 	}
 `;
 
@@ -124,27 +186,31 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 
 	return (
 		<Container>
-			<PlaceName>{location}</PlaceName>
-			<Grade>
-				<Score
-					type="range"
-					min="0"
-					max="5"
-					step="1"
-					name="score"
-					value={score}
-					onChange={GiveScore}
+			<Comment>
+				<PlaceName>{location}</PlaceName>
+				<Grade>
+					<ScoreInput
+						type="range"
+						min="0"
+						max="5"
+						step="1"
+						name="score"
+						value={score}
+						onChange={GiveScore}
+					/>
+					<Score>
+						<Star />
+						<ScoreNumber>{score}</ScoreNumber>
+					</Score>
+				</Grade>
+				<TextArea
+					value={comment}
+					onChange={(e) => {
+						setComment(e.target.value);
+					}}
 				/>
-				<Star />
-				<ScoreNumber>{score}</ScoreNumber>
-			</Grade>
-			<TextArea
-				value={comment}
-				onChange={(e) => {
-					setComment(e.target.value);
-				}}
-			/>
-			<SendBtn onClick={SendComment} />
+				<SendBtn onClick={SendComment}>送出評論</SendBtn>
+			</Comment>
 		</Container>
 	);
 }

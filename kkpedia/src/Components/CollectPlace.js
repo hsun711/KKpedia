@@ -80,7 +80,7 @@ function CollectPlace({ data }) {
 
 	return (
 		<EachPlace>
-			<PlaceImg src={img} />
+			<PlaceImg src={data.images.length === 0 ? img : data.images[0]} />
 			<PlaceTxt>
 				<Title>
 					<TitleTxt>{data.locationName}</TitleTxt>
