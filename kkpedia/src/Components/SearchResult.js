@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import firebase from "../utils/firebase";
 import algolia from "../utils/algolia";
 import styled from "styled-components";
+import Loading from "./Loading";
 import board from "../img/cork-board.png";
 import sticker from "../img/sticker.png";
 import idol from "../img/wanted.png";
@@ -74,72 +75,46 @@ const LinkTxt = styled.p`
 	font-weight: 600;
 `;
 
-function SearchResult() {
-	const db = firebase.firestore();
+function SearchResult({ allCategory }) {
 	const history = useHistory();
 	const { search } = useParams();
 	const [resultData, setResultData] = useState([]);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
+		setLoading(true);
 		algolia.search(search).then((result) => {
-			// console.log(result.hits);
-			const item = [];
-			result.hits.forEach((hit) => {
-				// console.log(hit);
-				db.collection("categories")
-					.doc(`${hit.title}`)
-					.get()
-					.then((doc) => {
-						// console.log(doc.data());
-						// setResultData(doc.data())
-						item.push(doc.data());
-					})
-					.catch((error) => {
-						console.log("Error getting document:", error);
-					});
+			const ar = [];
+			result.hits.map((hit) => {
+				const result = allCategory.filter((data) => {
+					return data.title === hit.title;
+				});
+				ar.push(...result);
 			});
-			setResultData(item);
-			// const searchReasults = result.hits.map((hit) => {
-			// 	const item = [];
-			// 	db.collection("categories")
-			// 		.doc(`${hit.title}`)
-			// 		.get()
-			// 		.then((doc) => {
-			// 			console.log(doc.data());
-			// 			item.push(doc.data());
-			// 		})
-			// 		.catch((error) => {
-			// 			console.log("Error getting document:", error);
-			// 		});
-			// 	return {
-			// 		title: hit.title,
-			// 		objectId: hit.objectID,
-			// 		main_image: resultImg,
-			// 		topic: resultTopic,
-			// 	};
-			// });
-			// setSearchResult(searchReasults);
+			setResultData(ar);
+			setLoading(false);
 		});
-	}, []);
+	}, [search]);
 
 	return (
 		<MainContainer>
 			<Container>
-				{resultData.map((item) => {
+				{resultData.map((result) => {
 					return (
-						<EachIdol key={item.title}>
+						<EachIdol key={result.title}>
 							<LinkNav
 								onClick={() => {
-									history.push(`/${item.topic}/${item.title}`);
+									history.push(`/${result.topic}/${result.title}`);
 								}}
 							>
-								<LinkTxt>{item.title}</LinkTxt>
-								<IdolImage src={item.main_image || idol} />
+								<LinkTxt>{result.title}</LinkTxt>
+								<IdolImage src={result.main_image || idol} />
 							</LinkNav>
 						</EachIdol>
 					);
 				})}
 			</Container>
+			{loading && <Loading />}
 		</MainContainer>
 	);
 }

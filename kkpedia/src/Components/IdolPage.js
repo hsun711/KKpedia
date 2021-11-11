@@ -21,42 +21,55 @@ import twitter from "../img/twitter.png";
 import youtube from "../img/youtube.png";
 import board from "../img/cork-board.png";
 import pin from "../img/pin-map.png";
-import pictures from "../img/pictures.png";
-import schedule from "../img/schedule.png";
-import comment from "../img/comment.png";
 import check from "../img/checked.png";
-import changeimg from "../img/camera.png";
+import changeimg from "../img/camera1.png";
 import add from "../img/add.png";
+import initbanner from "../img/NightSky.png";
+
+const Banner = styled.div`
+	width: 100%;
+	height: 40vmin;
+	background-image: url(${(props) => props.imgCover});
+	background-repeat: no-repeat;
+	background-color: black;
+	background-position: center 45%;
+	background-size: 100% auto;
+`;
 
 const Container = styled.div`
-	width: 70%;
+	width: 80%;
 	height: 100%;
-	margin: 10vmin auto;
+	margin: -3vmin auto;
 	padding-bottom: 7vmin;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
+	/* border: 2px solid black; */
+	@media screen and (max-width: 1024px) {
+		width: 100%;
+		margin: auto;
 	}
 `;
 
 const ColumnDiv = styled.div`
-	min-width: 20vmin;
+	align-self: flex-end;
+	min-width: 25vmin;
 	display: flex;
 	flex-direction: column;
 `;
 
 const Person = styled.div`
-	margin-top: 30px;
-	margin-left: 30px;
 	display: flex;
 	align-items: center;
+	@media screen and (max-width: 1024px) {
+		justify-content: center;
+		margin-top: 3vmin;
+	}
 `;
 
 const PersonName = styled.p`
 	font-size: 4vmin;
 	text-align: center;
 	align-self: center;
-	@media screen and (max-width: 992px) {
-		font-size: 5vmin;
+	@media screen and (max-width: 1024px) {
+		font-size: 6vmin;
 	}
 `;
 const SnsLink = styled.a`
@@ -68,6 +81,9 @@ const SnsLink = styled.a`
 
 const SnsImg = styled.img`
 	width: 3vmin;
+	@media screen and (max-width: 1024px) {
+		width: 4vmin;
+	}
 `;
 
 const Edit = styled.div`
@@ -80,6 +96,9 @@ const EditIcon = styled.img`
 	width: 3vmin;
 	margin-top: 2vmin;
 	cursor: pointer;
+	@media screen and (max-width: 1024px) {
+		width: 4vmin;
+	}
 `;
 
 const Photo = styled.div`
@@ -98,9 +117,12 @@ const PersonImage = styled.img`
 const PhotoChange = styled.div`
 	background-image: url(${changeimg});
 	background-repeat: no-repeat;
-	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	background-size: 80%;
+	background-position: center center;
+	background-color: #b2bec3;
+	border-radius: 50%;
+	width: 4vmin;
+	height: 4vmin;
 	cursor: pointer;
 	margin-right: 1vmin;
 	position: absolute;
@@ -112,29 +134,49 @@ const PhotoCheck = styled(PhotoChange)`
 	background-image: url(${check});
 `;
 
+const BannerChange = styled(PhotoChange)`
+	top: 42vmin;
+	right: 0.5vmin;
+`;
+
+const BannerCheck = styled(BannerChange)`
+	background-image: url(${check});
+`;
+
 const MenuBar = styled.div`
 	margin-top: 7vmin;
 	display: flex;
+	@media screen and (max-width: 1024px) {
+		justify-content: space-evenly;
+	}
 `;
 
 const MenuImage = styled.img`
-	width: 2vmin;
+	width: 3vmin;
 `;
 
 const MenuLink = styled(Link)`
-	font-size: 2vmin;
+	font-size: 3vmin;
 	font-weight: 600;
-	margin-right: 3vmin;
 	text-decoration: none;
-	color: black;
+	color: #404040;
+	display: flex;
+	/* align-items: center; */
+	margin-right: 4vmin;
+	@media screen and (max-width: 1024px) {
+		margin-right: 0vmin;
+	}
 `;
 
 const PlaceContainer = styled.div`
-	background-image: url(${board});
 	display: flex;
+	justify-content: center;
 	flex-wrap: wrap;
 	margin-top: 5vmin;
-	padding: 4vmin;
+	width: 100%;
+	@media screen and (max-width: 1024px) {
+		margin-top: 3vmin;
+	}
 `;
 
 function IdolPage({ topic }) {
@@ -143,21 +185,28 @@ function IdolPage({ topic }) {
 	const [sns, setSns] = useState([]);
 	const [mainImage, setMainImage] = useState("");
 	const [photoChange, setPhotoChange] = useState(false);
+	const [bannerImg, setBannerImg] = useState("");
+	const [bannerChange, setBannerChange] = useState(false);
 	const [followUsers, setFollowUsers] = useState([]);
 	const [file, setFile] = useState(null);
+	const [bannerFile, setBannerFile] = useState(null);
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const previewURL = file ? URL.createObjectURL(file) : mainImage;
+	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
 
 	useEffect(() => {
 		docRef.where("title", "==", `${title}`).onSnapshot((querySnapshot) => {
 			const item = [];
 			querySnapshot.forEach((doc) => {
 				// doc.data() is never undefined for query doc snapshots
+				// console.log(doc.data());
 				item.push({ star: doc.data() });
 			});
+			// console.log(item);
 			setSns(item);
 			setMainImage(item[0].star.main_image);
+			setBannerImg(item[0].star.main_banner);
 		});
 
 		db.collection("categories")
@@ -168,6 +217,21 @@ function IdolPage({ topic }) {
 			});
 	}, []);
 	// console.log(title);
+	const BannerOk = () => {
+		setBannerChange(false);
+		const fileRef = firebase.storage().ref(`banner_images/${title}`);
+		const metadata = {
+			contentType: bannerFile.type,
+		};
+		fileRef.put(bannerFile, metadata).then(() => {
+			fileRef.getDownloadURL().then((imageUrl) => {
+				docRef.doc(`${title}`).update({
+					main_banner: `${imageUrl}`,
+				});
+			});
+		});
+		alert("更新成功🎊🎊");
+	};
 
 	const ChangeOk = () => {
 		setPhotoChange(false);
@@ -197,8 +261,8 @@ function IdolPage({ topic }) {
 
 	const AddSns = (sns) => {
 		if (sns === "facebook") {
-			const url = prompt(`請輸入${sns}網址`);
-			if (url === null) {
+			let url = prompt(`請輸入${sns}網址`);
+			if (!url) {
 				url = "";
 			} else {
 				docRef.doc(`${title}`).update({
@@ -206,8 +270,8 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "instagram") {
-			const url = prompt(`請輸入${sns}網址`);
-			if (url === null) {
+			let url = prompt(`請輸入${sns}網址`);
+			if (!url) {
 				url = "";
 			} else {
 				docRef.doc(`${title}`).update({
@@ -215,8 +279,8 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "twitter") {
-			const url = prompt(`請輸入${sns}網址`);
-			if (url === null) {
+			let url = prompt(`請輸入${sns}網址`);
+			if (!url) {
 				url = "";
 			} else {
 				docRef.doc(`${title}`).update({
@@ -224,8 +288,8 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "youtube") {
-			const url = prompt(`請輸入${sns}網址`);
-			if (url === null) {
+			let url = prompt(`請輸入${sns}網址`);
+			if (!url) {
 				url = "";
 			} else {
 				docRef.doc(`${title}`).update({
@@ -237,6 +301,21 @@ function IdolPage({ topic }) {
 
 	return (
 		<>
+			<Banner imgCover={bennerURL || initbanner}></Banner>
+			{bannerChange ? (
+				<BannerCheck as="label" htmlFor="uploadBanner" onClick={BannerOk} />
+			) : (
+				<BannerChange as="label" htmlFor="uploadBanner" />
+			)}
+			<input
+				type="file"
+				id="uploadBanner"
+				style={{ display: "none" }}
+				onChange={(e) => {
+					setBannerFile(e.target.files[0]);
+					setBannerChange(true);
+				}}
+			/>
 			<Container>
 				<BrowserRouter>
 					<>
@@ -326,19 +405,19 @@ function IdolPage({ topic }) {
 
 						<MenuBar>
 							<MenuLink to={`${url}`}>
-								<MenuImage src={pin} />
+								{/* <MenuImage /> */}
 								聖地
 							</MenuLink>
 							<MenuLink to={`${url}/picture`}>
-								<MenuImage src={pictures} />
+								{/* <MenuImage /> */}
 								圖片區
 							</MenuLink>
 							<MenuLink to={`${url}/calender`}>
-								<MenuImage src={schedule} />
+								{/* <MenuImage /> */}
 								日程表
 							</MenuLink>
 							<MenuLink to={`${url}/post`}>
-								<MenuImage src={comment} />
+								{/* <MenuImage /> */}
 								留言區
 							</MenuLink>
 						</MenuBar>

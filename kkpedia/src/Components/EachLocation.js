@@ -11,6 +11,7 @@ import coverImage from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
 import board from "../img/cork-board.png";
+import background from "../img/20800062.jpg";
 import star from "../img/star.png";
 import edit from "../img/pencil.png";
 import check from "../img/checked.png";
@@ -18,53 +19,72 @@ import { useParams } from "react-router-dom";
 
 const MainContainer = styled.div`
 	width: 100%;
-	margin: 0px auto;
-	padding: 5vmin 0px;
-	background-image: url(${board});
-	display: flex;
-	justify-content: center;
+	background-image: url(${background});
+	background-size: 100% 100%;
+	background-repeat: no-repeat;
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	@media screen and (max-width: 1200px) {
+		width: 90%;
+	}
 `;
 
 const Container = styled.div`
-	width: 100%;
+	width: 90%;
 	display: flex;
 	flex-direction: column;
-	background-color: beige;
-	padding: 3vmin 5vmin;
+	padding: 4vmin;
+	margin: 0vmin auto;
 `;
 
 const TopDetail = styled.div`
 	width: 100%;
 	display: flex;
-	@media screen and (max-width: 992px) {
+	align-items: center;
+	justify-content: space-evenly;
+	@media screen and (max-width: 1200px) {
 		flex-direction: column;
 	}
 `;
 
 const Photo = styled.div`
+	width: 50vmin;
+	height: 30vmin;
 	display: flex;
+	justify-content: center;
 	position: relative;
-`;
-
-const MainImage = styled.img`
-	width: 20vmin;
-	/* height: 20vmin; */
-	@media screen and (max-width: 992px) {
-		width: 100%;
+	@media screen and (max-width: 1200px) {
+		margin: 0 auto;
 	}
 `;
 
+const MainImage = styled.img`
+	max-width: 100%;
+	max-height: 100%;
+`;
+
 const LocationDetail = styled.div`
+	width: 100%;
+	max-height: 30vmin;
 	display: flex;
 	flex-direction: column;
 	padding-left: 3vmin;
+	justify-content: space-between;
+	@media screen and (max-width: 1200px) {
+		padding-top: 5vmin;
+		max-height: 50vmin;
+		padding-left: 0vmin;
+	}
 `;
 
-const TitleName = styled.path`
-	font-size: 4vmin;
+const TitleName = styled.p`
+	font-size: 5vmin;
 	font-weight: 600;
-	margin-top: 1vmin;
-	margin-bottom: 2vmin;
+	line-height: 7vmin;
+	color: #482307;
+	@media screen and (max-width: 1200px) {
+		font-size: 6vmin;
+		line-height: 10vmin;
+	}
 `;
 
 const EditIcon = styled.img`
@@ -72,10 +92,12 @@ const EditIcon = styled.img`
 	height: 2vmin;
 	cursor: pointer;
 	margin-right: 1vmin;
+	margin-top: 0.5vmin;
 `;
 
 const EditArea = styled.div`
 	display: flex;
+	padding-top: 1vmin;
 `;
 
 const Description = styled.textarea`
@@ -84,21 +106,44 @@ const Description = styled.textarea`
 	width: 100%;
 	height: 10vmin;
 	border-radius: 10px;
-	background-color: beige;
 	color: grey;
 	resize: none;
 `;
 
-const NormalTxt = styled.p`
+const DescDiv = styled.div`
+	width: 100%;
+	height: 10vmin;
+	color: #57606f;
 	font-size: 2vmin;
-	margin-top: 2vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 2vmin;
+	}
+	@media screen and (max-width: 450px) {
+		font-size: 1.2vmin;
+	}
+`;
+
+const NormalTxt = styled.p`
+	font-size: 2.3vmin;
+	line-height: 4vmin;
+	color: #57606f;
+	@media screen and (max-width: 1200px) {
+		line-height: 5vmin;
+	}
+	@media screen and (max-width: 450px) {
+		line-height: 6vmin;
+	}
 `;
 
 const LikeIcon = styled.img`
-	width: 3vmin;
-	height: 3vmin;
-	margin-top: 1vmin;
+	width: 4vmin;
+	height: 4vmin;
 	cursor: pointer;
+	@media screen and (max-width: 500px) {
+		margin-top: 1.5vmin;
+		width: 5vmin;
+		height: 5vmin;
+	}
 `;
 
 const SubTitle = styled.p`
@@ -106,6 +151,7 @@ const SubTitle = styled.p`
 	font-weight: 600;
 	margin-top: 4vmin;
 	margin-bottom: 1vmin;
+	color: #482307;
 `;
 
 const PlaceMap = styled.div`
@@ -117,69 +163,77 @@ const PlaceMap = styled.div`
 const MoreImage = styled.div`
 	width: 100%;
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-evenly;
 	align-items: center;
-	justify-content: center;
-	margin-top: 3vmin;
-`;
-
-const Images = styled.div`
-	width: 90%;
-`;
-
-const Image = styled.img`
-	max-width: 20vmin;
-	height: 25vmin;
-	margin: 2vmin;
+	margin-top: 7vmin;
+	/* outline: 3px solid black; */
 `;
 
 const SingleImg = styled.div`
 	display: flex;
-	justify-content: center;
+	width: 20vmin;
+	height: 20vmin;
+	margin: 3vmin;
+	/* outline: 5px solid black; */
+`;
+
+const Image = styled.img`
+	max-width: 100%;
+	height: 100%;
+	/* margin: 2vmin; */
 `;
 
 const CommentArea = styled.div`
-	width: 70%;
+	width: 90%;
 	display: flex;
 	flex-direction: column;
-	margin: 0px auto;
+	margin: 3vmin auto;
 `;
 
 const Comment = styled.div`
 	padding: 2vmin;
-	background-color: #dfe6e9;
+	background-color: rgba(256, 256, 256, 0.7);
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
 	border-radius: 10px;
 	display: flex;
 	margin-bottom: 2vmin;
 `;
 
 const CommentUser = styled.img`
-	width: 3vmin;
-	height: 3vmin;
+	width: 4.5vmin;
+	height: 4.5vmin;
 	border-radius: 50%;
 	outline: 1px solid black;
 `;
+
+const CommentTxtArea = styled.div`
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+`;
+
 const CommentTxt = styled.div`
 	padding: 0px 2vmin;
-	position: relative;
 `;
 
 const Score = styled.div`
 	background-image: url(${star});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 2vmin;
-	height: 2vmin;
+	width: 2.5vmin;
+	height: 2.5vmin;
+	margin-bottom: 1vmin;
 `;
 
 const ScoreTxt = styled.p`
-	font-size: 2vmin;
+	font-size: 2.5vmin;
 	font-weight: 600;
-	margin-left: 2.3vmin;
+	margin-left: 3vmin;
 `;
 
 const TimeStamp = styled.div`
-	font-size: 1vmin;
+	font-size: 1.5vmin;
+	align-self: flex-end;
 `;
 
 const BottomBtn = styled.div`
@@ -189,18 +243,44 @@ const BottomBtn = styled.div`
 `;
 
 const CheckBtn = styled.div`
-	width: 20vmin;
-	height: 5vmin;
-	border: 1px solid black;
-	border-radius: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: #1dd1a1;
-	margin-bottom: 30px;
-	font-size: 2.6vmin;
-	font-weight: 600;
+	background-color: transparent;
+	background-image: linear-gradient(to bottom, #fff, #f8eedb);
+	border: 0 solid #e5e7eb;
+	border-radius: 0.5rem;
+	box-sizing: border-box;
+	color: #482307;
+	column-gap: 1rem;
 	cursor: pointer;
+	display: flex;
+	font-family: ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI",
+		Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+	font-size: 2vmin;
+	font-weight: 700;
+	line-height: 2vmin;
+	margin: 0;
+	outline: 2px solid transparent;
+	padding: 1.3vmin 2.3vmin;
+	text-align: center;
+	text-transform: none;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	box-shadow: 6px 8px 10px rgba(81, 41, 10, 0.1),
+		0px 2px 2px rgba(81, 41, 10, 0.2);
+	&:hover {
+		background-color: #f3f4f6;
+		box-shadow: 1px 2px 5px rgba(81, 41, 10, 0.15),
+			0px 1px 1px rgba(81, 41, 10, 0.15);
+		transform: translateY(0.125rem);
+	}
+	@media screen and (max-width: 1200px) {
+		font-size: 1.5vmin;
+	}
+	@media screen and (max-width: 550px) {
+		padding: 2.5vmin 3.2vmin;
+	}
 `;
 
 const Cover = styled.div`
@@ -210,14 +290,14 @@ const Cover = styled.div`
 	top: 0;
 	left: 0;
 	background-color: black;
-	opacity: 0.8;
+	opacity: 0.5;
 	z-index: 2;
 `;
 
 const StyledPopup = styled(Popup)`
 	/* use your custom style for ".popup-overlay" */
 	&-overlay {
-		background: rgba(0, 0, 0, 0.8);
+		background: rgba(0, 0, 0, 0.5);
 	}
 `;
 
@@ -293,7 +373,7 @@ function EachLocation({ title }) {
 			});
 	}, []);
 
-	const PopUp = () => {
+	const popUp = () => {
 		setPopUpWriteComment(!popUpWriteComment);
 	};
 
@@ -396,7 +476,7 @@ function EachLocation({ title }) {
 			<Container>
 				{popUpWriteComment ? (
 					<>
-						<Cover onClick={PopUp} />
+						<Cover onClick={popUp} />
 						<WriteComment
 							title={title}
 							location={location}
@@ -423,14 +503,18 @@ function EachLocation({ title }) {
 											src={readOnly ? edit : check}
 											onClick={Editable}
 										/>
-										<Description
-											edit={readOnly}
-											readOnly={readOnly}
-											value={editText}
-											onChange={(e) => {
-												setEditText(e.target.value);
-											}}
-										/>
+										{readOnly ? (
+											<DescDiv>{editText}</DescDiv>
+										) : (
+											<Description
+												edit={readOnly}
+												readOnly={readOnly}
+												value={editText}
+												onChange={(e) => {
+													setEditText(e.target.value);
+												}}
+											/>
+										)}
 									</EditArea>
 									<LikeIcon
 										src={favorite ? like : unlike}
@@ -444,21 +528,19 @@ function EachLocation({ title }) {
 								<Map latitude={data.latitude} placeId={data.placeId} />
 							</PlaceMap>
 							<MoreImage>
-								<Images>
-									{data.images.length < 3 ? (
-										<>
-											{data.images.map((image) => {
-												return (
-													<SingleImg key={uuidv4()}>
-														<Image src={image} />
-													</SingleImg>
-												);
-											})}
-										</>
-									) : (
-										<ImageCarousel images={data.images} showNum={3} />
-									)}
-								</Images>
+								{data.images.length <= 3 ? (
+									<>
+										{data.images.map((image) => {
+											return (
+												<SingleImg key={uuidv4()}>
+													<Image src={image} />
+												</SingleImg>
+											);
+										})}
+									</>
+								) : (
+									<ImageCarousel images={data.images} showNum={4} />
+								)}
 							</MoreImage>
 						</div>
 					);
@@ -470,19 +552,21 @@ function EachLocation({ title }) {
 						return (
 							<Comment key={uuidv4()}>
 								<CommentUser src={data.postUserImg || coverImage} />
-								<CommentTxt>
-									<Score>
-										<ScoreTxt>{data.score}</ScoreTxt>
-									</Score>
-									<NormalTxt>{data.comment}</NormalTxt>
+								<CommentTxtArea>
+									<CommentTxt>
+										<Score>
+											<ScoreTxt>{data.score}</ScoreTxt>
+										</Score>
+										<NormalTxt>{data.comment}</NormalTxt>
+									</CommentTxt>
 									<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
-								</CommentTxt>
+								</CommentTxtArea>
 							</Comment>
 						);
 					})}
 				</CommentArea>
 				<BottomBtn>
-					<CheckBtn onClick={PopUp}>評論</CheckBtn>
+					<CheckBtn onClick={popUp}>評論</CheckBtn>
 					<StyledPopup
 						trigger={<CheckBtn>查看更多</CheckBtn>}
 						position="center center"

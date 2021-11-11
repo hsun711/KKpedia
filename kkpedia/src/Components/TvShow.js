@@ -4,12 +4,8 @@ import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
 import add from "../img/plus.png";
 import board from "../img/cork-board.png";
+import actionboard from "../img/actionboard.png";
 import NewOne from "./NewOne";
-
-// const MainContainer = styled.div`
-// 	width: 100%;
-// 	display: flex;
-// `;
 
 const Add = styled.div`
 	background-image: url(${add});
@@ -34,22 +30,45 @@ const Cover = styled.div`
 	z-index: 2;
 `;
 
-const EachContainer = styled.div`
-	width: 70%;
+const ShowContainer = styled.div`
+	width: 80%;
 	height: 100%;
-	margin: 20vmin auto;
-	padding: 5vmin 0px;
-	background-image: url(${board});
-	display: flex;
-	/* justify-content: center; */
-	flex-wrap: wrap;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
+	margin: 7vmin auto;
+	position: relative;
+	@media screen and (max-width: 1024px) {
+		width: 90%;
 	}
 `;
+
+const EachContainer = styled.div`
+	min-width: 100%;
+	border-radius: 10px;
+	background-image: url(${board});
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-wrap: wrap;
+	position: absolute;
+	top: 23vmin;
+	left: 0px;
+	@media screen and (max-width: 1024px) {
+	}
+`;
+
+const TopicImg = styled.div`
+	background-image: url(${actionboard});
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30vmin;
+	height: 30vmin;
+	transform: rotateZ(-20deg);
+`;
+
 const TopicTitle = styled.p`
-	font-size: 3vmin;
+	font-size: 7vmin;
 	font-weight: 600;
+	position: absolute;
+	top: 10vmin;
+	left: 30vmin;
 `;
 
 function TvShow() {
@@ -81,18 +100,21 @@ function TvShow() {
 					<NewOne topic="tvshow" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
-				<EachContainer>
-					<TopicTitle>TV Show</TopicTitle>
-					{titleName.map((item) => {
-						return (
-							<TopicContainer
-								topic="tvshow"
-								item={item}
-								key={item.star.title}
-							/>
-						);
-					})}
-				</EachContainer>
+				<ShowContainer>
+					<TopicImg />
+					<TopicTitle>綜藝</TopicTitle>
+					<EachContainer>
+						{titleName.map((item) => {
+							return (
+								<TopicContainer
+									topic="tvshow"
+									item={item}
+									key={item.star.title}
+								/>
+							);
+						})}
+					</EachContainer>
+				</ShowContainer>
 			)}
 		</>
 	);

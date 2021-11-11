@@ -4,12 +4,8 @@ import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
 import add from "../img/plus.png";
 import board from "../img/cork-board.png";
+import dramaMedal from "../img/0LprnB1mp1.png";
 import NewOne from "./NewOne";
-
-// const MainContainer = styled.div`
-// 	width: 100%;
-// 	display: flex;
-// `;
 
 const Add = styled.div`
 	background-image: url(${add});
@@ -33,23 +29,45 @@ const Cover = styled.div`
 	opacity: 0.8;
 	z-index: 2;
 `;
-const EachContainer = styled.div`
-	width: 70%;
+
+const DramaContainer = styled.div`
+	width: 80%;
 	height: 100%;
-	margin: 20vmin auto;
-	padding: 5vmin 0px;
+	margin: 7vmin auto;
+	position: relative;
+	@media screen and (max-width: 1024px) {
+		width: 90%;
+	}
+`;
+const EachContainer = styled.div`
+	min-width: 100%;
 	background-image: url(${board});
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
 	display: flex;
-	/* justify-content: center; */
 	flex-wrap: wrap;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
+	position: absolute;
+	top: 25vmin;
+	left: 0px;
+	@media screen and (max-width: 1024px) {
 	}
 `;
 
+const TopicImg = styled.div`
+	background-image: url(${dramaMedal});
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30vmin;
+	height: 30vmin;
+	transform: rotateZ(-15deg);
+`;
+
 const TopicTitle = styled.p`
-	font-size: 3vmin;
+	font-size: 7vmin;
 	font-weight: 600;
+	position: absolute;
+	top: 13vmin;
+	left: 25vmin;
 `;
 
 function Drama() {
@@ -82,14 +100,21 @@ function Drama() {
 					<NewOne topic="drama" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
-				<EachContainer>
-					<TopicTitle>Drama</TopicTitle>
-					{titleName.map((item) => {
-						return (
-							<TopicContainer topic="drama" item={item} key={item.star.title} />
-						);
-					})}
-				</EachContainer>
+				<DramaContainer>
+					<TopicImg />
+					<TopicTitle>戲劇</TopicTitle>
+					<EachContainer>
+						{titleName.map((item) => {
+							return (
+								<TopicContainer
+									topic="drama"
+									item={item}
+									key={item.star.title}
+								/>
+							);
+						})}
+					</EachContainer>
+				</DramaContainer>
 			)}
 		</>
 	);

@@ -17,7 +17,6 @@ import userIcon from "../img/user.png";
 import levelImg from "../img/level-up.png";
 import profile from "../img/resume.png";
 import like from "../img/place.png";
-import post from "../img/comment.png";
 import check from "../img/checked.png";
 import changeimg from "../img/camera.png";
 import edit from "../img/pencil.png";
@@ -231,7 +230,7 @@ function Profile() {
 								收藏景點
 							</MenuLink>
 							<MenuLink to="/myPost">
-								<MenuImage src={post} />
+								<MenuImage />
 								過往PO文
 							</MenuLink>
 						</MenuBar>

@@ -210,7 +210,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 			.then((docRef) => {
 				UpdateLevel();
 				SendAlert();
-				// alert("新增成功😁😁😁😁");
 			});
 		files.map((file) => {
 			// console.log(file);
@@ -256,7 +255,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 		Promise.all(promises)
 			.then(() => {
 				setLoading(false);
-				alert("新增成功😁😁😁😁");
 				setPopAddPlace(false);
 			})
 			.catch((err) => console.log(err));

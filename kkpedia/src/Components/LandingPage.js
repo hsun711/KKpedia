@@ -6,8 +6,7 @@ import clickStart from "../img/start-buttonClick.png";
 import LoginPage from "./LoginPage";
 
 const Container = styled.div`
-	width: 100vw;
-	height: 100vh;
+	width: 100%;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -17,6 +16,8 @@ const Container = styled.div`
 
 const LandingVedio = styled.video`
 	width: 100vmax;
+	min-height: 100vh;
+	background-color: black;
 `;
 
 const StartBtn = styled.div`
@@ -54,9 +55,11 @@ function LandingPage() {
 	};
 	return (
 		<Container>
+			{/* <Cover />
+			<LoginPage />
 			<LandingVedio autoPlay loop muted>
 				<source src={vedioCover} type="video/mp4" />
-			</LandingVedio>
+			</LandingVedio> */}
 			<StartBtn onClick={ShowSignIn} />
 			{popUpsignin ? (
 				<div>

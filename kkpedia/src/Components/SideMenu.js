@@ -5,7 +5,6 @@ import { Link } from "react-router-dom";
 const MenuBar = styled.div`
 	width: 20vmin;
 	height: 100vh;
-	margin-top: 7vmin;
 	background-color: #fff;
 	border-right: 1px solid #dfe6e9;
 	box-shadow: 1px 1px 3px #95a5a6;

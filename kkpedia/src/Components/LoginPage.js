@@ -8,20 +8,9 @@ import fb from "../img/facebook.png";
 import google from "../img/google.png";
 import { facebookProvider, googleProvider } from "../utils/authMethod";
 
-// const Container = styled.div`
-// 	width: 100vw;
-// 	height: 100vh;
-// 	position: fixed;
-// 	top: 0;
-// 	left: 0;
-// 	display: flex;
-// 	z-index: 5;
-// `;
-
 const Container = styled.div`
 	width: 80vw;
 	height: 70vh;
-	/* background-color: beige; */
 	position: fixed;
 	top: 50%;
 	left: 50%;
@@ -31,6 +20,9 @@ const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	z-index: 50;
+	@media screen and (max-width: 992px) {
+		flex-direction: column;
+	}
 `;
 
 const WelcomeLeft = styled.div`
@@ -39,26 +31,43 @@ const WelcomeLeft = styled.div`
 	background-color: #018181;
 	display: flex;
 	align-items: center;
+	padding: 1vmin;
+	@media screen and (max-width: 992px) {
+		width: 100vw;
+	}
 `;
+
 const WelcomeArea = styled.div`
 	margin: 0px auto;
+	@media screen and (max-width: 992px) {
+		margin-top: 3vmin;
+	}
 `;
 
 const WelcomeText = styled.p`
-	font-size: 3.7vmin;
-	font-weight: 500;
+	font-size: 3vmin;
+	font-weight: 600;
 	margin-bottom: 3vmin;
-	color: white;
-	@media screen and (max-width: 1200px) {
-		font-size: 2.6vmin;
+	color: #ffe30d;
+	@media screen and (max-width: 992px) {
+		font-size: 4vmin;
+	}
+	@media screen and (max-width: 400px) {
+		font-size: 5vmin;
+		margin: 2vmin;
 	}
 `;
 const WelcomeRigth = styled.div`
 	width: 50vw;
 	height: 100%;
-	background-color: #f9e8a9;
+	background-color: #e5ddd2;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
+	justify-content: center;
+	@media screen and (max-width: 992px) {
+		width: 100vw;
+	}
 `;
 
 const LoginBtn = styled.div`
@@ -70,8 +79,15 @@ const LoginBtn = styled.div`
 	align-items: center;
 	justify-content: center;
 	background-color: #f1f2f6;
-	margin-bottom: 30px;
+	margin-bottom: 3vmin;
 	cursor: pointer;
+	@media screen and (max-width: 992px) {
+		width: 50vw;
+		height: 7vmin;
+	}
+	@media screen and (max-width: 400px) {
+		width: 65vw;
+	}
 `;
 
 const LoginImg = styled.img`
@@ -80,14 +96,20 @@ const LoginImg = styled.img`
 
 const LoginText = styled.p`
 	font-size: 2vmin;
-	margin-left: 10px;
+	margin-left: 2vmin;
 	font-weight: 600;
+	@media screen and (max-width: 992px) {
+		font-size: 2.5vmin;
+	}
+	@media screen and (max-width: 400px) {
+		font-size: 1vmin;
+	}
 `;
 const Text = styled.p`
 	font-size: 2.7vmin;
 	font-weight: 600;
 	text-align: center;
-	margin-top: 60px;
+	margin-top: 5vmin;
 `;
 
 const InputArea = styled.div`
@@ -100,13 +122,18 @@ const NameInput = styled.input`
 	border-radius: 20px;
 	width: 30vmin;
 	height: 4vmin;
-	margin: 15px 0px;
-	padding-left: 20px;
-	padding-top: 0.5vmin;
+	margin: 2vmin 0px;
+	padding-left: 1vmin;
 	font-size: 2vmin;
-	text-align: center;
-	@media screen and (max-width: 800px) {
+	@media screen and (max-width: 992px) {
 		font-size: 1.5vmin;
+		width: 50vmin;
+		height: 7vmin;
+		margin: 3vmin 0px;
+		font-size: 3vmin;
+	}
+	@media screen and (max-width: 400px) {
+		width: 65vw;
 	}
 `;
 const MailInput = styled(NameInput)``;
@@ -114,7 +141,7 @@ const PasswordInput = styled(NameInput)``;
 
 const BottomBtn = styled.div`
 	display: flex;
-	justify-content: space-around;
+	justify-content: space-evenly;
 	margin-top: 3vmin;
 `;
 
@@ -122,6 +149,9 @@ const CheckBtn = styled(LoginBtn)`
 	width: 10vmin;
 	font-size: 2.6vmin;
 	font-weight: 600;
+	@media screen and (max-width: 400px) {
+		width: 15vmin;
+	}
 `;
 
 const ErrorText = styled(Text)`
@@ -216,7 +246,7 @@ function LoginPage() {
 	};
 	return (
 		<Container>
-			<WelcomeLeft>
+			<WelcomeLeft autoPlay loop muted>
 				<WelcomeArea>
 					<WelcomeText>人生啊</WelcomeText>
 					<WelcomeText>總要有一次奮不顧身</WelcomeText>

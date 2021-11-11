@@ -4,20 +4,26 @@ import firebase from "../utils/firebase";
 import add from "../img/plus.png";
 import send from "../img/submit.png";
 import cover from "../img/wanted.png";
+import paper from "../img/rm429-013.png";
 import Loading from "./Loading";
 
 const Container = styled.div`
 	width: 70vmin;
-	background-color: beige;
+	background-image: url(${paper});
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	margin-left: -35vmin;
 	margin-top: -44vmin;
-	padding: 5vmin 7vmin;
+	padding: 10vmin 7vmin 5vmin;
 	display: flex;
 	flex-direction: column;
 	z-index: 5;
+	@media screen and (max-width: 1200px) {
+		margin-top: -55vmin;
+	}
 `;
 
 const InputTitle = styled.p`
@@ -33,16 +39,19 @@ const InputArea = styled.input`
 	margin: 15px 0px;
 	padding-left: 10px;
 	font-size: 2vmin;
-	@media screen and (max-width: 800px) {
+	@media screen and (max-width: 1200px) {
 		font-size: 1.5vmin;
 	}
 `;
 
 const ArtistName = styled.div`
 	width: 100%;
-	margin-top: 3vmin;
+	margin-top: 2vmin;
 	display: flex;
 	align-items: center;
+	@media screen and (max-width: 1200px) {
+		margin-top: 1vmin;
+	}
 `;
 
 const ShortTitle = styled(InputTitle)`
@@ -110,12 +119,12 @@ function NewOne({ topic, setPopAddOne }) {
 							twitter: twitter,
 							youtube: youtube,
 							main_image: mainimage,
+							main_banner: "",
 						},
 						{ merge: true }
 					)
 					.then((docRef) => {
 						setLoading(false);
-						alert("新增成功😁😁😁😁");
 						setPopAddOne(false);
 					});
 			});

@@ -3,8 +3,12 @@
 	margin: 0px;
 	padding: 0px;
 	/* font-family: "cwTeXYen", cursive; */
+	color: #404040;
+	/* color: #482307; */
 }
 
 body {
-	background-image: url("./img/lined_paper.png");
+	background-image: url("./img/craft-texture-brown-journal-note.jpg");
+	background-size: cover;
+	background-attachment: fixed;
 }

@@ -8,14 +8,23 @@ import coverImage from "../img/wanted.png";
 import leftarrow from "../img/left-arrow.png";
 import rightarrow from "../img/right-arrow.png";
 
+const Images = styled.div`
+	width: 90%;
+	/* outline: 5px solid blue; */
+	padding-left: 4vmin;
+	padding-right: 3vmin;
+`;
+const ImgContainer = styled.div`
+	width: 20vmin;
+	height: 25vmin;
+	display: flex;
+	margin-top: 1vmin;
+`;
+
 const Image = styled.img`
-	max-width: 20vmin;
-	height: 20vmin;
-	margin: 2vmin;
-	@media screen and (max-width: 992px) {
-		max-width: 10vmin;
-		height: 10vmin;
-	}
+	width: 80%;
+	height: 100%;
+	margin: 0vmin auto;
 `;
 const Arrow = styled.img`
 	width: 7vmin;
@@ -36,12 +45,16 @@ export default function ImageCarousel({ images, showNum }) {
 
 	// console.log(images.length);
 	return (
-		<>
+		<Images>
 			<Slider {...settings}>
 				{images.map((image) => {
-					return <Image src={image || coverImage} key={uuidv4()} />;
+					return (
+						<ImgContainer>
+							<Image src={image || coverImage} key={uuidv4()} />
+						</ImgContainer>
+					);
 				})}
 			</Slider>
-		</>
+		</Images>
 	);
 }

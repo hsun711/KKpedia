@@ -1,27 +1,25 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
-import algolia from "../utils/algolia";
 import menu from "../img/burgerMenu.png";
 import userIcon from "../img/user.png";
 import logo from "../img/logo1.png";
 import search from "../img/search.png";
 import SideMenu from "./SideMenu";
 import Notification from "./Notification";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logout from "../img/logout.png";
 import bell from "../img/bell.png";
 
 const HeaderContent = styled.div`
-	background-color: #fff;
+	background-color: rgba(256, 256, 256);
 	display: flex;
 	border: 1px solid #dfe6e9;
 	width: 100%;
 	height: 7vmin;
 	margin: 0px auto;
-	box-shadow: 1px 1px 3px #95a5a6;
-	display: flex;
-	position: fixed;
+	position: sticky;
+	top: 0px;
 	z-index: 2;
 	justify-content: space-between;
 `;
@@ -56,7 +54,9 @@ const BurgerMenu = styled.div`
 const Member = styled.img`
 	width: 3vmin;
 	height: 3vmin;
-	margin: auto 2.5vmin;
+	margin-top: 0.5vmin;
+	margin-right: 2.5vmin;
+	margin-left: 2.5vmin;
 	border-radius: 50%;
 	cursor: pointer;
 `;
@@ -68,26 +68,17 @@ const Search = styled.div`
 
 const SearchInput = styled.input`
 	border-radius: 20px;
-	width: 20vmin;
+	border: 2px solid #8a4b35;
+	width: 25vmin;
 	height: 4vmin;
 	padding: 8px 48px 8px 20px;
 	outline: none;
 	font-size: 2vmin;
-	/* @media screen and (max-width: 1280px){
-        width: 0;
-        padding: 20px;
-        border: none;
-        font-size: 16px;
-        background-size: 32px;
-        position: absolute;
-        right: 10px;
-        cursor: pointer;
-
-        &:focus {
-            width: 90%;
-            border: solid 1px #979797;
-        }
-    } */
+	@media screen and (max-width: 992px) {
+		width: 20vmin;
+		height: 3vmin;
+		padding: 2vmin;
+	}
 `;
 
 const InputBtn = styled(Link)`
@@ -97,8 +88,11 @@ const InputBtn = styled(Link)`
 	width: 4vmin;
 	height: 4vmin;
 	position: absolute;
-	right: 0px;
+	right: 1vmin;
 	cursor: pointer;
+	@media screen and (max-width: 992px) {
+		top: 0.5vmin;
+	}
 `;
 
 const LinkNav = styled(Link)`
@@ -164,10 +158,6 @@ function Header() {
 		setSideBar(!sideBar);
 	};
 
-	const SearchChange = (e) => {
-		setInputSearch(e.target.value);
-	};
-
 	useEffect(() => {
 		db.collection("users")
 			.doc(`${user.uid}`)
@@ -204,7 +194,12 @@ function Header() {
 				</HeaderNav>
 				<HeaderNav>
 					<Search>
-						<SearchInput value={inputSearch} onChange={SearchChange} />
+						<SearchInput
+							value={inputSearch}
+							onChange={(e) => {
+								setInputSearch(e.target.value);
+							}}
+						/>
 						<InputBtn to={`/search/${inputSearch}`} />
 					</Search>
 					<Bell onClick={showNewAlert}>

@@ -2,15 +2,10 @@ import React, { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
+import artist from "../img/artist.png";
 import add from "../img/plus.png";
 import board from "../img/cork-board.png";
 import NewOne from "./NewOne";
-
-// const MainContainer = styled.div`
-// 	width: 100%;
-// 	display: flex;
-// 	flex-direction: column;
-// `;
 
 const Add = styled.div`
 	background-image: url(${add});
@@ -19,7 +14,7 @@ const Add = styled.div`
 	width: 7vmin;
 	height: 7vmin;
 	position: fixed;
-	bottom: 3vmin;
+	top: 10vmin;
 	right: 3vmin;
 	cursor: pointer;
 `;
@@ -35,23 +30,44 @@ const Cover = styled.div`
 	z-index: 2;
 `;
 
-const EachContainer = styled.div`
-	width: 70%;
+const IdolContainer = styled.div`
+	/* max-width: 1440px; */
+	width: 80%;
 	height: 100%;
-	margin: 20vmin auto;
-	padding: 5vmin 0px;
-	background-image: url(${board});
-	display: flex;
-	flex-wrap: wrap;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
-		justify-content: center;
+	margin: 7vmin auto;
+	position: relative;
+	@media screen and (max-width: 1024px) {
+		width: 90%;
 	}
 `;
 
+const EachContainer = styled.div`
+	min-width: 100%;
+	border-radius: 10px;
+	background-image: url(${board});
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	display: flex;
+	flex-wrap: wrap;
+	position: absolute;
+	top: 21vmin;
+	left: 0px;
+`;
+
+const TopicImg = styled.div`
+	background-image: url(${artist});
+	background-repeat: no-repeat;
+	background-size: contain;
+	width: 30vmin;
+	height: 30vmin;
+	transform: rotateZ(-30deg);
+`;
+
 const TopicTitle = styled.p`
-	font-size: 3vmin;
+	font-size: 7vmin;
 	font-weight: 600;
+	position: absolute;
+	top: 10vmin;
+	left: 30vmin;
 `;
 
 function Idol() {
@@ -84,13 +100,21 @@ function Idol() {
 					<NewOne topic="idol" setPopAddOne={setPopAddOne} />
 				</div>
 			) : (
-				<EachContainer>
-					{titleName.map((item) => {
-						return (
-							<TopicContainer topic="idol" item={item} key={item.star.title} />
-						);
-					})}
-				</EachContainer>
+				<IdolContainer>
+					<TopicImg />
+					<TopicTitle>藝人</TopicTitle>
+					<EachContainer>
+						{titleName.map((item) => {
+							return (
+								<TopicContainer
+									topic="idol"
+									item={item}
+									key={item.star.title}
+								/>
+							);
+						})}
+					</EachContainer>
+				</IdolContainer>
 			)}
 		</>
 	);

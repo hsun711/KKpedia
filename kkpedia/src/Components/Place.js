@@ -3,21 +3,40 @@ import styled from "styled-components";
 import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
 import { Link, useRouteMatch } from "react-router-dom";
+import board from "../img/cork-board.png";
 import add from "../img/plus.png";
-import sticker from "../img/sticker4.png";
+import sticker from "../img/sticker6.png";
 import NewPlace from "./NewPlace";
+
+const OutsideContainer = styled.div`
+	width: 100%;
+	background-image: url(${board});
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	flex-wrap: wrap;
+	padding: 3vmin;
+	@media screen and (max-width: 1024px) {
+		margin: 3vmin;
+	}
+`;
 
 const Container = styled.div`
 	display: flex;
-	background-color: beige;
+	background-image: url(${sticker});
+	background-repeat: no-repeat;
+	background-size: 100%;
 	padding: 1vmin;
 	width: 30vmin;
-	min-height: 20vmin;
-	border-radius: 10px;
+	height: 32vmin;
 	align-items: center;
 	justify-content: center;
-	margin-left: 3vmin;
-	margin-bottom: 3vmin;
+	margin: 3vmin;
+
+	@media screen and (max-width: 1024px) {
+		margin: 3vmin 7vmin;
+	}
 `;
 
 const PlaceLink = styled(Link)`
@@ -34,34 +53,56 @@ const EachPlace = styled.div`
 `;
 
 const ImgContainer = styled.div`
-	/* background-image: url(${sticker});
-	background-repeat: no-repeat;
-	background-size: 100%; */
 	width: 20vmin;
 	height: 20vmin;
 	display: flex;
 	justify-content: center;
+	align-items: center;
+	@media screen and (max-width: 1024px) {
+		width: 15vmin;
+		height: 15vmin;
+	}
 `;
 
 const PlaceImage = styled.img`
-	max-width: 100%;
-	max-height: 100%;
+	max-width: 90%;
+	max-height: 70%;
+	transform: rotateZ(7deg);
 `;
 
 const PlaceText = styled.div`
-	min-width: 20vmin;
+	max-width: 20vmin;
 	min-height: 7vmin;
-	text-align: center;
-	padding-top: 2vmin;
+	margin-top: -2vmin;
+	transform: rotateZ(7deg);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	margin-left: -2.5vmin;
+	@media screen and (max-width: 1024px) {
+		padding-top: 1vmin;
+	}
 `;
 
 const PlaceTitle = styled.p`
-	font-size: 2vmin;
+	font-size: 3vmin;
 	font-weight: 600;
+	@media screen and (max-width: 500px) {
+		font-size: 1vmin;
+	}
 `;
 const PlaceDesp = styled.p`
-	margin-top: 1vmin;
+	/* margin-top: 0.75vmin; */
 	font-size: 1.5vmin;
+	color: #34495e;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	@media screen and (max-width: 500px) {
+		font-size: 1vmin;
+	}
 `;
 
 const Add = styled.div`
@@ -102,6 +143,7 @@ function Place({ title, topic }) {
 	};
 
 	useEffect(() => {
+		let isMounted = true;
 		docRef
 			.doc(`${title}`)
 			.collection("places")
@@ -113,9 +155,12 @@ function Place({ title, topic }) {
 				// console.log(placeDetail);
 				setPlace(placeDetail);
 			});
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 	return (
-		<>
+		<OutsideContainer>
 			<Add onClick={AddSomePlace} topic="Idol" />
 			{popAddPlace ? (
 				<div>
@@ -148,7 +193,7 @@ function Place({ title, topic }) {
 					})}
 				</>
 			)}
-		</>
+		</OutsideContainer>
 	);
 }
 
