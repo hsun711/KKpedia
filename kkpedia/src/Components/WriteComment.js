@@ -111,9 +111,6 @@ const SendBtn = styled.div`
 	cursor: pointer;
 	display: flex;
 	justify-content: center;
-	font-family: ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	font-size: 2vmin;
 	font-weight: 700;
 	line-height: 2vmin;

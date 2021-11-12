@@ -19,12 +19,19 @@ const ImgContainer = styled.div`
 	height: 25vmin;
 	display: flex;
 	margin-top: 1vmin;
+	@media screen and (max-width: 1200px) {
+		width: 20vmin;
+		height: 15vmin;
+	}
 `;
 
 const Image = styled.img`
 	width: 80%;
 	height: 100%;
 	margin: 0vmin auto;
+	@media screen and (max-width: 1200px) {
+		height: 90%;
+	}
 `;
 const Arrow = styled.img`
 	width: 7vmin;
@@ -49,8 +56,8 @@ export default function ImageCarousel({ images, showNum }) {
 			<Slider {...settings}>
 				{images.map((image) => {
 					return (
-						<ImgContainer>
-							<Image src={image || coverImage} key={uuidv4()} />
+						<ImgContainer key={uuidv4()}>
+							<Image src={image || coverImage} />
 						</ImgContainer>
 					);
 				})}

@@ -4,7 +4,6 @@ import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
 import { Link, useRouteMatch } from "react-router-dom";
 import board from "../img/cork-board.png";
-import add from "../img/plus.png";
 import sticker from "../img/sticker6.png";
 import NewPlace from "./NewPlace";
 
@@ -106,15 +105,34 @@ const PlaceDesp = styled.p`
 `;
 
 const Add = styled.div`
-	background-image: url(${add});
-	background-repeat: no-repeat;
-	background-size: 100%;
-	width: 7vmin;
-	height: 7vmin;
+	background-color: #f8eedb;
+	border: 2px solid #422800;
+	border-radius: 30px;
+	box-shadow: #422800 4px 4px 0 0;
+	color: #422800;
+	cursor: pointer;
 	position: fixed;
 	bottom: 3vmin;
-	right: 3vmin;
-	cursor: pointer;
+	right: 2vmin;
+	display: inline-block;
+	font-weight: 600;
+	font-size: 2vmin;
+	padding: 0 2vmin;
+	line-height: 4.2vmin;
+	text-align: center;
+	text-decoration: none;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	&:hover {
+		background-color: #f3f4f6;
+		box-shadow: #422800 2px 2px 0 0;
+		transform: translate(2px, 2px);
+	}
+	@media screen and (max-width: 1200px) {
+		line-height: 5vmin;
+		padding: 0.75vmin 2vmin;
+	}
 `;
 
 const Cover = styled.div`
@@ -161,7 +179,9 @@ function Place({ title, topic }) {
 	}, []);
 	return (
 		<OutsideContainer>
-			<Add onClick={AddSomePlace} topic="Idol" />
+			<Add onClick={AddSomePlace} topic="Idol">
+				新增聖地
+			</Add>
 			{popAddPlace ? (
 				<div>
 					<Cover onClick={AddSomePlace} />

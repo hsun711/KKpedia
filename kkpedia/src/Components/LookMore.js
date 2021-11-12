@@ -4,9 +4,7 @@ import styled from "styled-components";
 import firebase from "../utils/firebase";
 import mainImage from "../img/wanted.png";
 import star from "../img/star.png";
-import notepaper from "../img/assortment.png";
-import comentpaper from "../img/678.png";
-import notebook from "../img/20800062.jpg";
+import notebook from "../img/20800062.png";
 
 const Container = styled.div`
 	width: 80vmin;

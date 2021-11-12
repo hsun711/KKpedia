@@ -1,44 +1,63 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import idolimage from "../img/wanted.png";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
-import send from "../img/submit.png";
 import ungood from "../img/unthumbs-up.png";
 import dogood from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
 import userIcon from "../img/user.png";
 
 const CommentArea = styled.div`
-	width: 80vmin;
+	width: 90%;
 	align-self: center;
-	outline: 1px solid black;
+	background-color: rgba(256, 256, 256, 0.5);
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	/* outline: 1px solid black; */
 	display: flex;
 	flex-direction: column;
 	padding: 3vmin;
 	border-radius: 10px;
-	margin-bottom: 3vmin;
+	margin: 3vmin 0vmin;
 `;
 
 const PosterDetail = styled.div`
+	width: 100%;
 	display: flex;
+	align-items: center;
 	margin-bottom: 1vmin;
+	padding-left: 1vmin;
 `;
 
 const PosterImage = styled.img`
-	width: 5vmin;
-	height: 5vmin;
+	width: 6vmin;
+	height: 6vmin;
 	border-radius: 50%;
-	outline: 1px solid black;
+	/* outline: 2px solid black; */
 `;
 
 const PosterText = styled.div`
-	height: 5vmin;
-	margin-left: 0.5vmin;
+	width: 100%;
+	margin-left: 1.5vmin;
+`;
+
+const PosterName = styled.p`
+	font-size: 3vmin;
+`;
+
+const TimeStamp = styled.div`
+	font-size: 1.5vmin;
 `;
 
 const Comment = styled.div`
 	padding: 2vmin;
+	word-wrap: break-word;
+	@media screen and (max-width: 1200px) {
+		font-size: 2.2vmin;
+	}
+`;
+
+const CommentText = styled.p`
+	font-size: 3.5vmin;
 `;
 
 const Icon = styled.div`
@@ -65,40 +84,20 @@ const Recomment = styled.div`
 `;
 
 const ReplyImg = styled(PosterImage)`
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 `;
 
 const ReplyComment = styled.div`
 	padding: 1vmin 2vmin 2vmin;
-	width: 100%;
 	background-color: #dfe6e9;
+	min-width: 30vmin;
 	margin-left: 1vmin;
 	border-radius: 10px;
-`;
-
-const TextArea = styled.input`
-	width: 90%;
-	height: 5vmin;
-	font-size: 2vmin;
-	margin-left: 4vmin;
-	border-radius: 10px;
-	padding: 1vmin;
-	align-self: center;
-`;
-
-const Submit = styled.div`
-	background-image: url(${send});
-	background-size: 90%;
-	background-repeat: no-repeat;
-	width: 6vmin;
-	height: 5vmin;
-	border-radius: 10px;
-	margin-left: 90%;
-	cursor: pointer;
-	&:hover {
-		background-position-x: 2px;
-		background-position-y: 2px;
+	display: flex;
+	flex-direction: column;
+	@media screen and (max-width: 1200px) {
+		width: 100%;
 	}
 `;
 
@@ -107,10 +106,17 @@ const ReplyText = styled.div`
 	align-items: center;
 `;
 
+const ReplyUserName = styled.p`
+	font-size: 2vmin;
+	font-weight: 600;
+`;
+
 const SmallTxt = styled.p`
 	font-size: 1.3vmin;
-	font-weight: 600;
-	margin-right: 1.3vmin;
+	align-self: flex-end;
+	@media screen and (max-width: 1200px) {
+		font-size: 1vmin;
+	}
 `;
 
 const EditArea = styled.div`
@@ -118,10 +124,57 @@ const EditArea = styled.div`
 	align-items: center;
 `;
 
+const TextArea = styled.textarea`
+	width: 90%;
+	height: 10vmin;
+	font-size: 2.5vmin;
+	border-radius: 10px;
+	margin-top: 3vmin;
+	padding: 1vmin;
+	align-self: center;
+	@media screen and (max-width: 1200px) {
+		height: 7vmin;
+	}
+`;
+
+const Submit = styled.div`
+	align-self: flex-end;
+	background-color: transparent;
+	background-image: linear-gradient(to bottom, #fff, #f8eedb);
+	border: 0 solid #e5e7eb;
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: #482307;
+	column-gap: 1rem;
+	cursor: pointer;
+	display: flex;
+	font-size: 2.5vmin;
+	font-weight: 700;
+	line-height: 2.5vmin;
+	margin: 2vmin;
+	outline: 2px solid transparent;
+	padding: 1vmin 2vmin;
+	text-align: center;
+	text-transform: none;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	box-shadow: 6px 8px 10px rgba(81, 41, 10, 0.1),
+		0px 2px 2px rgba(81, 41, 10, 0.2);
+	&:hover {
+		background-color: #f3f4f6;
+		box-shadow: 1px 2px 5px rgba(81, 41, 10, 0.15),
+			0px 1px 1px rgba(81, 41, 10, 0.15);
+		transform: translateY(0.125rem);
+	}
+`;
+
 function RenderPost({ item }) {
 	const time = item.data.postTime;
 	const [replyComment, setReplyComment] = useState("");
 	const [renderReply, setRenderReply] = useState([]);
+	const [showReply, setShowReply] = useState({});
 	const [userImg, setUserImg] = useState("");
 	const [userName, setUserName] = useState("");
 	const [good, setGood] = useState(false);
@@ -161,7 +214,6 @@ function RenderPost({ item }) {
 		if (doc.exists) {
 			setUserImg(doc.data().userImage);
 			setUserName(doc.data().userName);
-			// console.log(doc.data().userImage);
 		} else {
 			// doc.data() will be undefined in this case
 			console.log("No such document!");
@@ -178,8 +230,10 @@ function RenderPost({ item }) {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					item.push(doc.data());
-					// console.log(item);
+					console.log(doc.data());
 				});
+
+				setShowReply(item[0]);
 				setRenderReply(item);
 				setCommentNum(item.length);
 			});
@@ -220,19 +274,21 @@ function RenderPost({ item }) {
 			});
 	};
 
+	// console.log(userImg);
+
 	return (
 		<CommentArea>
 			<PosterDetail>
-				<PosterImage src={idolimage} />
+				<PosterImage src={item.data.userImage || userIcon} />
 				<PosterText>
-					<h3>{item.data.displayName}</h3>
-					<p>{new Date(time).toLocaleString()}</p>
+					<PosterName>{item.data.displayName}</PosterName>
+					<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
 				</PosterText>
 			</PosterDetail>
 			<hr />
 			<EditArea>
 				<Comment>
-					<p>{item.data.content}</p>
+					<CommentText>{item.data.content}</CommentText>
 				</Comment>
 			</EditArea>
 
@@ -251,19 +307,36 @@ function RenderPost({ item }) {
 								<ReplyImg src={item.userImg || userIcon} />
 								<ReplyComment>
 									<ReplyText>
-										<SmallTxt>{item.replyUser}</SmallTxt>
-										<SmallTxt>
-											{new Date(item.postTime).toLocaleString()}
-										</SmallTxt>
+										<ReplyUserName>{item.replyUser}</ReplyUserName>
 									</ReplyText>
 									<Comment>{item.content}</Comment>
+									<SmallTxt>
+										{new Date(item.postTime).toLocaleString()}
+									</SmallTxt>
 								</ReplyComment>
 							</Recomment>
 						);
 					})}
 				</>
 			) : (
-				<></>
+				<>
+					{showReply !== undefined ? (
+						<Recomment>
+							<ReplyImg src={showReply.userImg || userIcon} />
+							<ReplyComment>
+								<ReplyText>
+									<ReplyUserName>{showReply.replyUser}</ReplyUserName>
+								</ReplyText>
+								<Comment>{showReply.content}</Comment>
+								<SmallTxt>
+									{new Date(showReply.postTime).toLocaleString()}
+								</SmallTxt>
+							</ReplyComment>
+						</Recomment>
+					) : (
+						<></>
+					)}
+				</>
 			)}
 
 			<TextArea
@@ -272,7 +345,7 @@ function RenderPost({ item }) {
 					setReplyComment(e.target.value);
 				}}
 			/>
-			<Submit onClick={SendReply} />
+			<Submit onClick={SendReply}>回覆</Submit>
 		</CommentArea>
 	);
 }

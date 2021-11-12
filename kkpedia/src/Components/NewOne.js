@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
-import add from "../img/plus.png";
-import send from "../img/submit.png";
-import cover from "../img/wanted.png";
+import add from "../img/addimage.png";
 import paper from "../img/rm429-013.png";
 import Loading from "./Loading";
 
@@ -17,9 +15,10 @@ const Container = styled.div`
 	left: 50%;
 	margin-left: -35vmin;
 	margin-top: -44vmin;
-	padding: 10vmin 7vmin 5vmin;
+	padding: 10vmin 7vmin 0vmin;
 	display: flex;
 	flex-direction: column;
+	justify-content: space-evenly;
 	z-index: 5;
 	@media screen and (max-width: 1200px) {
 		margin-top: -55vmin;
@@ -29,7 +28,20 @@ const Container = styled.div`
 const InputTitle = styled.p`
 	width: 55vmin;
 	font-size: 2.5vmin;
+	line-height: 4vmin;
 	font-weight: 600;
+	@media screen and (max-width: 1200px) {
+		font-size: 3vmin;
+		line-height: 3vmin;
+	}
+`;
+
+const LongTitle = styled(InputTitle)`
+	@media screen and (max-width: 520px) {
+		width: 100vmin;
+		font-size: 1vmin;
+		line-height: 4vmin;
+	}
 `;
 
 const InputArea = styled.input`
@@ -46,7 +58,7 @@ const InputArea = styled.input`
 
 const ArtistName = styled.div`
 	width: 100%;
-	margin-top: 2vmin;
+	margin-top: 1vmin;
 	display: flex;
 	align-items: center;
 	@media screen and (max-width: 1200px) {
@@ -73,16 +85,39 @@ const CoverImage = styled.img`
 `;
 
 const SendBtn = styled.div`
-	background-image: url(${send});
-	background-size: 95%;
-	background-repeat: no-repeat;
-	width: 10vmin;
-	height: 8vmin;
-	margin-left: 45vmin;
+	width: 100%;
+	margin: 5vmin auto;
+	background-color: transparent;
+	background-image: linear-gradient(to bottom, #9c8879, #482307);
+	border: 0 solid #e5e7eb;
+	border-radius: 0.5rem;
+	box-sizing: border-box;
+	color: #f8eedb;
+	column-gap: 1rem;
 	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	font-size: 2.5vmin;
+	font-weight: 700;
+	line-height: 2vmin;
+	outline: 2px solid transparent;
+	padding: 1.3vmin 2.3vmin;
+	text-transform: none;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	box-shadow: 6px 8px 10px rgba(81, 41, 10, 0.1),
+		0px 2px 2px rgba(81, 41, 10, 0.2);
 	&:hover {
-		background-position-x: 2px;
-		background-position-y: 2px;
+		background-color: #f3f4f6;
+		box-shadow: 1px 2px 5px rgba(81, 41, 10, 0.15),
+			0px 1px 1px rgba(81, 41, 10, 0.15);
+		transform: translateY(0.125rem);
+	}
+
+	@media screen and (max-width: 550px) {
+		padding: 2.5vmin 3.2vmin;
 	}
 `;
 
@@ -95,18 +130,17 @@ function NewOne({ topic, setPopAddOne }) {
 	const [twitter, setTwitter] = useState("");
 	const [youtube, setYoutube] = useState("");
 	const [file, setFile] = useState(null);
-
-	const previewURL = file ? URL.createObjectURL(file) : `${cover}`;
+	const previewURL = file ? URL.createObjectURL(file) : "";
 
 	const SendNewOn = () => {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
-		// const metadata = {
-		// 	contentType: file.type,
-		// };
+		const metadata = {
+			contentType: file.type,
+		};
 
-		fileRef.put(file).then(() => {
+		fileRef.put(file, metadata).then(() => {
 			fileRef.getDownloadURL().then((imageUrl) => {
 				const mainimage = file ? imageUrl : "";
 				documentRef
@@ -135,7 +169,7 @@ function NewOne({ topic, setPopAddOne }) {
 		<Container>
 			<InputTitle>類別：{topic}</InputTitle>
 			<ArtistName>
-				<InputTitle>藝人 / 戲劇 / 綜藝名稱：</InputTitle>
+				<LongTitle>藝人 / 戲劇 / 綜藝名稱：</LongTitle>
 				<InputArea
 					value={title}
 					onChange={(e) => {
@@ -192,7 +226,7 @@ function NewOne({ topic, setPopAddOne }) {
 				/>
 				<CoverImage src={previewURL} />
 			</ArtistName>
-			<SendBtn onClick={SendNewOn} />
+			<SendBtn onClick={SendNewOn}>新增</SendBtn>
 			{loading && <Loading />}
 		</Container>
 	);

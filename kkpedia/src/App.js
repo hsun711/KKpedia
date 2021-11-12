@@ -91,8 +91,8 @@ function App() {
 						</MainContainer>
 					</>
 				) : (
-					<Loading />
-					/* <LandingPage /> */
+					/* <Loading /> */
+					<LandingPage />
 				)}
 			</>
 		</BrowserRouter>
