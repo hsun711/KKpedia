@@ -79,7 +79,7 @@ const TitleName = styled.p`
 	font-size: 5vmin;
 	font-weight: 600;
 	line-height: 7vmin;
-	color: #482307;
+	color: #404040;
 	@media screen and (max-width: 1200px) {
 		font-size: 6vmin;
 		line-height: 10vmin;
@@ -150,7 +150,7 @@ const SubTitle = styled.p`
 	font-weight: 600;
 	margin-top: 4vmin;
 	margin-bottom: 1vmin;
-	color: #482307;
+	color: #404040;
 `;
 
 const PlaceMap = styled.div`
@@ -251,9 +251,6 @@ const CheckBtn = styled.div`
 	column-gap: 1rem;
 	cursor: pointer;
 	display: flex;
-	font-family: ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	font-size: 2vmin;
 	font-weight: 700;
 	line-height: 2vmin;

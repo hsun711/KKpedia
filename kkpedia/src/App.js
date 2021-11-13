@@ -14,15 +14,17 @@ import { BrowserRouter, Route, Switch } from "react-router-dom";
 import Loading from "./Components/Loading";
 
 const MainContainer = styled.div`
-	width: 100%;
+	max-width: 1560px;
+	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
-	/* border: 5px solid black; */
+	/* border: 1px solid black; */
 `;
 
 const Container = styled.div`
 	width: 100%;
-	height: 90vh;
+	/* height: 90vh; */
+	/* outline: 5px soild black; */
 `;
 
 function App() {
@@ -74,10 +76,14 @@ function App() {
 										<TvShow />
 									</Container>
 								</Route>
+								<Route exact path="/profile">
+									<Container>
+										<Profile />
+									</Container>
+								</Route>
 								<Route path="/tvshow/:title">
 									<IdolPage topic="tvshow" />
 								</Route>
-								<Route exact path="/profile" component={Profile}></Route>
 								<Route path="/search/:search">
 									<SearchResult allCategory={allCategory} />
 								</Route>

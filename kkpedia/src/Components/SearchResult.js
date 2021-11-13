@@ -4,7 +4,7 @@ import algolia from "../utils/algolia";
 import styled from "styled-components";
 import Loading from "./Loading";
 import board from "../img/cork-board.png";
-import sticker from "../img/sticker.png";
+import sticker from "../img/sticker2.png";
 import idol from "../img/wanted.png";
 import { Link, useParams, useHistory } from "react-router-dom";
 
@@ -15,43 +15,32 @@ const MainContainer = styled.div`
 `;
 
 const Container = styled.div`
-	width: 70%;
+	width: 80%;
 	height: 100%;
 	margin: 20vmin auto;
-	padding: 5vmin 0px;
 	background-image: url(${board});
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
 	display: flex;
-	/* justify-content: center; */
+	justify-content: center;
 	flex-wrap: wrap;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
+	@media screen and (max-width: 1200px) {
+		width: 90%;
 	}
 `;
 
 const EachIdol = styled.div`
 	background-image: url(${sticker});
 	background-size: 100%;
-	width: 20vmin;
-	height: 20vmin;
-	margin: 4vmin 5vmin;
-	padding: 0px 3vmin;
+	width: 30vmin;
+	height: 30vmin;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 `;
 
-// const LinkNav = styled(Link)`
-// 	text-decoration: none;
-// 	display: flex;
-// 	flex-direction: column;
-// 	justify-content: center;
-// 	&:hover {
-// 		transform: scale(1.1);
-// 		transition: all 0.3s;
-// 		cursor: pointer;
-// 	}
-// `;
 const LinkNav = styled.div`
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
@@ -64,15 +53,19 @@ const LinkNav = styled.div`
 
 const IdolImage = styled.img`
 	align-self: center;
-	width: 10vmin;
-	/* height: 10vmin; */
+	max-width: 15vmin;
+	height: 15vmin;
+	margin-top: 2.75vmin;
+	margin-right: 1.1vmin;
 `;
 
 const LinkTxt = styled.p`
 	color: #2d3436;
 	text-align: center;
 	font-size: 2.5vmin;
+	line-height: 2.5vmin;
 	font-weight: 600;
+	margin-top: 2.5vmin;
 `;
 
 function SearchResult({ allCategory }) {
@@ -97,7 +90,7 @@ function SearchResult({ allCategory }) {
 	}, [search]);
 
 	return (
-		<MainContainer>
+		<>
 			<Container>
 				{resultData.map((result) => {
 					return (
@@ -107,15 +100,15 @@ function SearchResult({ allCategory }) {
 									history.push(`/${result.topic}/${result.title}`);
 								}}
 							>
-								<LinkTxt>{result.title}</LinkTxt>
 								<IdolImage src={result.main_image || idol} />
+								<LinkTxt>{result.title}</LinkTxt>
 							</LinkNav>
 						</EachIdol>
 					);
 				})}
 			</Container>
 			{loading && <Loading />}
-		</MainContainer>
+		</>
 	);
 }
 

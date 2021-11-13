@@ -4,48 +4,82 @@ import firebase from "../utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import FollowIdol from "./FollowIdol";
 import image from "../img/wanted.png";
-import { Link, Switch, Route, Redirect, useHistory } from "react-router-dom";
-import EachLocation from "./EachLocation";
 
 const ProfileContainer = styled.div`
-	background-color: #ffeaa7;
 	margin-top: 5vmin;
 	padding: 4vmin;
 `;
 
 const TitleText = styled.p`
-	font-size: 2.7vmin;
+	font-size: 4vmin;
 	font-weight: 600;
 	margin-bottom: 1vmin;
 `;
 
 const FollowStar = styled.div`
+	width: 100%;
 	display: flex;
+	justify-content: space-evenly;
 	flex-wrap: wrap;
-	margin-bottom: 5vmin;
-	margin-left: 1.5vmin;
+	padding: 2vmin;
+	margin-bottom: 10vmin;
 `;
 
 const EachFeolowLink = styled.a`
-	width: 20vmin;
+	background-color: rgba(256, 256, 256, 0.7);
+	border-radius: 10px;
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	width: 23vmin;
+	height: 24vmin;
 	text-decoration: none;
-	margin-right: 1vmin;
-	padding: 1vmin;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	color: black;
+	justify-content: center;
 	cursor: pointer;
+	@media screen and (max-width: 1200px) {
+		width: 35vmin;
+		height: 40vmin;
+		margin: 2vmin;
+	}
+`;
+
+const StarImage = styled.div`
+	width: 100%;
+	height: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	border-radius: 10px 10px 0 0;
 `;
 
 const PerStar = styled.img`
-	width: 7vmin;
-	height: 7vmin;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+`;
+
+const StarDetail = styled.div`
+	width: 90%;
+	height: 50%;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
 `;
 
 const NormalTxt = styled.p`
-	font-size: 2vmin;
-	text-align: center;
+	font-size: 2.2vmin;
+	font-weight: 600;
+	margin-bottom: 1vmin;
+	color: #1e272e;
+	@media screen and (max-width: 1200px) {
+		font-size: 3vmin;
+	}
+	@media screen and (max-width: 500px) {
+		font-size: 1vmin;
+	}
 `;
 
 function PersonalData() {
@@ -101,11 +135,16 @@ function PersonalData() {
 					return (
 						<EachFeolowLink
 							href={`/${item.topic}/${item.title}/${item.locationName}`}
+							target="_blank"
 							key={uuidv4()}
 						>
-							<PerStar src={item.images[0] || image} />
-							<NormalTxt>{item.title}</NormalTxt>
-							<NormalTxt>{item.locationName}</NormalTxt>
+							<StarImage>
+								<PerStar src={item.images[0] || image} />
+							</StarImage>
+							<StarDetail>
+								<NormalTxt>{item.title}</NormalTxt>
+								<NormalTxt>{item.locationName}</NormalTxt>
+							</StarDetail>
 						</EachFeolowLink>
 					);
 				})}

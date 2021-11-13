@@ -14,7 +14,9 @@ import bell from "../img/bell.png";
 const HeaderContainer = styled.div`
 	display: flex;
 	flex-direction: column;
-	position: relative;
+	position: sticky;
+	top: 0;
+	z-index: 3;
 `;
 
 const Notify = styled.div`
@@ -24,6 +26,7 @@ const Notify = styled.div`
 	position: absolute;
 	right: 0px;
 	top: 3.5vmin;
+	z-index: 3;
 	@media screen and (max-width: 1200px) {
 		width: 60%;
 	}
@@ -34,9 +37,9 @@ const Notify = styled.div`
 `;
 
 const HeaderContent = styled.div`
-	background-color: rgba(256, 256, 256);
+	background-color: rgba(256, 256, 256, 0.9);
+	box-shadow: 0 0 5px 5px rgba(256, 256, 256, 0.9);
 	display: flex;
-	border: 1px solid #dfe6e9;
 	width: 100%;
 	height: 7vmin;
 	margin: 0px auto;
@@ -44,7 +47,6 @@ const HeaderContent = styled.div`
 	top: 0px;
 	z-index: 2;
 	justify-content: space-between;
-	/* outline: 2px solid black; */
 	@media screen and (max-width: 992px) {
 		height: 10vmin;
 	}
@@ -269,7 +271,7 @@ function Header() {
 					)}
 				</Notify>
 			</HeaderContainer>
-			{sideBar ? <SideMenu /> : <div></div>}
+			{sideBar ? <SideMenu /> : <></>}
 		</>
 	);
 }

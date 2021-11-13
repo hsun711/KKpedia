@@ -22,9 +22,14 @@ import youtube from "../img/youtube.png";
 import board from "../img/cork-board.png";
 import pin from "../img/pin-map.png";
 import check from "../img/checked.png";
-import changeimg from "../img/camera1.png";
+import changeimg from "../img/photo-camera.png";
 import add from "../img/add.png";
 import initbanner from "../img/NightSky.png";
+
+const BannerArea = styled.div`
+	display: flex;
+	flex-direction: column;
+`;
 
 const Banner = styled.div`
 	width: 100%;
@@ -34,15 +39,36 @@ const Banner = styled.div`
 	background-color: black;
 	background-position: center 45%;
 	background-size: 100% auto;
+	border-radius: 0px 0px 10px 10px;
+`;
+
+const BannerChange = styled.div`
+	align-self: flex-end;
+	background-image: url(${changeimg});
+	background-repeat: no-repeat;
+	background-size: 60%;
+	background-position: center center;
+	background-color: #3a3b3c;
+	border-radius: 50%;
+	width: 4vmin;
+	height: 4vmin;
+	cursor: pointer;
+	margin-top: -5vmin;
+	margin-right: 1vmin;
+`;
+
+const BannerCheck = styled(BannerChange)`
+	background-image: url(${check});
+	background-color: rgba(0, 0, 0, 0);
 `;
 
 const Container = styled.div`
-	width: 80%;
+	width: 95%;
 	height: 100%;
 	margin: -3vmin auto;
 	padding-bottom: 7vmin;
 	/* border: 2px solid black; */
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		width: 100%;
 		margin: auto;
 	}
@@ -58,7 +84,7 @@ const ColumnDiv = styled.div`
 const Person = styled.div`
 	display: flex;
 	align-items: center;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		justify-content: center;
 		margin-top: 3vmin;
 	}
@@ -68,7 +94,7 @@ const PersonName = styled.p`
 	font-size: 4vmin;
 	text-align: center;
 	align-self: center;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		font-size: 6vmin;
 	}
 `;
@@ -81,7 +107,7 @@ const SnsLink = styled.a`
 
 const SnsImg = styled.img`
 	width: 3vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		width: 4vmin;
 	}
 `;
@@ -96,7 +122,7 @@ const EditIcon = styled.img`
 	width: 3vmin;
 	margin-top: 2vmin;
 	cursor: pointer;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		width: 4vmin;
 	}
 `;
@@ -117,12 +143,12 @@ const PersonImage = styled.img`
 const PhotoChange = styled.div`
 	background-image: url(${changeimg});
 	background-repeat: no-repeat;
-	background-size: 80%;
+	background-size: 60%;
 	background-position: center center;
-	background-color: #b2bec3;
+	background-color: #3a3b3c;
 	border-radius: 50%;
-	width: 4vmin;
-	height: 4vmin;
+	width: 3vmin;
+	height: 3vmin;
 	cursor: pointer;
 	margin-right: 1vmin;
 	position: absolute;
@@ -134,19 +160,10 @@ const PhotoCheck = styled(PhotoChange)`
 	background-image: url(${check});
 `;
 
-const BannerChange = styled(PhotoChange)`
-	top: 42vmin;
-	right: 0.5vmin;
-`;
-
-const BannerCheck = styled(BannerChange)`
-	background-image: url(${check});
-`;
-
 const MenuBar = styled.div`
 	margin-top: 7vmin;
 	display: flex;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		justify-content: space-evenly;
 	}
 `;
@@ -163,7 +180,7 @@ const MenuLink = styled(Link)`
 	display: flex;
 	/* align-items: center; */
 	margin-right: 4vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin-right: 0vmin;
 	}
 `;
@@ -174,7 +191,7 @@ const PlaceContainer = styled.div`
 	flex-wrap: wrap;
 	margin-top: 5vmin;
 	width: 100%;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin-top: 3vmin;
 	}
 `;
@@ -301,21 +318,23 @@ function IdolPage({ topic }) {
 
 	return (
 		<>
-			<Banner imgCover={bennerURL || initbanner}></Banner>
-			{bannerChange ? (
-				<BannerCheck as="label" htmlFor="uploadBanner" onClick={BannerOk} />
-			) : (
-				<BannerChange as="label" htmlFor="uploadBanner" />
-			)}
-			<input
-				type="file"
-				id="uploadBanner"
-				style={{ display: "none" }}
-				onChange={(e) => {
-					setBannerFile(e.target.files[0]);
-					setBannerChange(true);
-				}}
-			/>
+			<BannerArea>
+				<Banner imgCover={bennerURL || initbanner}></Banner>
+				{bannerChange ? (
+					<BannerCheck as="label" htmlFor="uploadBanner" onClick={BannerOk} />
+				) : (
+					<BannerChange as="label" htmlFor="uploadBanner" />
+				)}
+				<input
+					type="file"
+					id="uploadBanner"
+					style={{ display: "none" }}
+					onChange={(e) => {
+						setBannerFile(e.target.files[0]);
+						setBannerChange(true);
+					}}
+				/>
+			</BannerArea>
 			<Container>
 				<BrowserRouter>
 					<>

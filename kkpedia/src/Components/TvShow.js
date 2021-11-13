@@ -3,7 +3,6 @@ import firebase from "../utils/firebase";
 import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
 import board from "../img/cork-board.png";
-import actionboard from "../img/actionboard.png";
 import NewOne from "./NewOne";
 
 const TitleDiv = styled.div`
@@ -66,13 +65,10 @@ const Cover = styled.div`
 `;
 
 const ShowContainer = styled.div`
-	width: 80%;
+	width: 90%;
 	height: 100%;
 	margin: 7vmin auto;
 	position: relative;
-	@media screen and (max-width: 1200px) {
-		width: 90%;
-	}
 `;
 
 const EachContainer = styled.div`

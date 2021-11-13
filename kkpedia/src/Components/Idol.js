@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
 import TopicContainer from "./TopicContainer";
-import artist from "../img/artist.png";
 import board from "../img/cork-board.png";
 import NewOne from "./NewOne";
 
@@ -66,14 +65,10 @@ const Cover = styled.div`
 `;
 
 const IdolContainer = styled.div`
-	/* max-width: 1440px; */
-	width: 80%;
+	width: 90%;
 	height: 100%;
 	margin: 7vmin auto;
 	position: relative;
-	@media screen and (max-width: 1200px) {
-		width: 90%;
-	}
 `;
 
 const EachContainer = styled.div`

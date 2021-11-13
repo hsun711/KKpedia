@@ -15,56 +15,109 @@ import PersonalCollection from "./PersonalCollection";
 import PersonalPost from "./PersonalPost";
 import userIcon from "../img/user.png";
 import levelImg from "../img/level-up.png";
-import profile from "../img/resume.png";
-import like from "../img/place.png";
 import check from "../img/checked.png";
-import changeimg from "../img/camera.png";
-import edit from "../img/pencil.png";
+import changeimg from "../img/photo-camera.png";
+import initbanner from "../img/NightSky.png";
 
 const MainContainer = styled.div`
 	width: 100%;
 	display: flex;
-	/* outline: 10px solid black; */
+	flex-direction: column;
+	/* outline: 1px solid black; */
+`;
+
+const BannerArea = styled.div`
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+`;
+
+const Banner = styled.div`
+	width: 100%;
+	height: 40vmin;
+	background-image: url(${(props) => props.imgCover});
+	background-repeat: no-repeat;
+	background-position: center 45%;
+	background-size: 100% auto;
+	border-radius: 0px 0px 10px 10px;
+`;
+
+const BannerChange = styled.div`
+	align-self: flex-end;
+	background-image: url(${changeimg});
+	background-repeat: no-repeat;
+	background-size: 60%;
+	background-position: center center;
+	background-color: #3a3b3c;
+	border-radius: 50%;
+	width: 4vmin;
+	height: 4vmin;
+	cursor: pointer;
+	margin-top: -5vmin;
+	margin-right: 1vmin;
+`;
+
+const BannerCheck = styled(BannerChange)`
+	background-image: url(${check});
+	background-color: rgba(0, 0, 0, 0);
 `;
 
 const Container = styled.div`
-	width: 70%;
+	width: 100%;
 	height: 100%;
-	margin: 20vmin auto;
-	padding: 0px 5vmin 7vmin;
-	background-color: beige;
+	margin: 0vmin auto;
+	padding: 0 5vmin 7vmin;
 	display: flex;
 	flex-direction: column;
-	@media screen and (max-width: 992px) {
-		margin: 90px auto;
+	@media screen and (max-width: 1200px) {
+		margin: 0 auto;
 	}
 `;
 
 const Person = styled.div`
-	margin-top: 30px;
-	margin-left: 30px;
+	width: 100%;
+	margin: 4vmin 0;
 	display: flex;
+	@media screen and (max-width: 1200px) {
+		flex-direction: column;
+		align-items: center;
+		margin: -4vmin 0;
+	}
 `;
 const EditArea = styled.div`
 	display: flex;
 	align-items: center;
+	@media screen and (max-width: 1200px) {
+		margin: 2vmin 0;
+	}
+`;
+
+const UserNameDiv = styled.div`
+	width: fit-content;
+	font-size: 6vmin;
+	font-weight: 600;
+	margin-left: 2vmin;
 `;
 
 const PersonName = styled.input`
 	border: ${(props) => (props.edit ? "none" : "1px solid black")};
 	border-radius: 10px;
-	width: 30vmin;
-	background-color: beige;
+	width: fit-content;
+	background-color: rgba(0, 0, 0, 0);
 	padding-right: 1vmin;
 	font-size: 4vmin;
 	align-self: center;
 `;
 
-const EditIcon = styled.img`
+const EditIcon = styled.div`
+	background-image: url(${check});
+	background-size: 100%;
+	background-repeat: no-repeat;
 	width: 2vmin;
 	height: 2vmin;
 	cursor: pointer;
-	margin-right: 1vmin;
+	margin: 0 1vmin;
+	display: ${(props) => (props.edit ? "none" : "block")};
 `;
 
 const Photo = styled.div`
@@ -78,18 +131,32 @@ const PersonImage = styled.img`
 	height: 10vmin;
 	border-radius: 50%;
 	cursor: pointer;
+	@media screen and (max-width: 1200px) {
+		width: 15vmin;
+		height: 15vmin;
+	}
 `;
 const PhotoChange = styled.div`
 	background-image: url(${changeimg});
 	background-repeat: no-repeat;
-	background-size: 100%;
+	background-position-x: 0.67vmin;
+	background-position-y: center;
+	background-size: 60%;
+	background-color: #3a3b3c;
+	border-radius: 50%;
 	width: 3vmin;
 	height: 3vmin;
 	cursor: pointer;
 	margin-right: 1vmin;
 	position: absolute;
-	bottom: -5px;
-	right: -15px;
+	bottom: -0.5vmin;
+	right: -1vmin;
+	@media screen and (max-width: 1200px) {
+		width: 4vmin;
+		height: 4vmin;
+		background-position-x: 0.75vmin;
+		bottom: 0vmin;
+	}
 `;
 
 const PhotoCheck = styled(PhotoChange)`
@@ -97,7 +164,7 @@ const PhotoCheck = styled(PhotoChange)`
 `;
 
 const LevelTag = styled.p`
-	font-size: 3vmin;
+	font-size: 4vmin;
 	font-weight: 600;
 	margin-left: 1.5vmin;
 	text-align: center;
@@ -105,21 +172,27 @@ const LevelTag = styled.p`
 `;
 
 const LevelImg = styled.img`
-	width: 2vmin;
+	width: 7vmin;
 `;
 
 const MenuBar = styled.div`
-	margin-top: 7vmin;
-	margin-left: 5vmin;
+	margin: 5vmin 0 0 5vmin;
 	display: flex;
+	@media screen and (max-width: 1200px) {
+		justify-content: space-evenly;
+		margin: 7vmin 0 0 0;
+	}
 `;
 
 const MenuLink = styled(Link)`
-	font-size: 2vmin;
+	font-size: 3vmin;
 	font-weight: 600;
 	margin-right: 5vmin;
 	text-decoration: none;
-	color: black;
+	color: #2f3640;
+	@media screen and (max-width: 1200px) {
+		justify-content: space-evenly;
+	}
 `;
 
 const MenuImage = styled.img`
@@ -132,21 +205,43 @@ function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
+	const [activeItem, setActiveItem] = useState("");
 	const [readOnly, setReadOnly] = useState(true);
 	const [userName, setUserName] = useState("");
 	const [userImg, setUserImg] = useState("");
 	const [level, setLevel] = useState(0);
 	const [photoChange, setPhotoChange] = useState(false);
 	const [file, setFile] = useState(null);
+	const [bannerImg, setBannerImg] = useState("");
+	const [bannerChange, setBannerChange] = useState(false);
+	const [bannerFile, setBannerFile] = useState(null);
 	const previewURL = file ? URL.createObjectURL(file) : userImg;
+	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
 
 	useEffect(() => {
 		docRef.onSnapshot((doc) => {
+			setBannerImg(doc.data().user_banner);
 			setUserName(doc.data().userName);
 			setUserImg(doc.data().userImage);
 			setLevel(doc.data().userLevel);
 		});
 	}, []);
+
+	const BannerOk = () => {
+		setBannerChange(false);
+		const fileRef = firebase.storage().ref(`users_images/banner${user.uid}`);
+		const metadata = {
+			contentType: bannerFile.type,
+		};
+		fileRef.put(bannerFile, metadata).then(() => {
+			fileRef.getDownloadURL().then((imageUrl) => {
+				docRef.update({
+					user_banner: `${imageUrl}`,
+				});
+			});
+		});
+		alert("更新成功🎊🎊");
+	};
 
 	const ChangeOk = () => {
 		setPhotoChange(false);
@@ -182,19 +277,25 @@ function Profile() {
 
 	return (
 		<MainContainer>
+			<BannerArea>
+				<Banner imgCover={bennerURL || initbanner}></Banner>
+				{bannerChange ? (
+					<BannerCheck as="label" htmlFor="uploadBanner" onClick={BannerOk} />
+				) : (
+					<BannerChange as="label" htmlFor="uploadBanner" />
+				)}
+				<input
+					type="file"
+					id="uploadBanner"
+					style={{ display: "none" }}
+					onChange={(e) => {
+						setBannerFile(e.target.files[0]);
+						setBannerChange(true);
+					}}
+				/>
+			</BannerArea>
 			<Container>
 				<Person>
-					<EditArea>
-						<EditIcon src={readOnly ? edit : check} onClick={Editable} />
-						<PersonName
-							edit={readOnly}
-							readOnly={readOnly}
-							value={userName}
-							onChange={(e) => {
-								setUserName(e.target.value);
-							}}
-						/>
-					</EditArea>
 					<Photo>
 						<PersonImage src={previewURL || userIcon} />
 						{photoChange ? (
@@ -212,27 +313,32 @@ function Profile() {
 							}}
 						/>
 					</Photo>
-
-					<LevelTag>
-						<LevelImg src={levelImg} />
-						{level}
-					</LevelTag>
+					<EditArea>
+						<EditIcon edit={readOnly} onClick={Editable} />
+						{readOnly ? (
+							<UserNameDiv onClick={Editable}>{userName}</UserNameDiv>
+						) : (
+							<PersonName
+								edit={readOnly}
+								readOnly={readOnly}
+								value={userName}
+								onChange={(e) => {
+									setUserName(e.target.value);
+								}}
+							/>
+						)}
+						<LevelTag>
+							<LevelImg src={levelImg} />
+							LV.{level}
+						</LevelTag>
+					</EditArea>
 				</Person>
 				<BrowserRouter>
 					<>
 						<MenuBar>
-							<MenuLink to={`${url}`}>
-								<MenuImage src={profile} />
-								個人資料
-							</MenuLink>
-							<MenuLink to="/myCollection">
-								<MenuImage src={like} />
-								收藏景點
-							</MenuLink>
-							<MenuLink to="/myPost">
-								<MenuImage />
-								過往PO文
-							</MenuLink>
+							<MenuLink to={`${url}`}>個人資料</MenuLink>
+							<MenuLink to="/myCollection">收藏景點</MenuLink>
+							<MenuLink to="/myPost">過往PO文</MenuLink>
 						</MenuBar>
 						<Switch>
 							<Route exact path={`${url}`}>

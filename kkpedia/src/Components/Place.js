@@ -16,7 +16,7 @@ const OutsideContainer = styled.div`
 	justify-content: center;
 	flex-wrap: wrap;
 	padding: 3vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin: 3vmin;
 	}
 `;
@@ -33,7 +33,7 @@ const Container = styled.div`
 	justify-content: center;
 	margin: 3vmin;
 
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin: 3vmin 7vmin;
 	}
 `;
@@ -57,7 +57,7 @@ const ImgContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		width: 15vmin;
 		height: 15vmin;
 	}
@@ -78,7 +78,7 @@ const PlaceText = styled.div`
 	flex-direction: column;
 	align-items: center;
 	margin-left: -2.5vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		padding-top: 1vmin;
 	}
 `;

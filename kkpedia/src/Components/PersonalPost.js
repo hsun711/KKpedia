@@ -2,29 +2,38 @@ import React, { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
 import RenderPost from "./RenderPost";
-import cancel from "../img/cancel.png";
+import cancel from "../img/trash.png";
+
 const ProfileContainer = styled.div`
-	margin-top: 5vmin;
+	outline: 5px solid black;
 	padding: 4vmin;
 `;
 
 const Container = styled.div`
 	position: relative;
-	/* outline: 1px solid black; */
-	display: flex;
 	flex-direction: column;
+	margin-top: 2vmin;
+	display: flex;
 `;
 
 const DeletePost = styled.div`
 	background-image: url(${cancel});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 	position: absolute;
-	top: 10px;
-	right: 65px;
+	top: 8vmin;
+	right: 13vmin;
 	cursor: pointer;
+	@media screen and (max-width: 1024px) {
+		top: 8vmin;
+		right: 11vmin;
+	}
+	@media screen and (max-width: 500px) {
+		top: 10vmin;
+		right: 9vmin;
+	}
 `;
 
 function PersonalPost() {
@@ -62,7 +71,7 @@ function PersonalPost() {
 	};
 
 	return (
-		<ProfileContainer>
+		<>
 			{postData.map((item) => {
 				return (
 					<Container key={item.id}>
@@ -71,7 +80,7 @@ function PersonalPost() {
 					</Container>
 				);
 			})}
-		</ProfileContainer>
+		</>
 	);
 }
 

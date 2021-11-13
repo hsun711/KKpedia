@@ -62,19 +62,26 @@ const CommentText = styled.p`
 
 const Icon = styled.div`
 	display: flex;
+	align-items: center;
 	padding: 1vmin;
+	/* outline: 1px solid black; */
 `;
 
-const EachIcon = styled.img`
-	width: 3vmin;
-	height: 3vmin;
+const CommentIcon = styled.img`
+	width: 4vmin;
+	height: 4vmin;
 	cursor: pointer;
-	margin-right: 0.5vmin;
+	margin: 0.5vmin 0.5vmin 0 0;
 	cursor: pointer;
+	/* outline: 2px solid black; */
+`;
+
+const ThumbsIcon = styled(CommentIcon)`
+	margin: 0vmin 0.5vmin 0.5vmin 0;
 `;
 
 const GoodTotal = styled.p`
-	font-size: 3vmin;
+	font-size: 4vmin;
 	margin-right: 4vmin;
 `;
 
@@ -294,9 +301,9 @@ function RenderPost({ item }) {
 
 			<hr />
 			<Icon>
-				<EachIcon src={good ? dogood : ungood} onClick={AddGood} />
+				<ThumbsIcon src={good ? dogood : ungood} onClick={AddGood} />
 				<GoodTotal>{goodNum || 0}</GoodTotal>
-				<EachIcon src={comment} onClick={RenderComment} />
+				<CommentIcon src={comment} onClick={RenderComment} />
 				<GoodTotal>{commentNum || 0}</GoodTotal>
 			</Icon>
 			{showComment ? (

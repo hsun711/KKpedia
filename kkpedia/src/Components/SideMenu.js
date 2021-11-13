@@ -5,12 +5,11 @@ import { Link } from "react-router-dom";
 const MenuBar = styled.div`
 	width: 20vmin;
 	height: 100vh;
-	background-color: #fff;
-	border-right: 1px solid #dfe6e9;
-	box-shadow: 1px 1px 3px #95a5a6;
+	background-color: rgb(256, 256, 256);
+	box-shadow: 0 0 5px 5px rgba(256, 256, 256, 0.9);
 	padding-top: 20vmin;
 	position: fixed;
-	z-index: 2;
+	z-index: 1;
 `;
 
 const Topic = styled.div`
@@ -25,7 +24,7 @@ const Topic = styled.div`
 `;
 
 const LinkNav = styled(Link)`
-	color: #079992;
+	color: #482307;
 	font-weight: 600;
 	text-decoration: none;
 	&:hover {
