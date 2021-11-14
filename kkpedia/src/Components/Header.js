@@ -7,7 +7,7 @@ import logo from "../img/logo02.png";
 import search from "../img/search.png";
 import SideMenu from "./SideMenu";
 import Notification from "./Notification";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import logout from "../img/logout.png";
 import bell from "../img/bell.png";
 
@@ -20,35 +20,36 @@ const HeaderContainer = styled.div`
 `;
 
 const Notify = styled.div`
-	box-shadow: 1px 1px 3px #95a5a6;
+	/* box-shadow: 1px 1px 3px #95a5a6; */
+	box-shadow: 0px -5px 10px 0px rgba(255, 255, 255, 0.75);
 	width: 50%;
 	align-self: flex-end;
 	position: absolute;
 	right: 0px;
-	top: 3.5vmin;
+	top: 5.1vmin;
 	z-index: 3;
 	@media screen and (max-width: 1200px) {
 		width: 60%;
 	}
 	@media screen and (max-width: 992px) {
-		top: 5vmin;
+		top: 6.1vmin;
 		width: 80%;
 	}
 `;
 
 const HeaderContent = styled.div`
-	background-color: rgba(256, 256, 256, 0.9);
+	background-color: rgb(256, 256, 256);
 	box-shadow: 0 0 5px 5px rgba(256, 256, 256, 0.9);
 	display: flex;
 	width: 100%;
-	height: 7vmin;
+	height: 10vmin;
 	margin: 0px auto;
 	position: sticky;
 	top: 0px;
 	z-index: 2;
 	justify-content: space-between;
 	@media screen and (max-width: 992px) {
-		height: 10vmin;
+		height: 12vmin;
 	}
 `;
 
@@ -62,10 +63,10 @@ const Logo = styled.div`
 	background-size: 90%;
 	background-repeat: no-repeat;
 	margin: 2vmin 0vmin 0vmin 1vmin;
-	width: 15vmin;
-	height: 7vmin;
+	width: 20vmin;
+	height: 9vmin;
 	@media screen and (max-width: 1200px) {
-		width: 19vmin;
+		width: 25vmin;
 		margin: 0vmin 0vmin 0vmin 1vmin;
 	}
 `;
@@ -74,27 +75,27 @@ const BurgerMenu = styled.div`
 	background-image: url(${menu});
 	background-size: 100%;
 	background-repeat: no-repeat;
-	width: 3vmin;
-	height: 3vmin;
+	width: 5vmin;
+	height: 5vmin;
 	margin: auto 2.5vmin;
 	cursor: pointer;
 	@media screen and (max-width: 1200px) {
-		width: 4vmin;
-		height: 4vmin;
+		width: 6vmin;
+		height: 6vmin;
 	}
 `;
 
 const Member = styled.img`
-	width: 3vmin;
-	height: 3vmin;
+	width: 5vmin;
+	height: 5vmin;
 	margin-top: 0.5vmin;
 	margin-right: 2.5vmin;
 	margin-left: 2.5vmin;
 	border-radius: 50%;
 	cursor: pointer;
 	@media screen and (max-width: 1200px) {
-		width: 4vmin;
-		height: 4vmin;
+		width: 7vmin;
+		height: 7vmin;
 	}
 `;
 
@@ -105,16 +106,17 @@ const Search = styled.div`
 
 const SearchInput = styled.input`
 	border-radius: 20px;
-	border: 2px solid #8a4b35;
+	border: 2px solid #7b612a;
 	width: 25vmin;
-	height: 4vmin;
+	height: 5vmin;
 	padding: 8px 48px 8px 20px;
 	outline: none;
 	font-size: 2vmin;
 	@media screen and (max-width: 1200px) {
 		width: 20vmin;
-		height: 3vmin;
+		height: 7vmin;
 		padding: 2vmin;
+		font-size: 3.2vmin;
 	}
 `;
 
@@ -122,13 +124,15 @@ const InputBtn = styled(Link)`
 	background-image: url(${search});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 4vmin;
-	height: 4vmin;
+	width: 5vmin;
+	height: 5vmin;
 	position: absolute;
 	right: 1vmin;
 	cursor: pointer;
 	@media screen and (max-width: 1200px) {
 		top: 0.25vmin;
+		width: 7vmin;
+		height: 7vmin;
 	}
 `;
 
@@ -142,23 +146,23 @@ const Bell = styled.div`
 	background-image: url(${bell});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	width: 5vmin;
+	height: 5vmin;
 	margin-left: 2vmin;
 	cursor: pointer;
 	position: relative;
 	@media screen and (max-width: 1200px) {
-		width: 4vmin;
-		height: 4vmin;
+		width: 7vmin;
+		height: 7vmin;
 	}
 `;
 
 const AlertNum = styled.div`
-	font-size: 1.75vmin;
+	font-size: 2vmin;
 	background-color: red;
 	color: #fff;
-	width: 2vmin;
-	height: 2vmin;
+	width: 2.5vmin;
+	height: 2.5vmin;
 	border-radius: 50%;
 	outline: 1px solid white;
 	text-align: center;
@@ -166,9 +170,9 @@ const AlertNum = styled.div`
 	bottom: -0.5vmin;
 	right: -1vmin;
 	@media screen and (max-width: 1200px) {
-		font-size: 2vmin;
-		width: 2.5vmin;
-		height: 2.5vmin;
+		font-size: 3vmin;
+		width: 3.5vmin;
+		height: 3.5vmin;
 	}
 `;
 
@@ -176,17 +180,18 @@ const Logout = styled.div`
 	background-image: url(${logout});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	width: 5vmin;
+	height: 5vmin;
 	margin-right: 2vmin;
 	cursor: pointer;
 	@media screen and (max-width: 1200px) {
-		width: 4vmin;
-		height: 4vmin;
+		width: 7vmin;
+		height: 7vmin;
 	}
 `;
 
 function Header() {
+	const history = useHistory();
 	const [sideBar, setSideBar] = useState(false);
 	const [inputSearch, setInputSearch] = useState("");
 	const [userData, setUserData] = useState({});
@@ -238,6 +243,11 @@ function Header() {
 								value={inputSearch}
 								onChange={(e) => {
 									setInputSearch(e.target.value);
+								}}
+								onKeyDown={(e) => {
+									if (e.keyCode === 13) {
+										history.push(`/search/${inputSearch}`);
+									}
 								}}
 							/>
 							<InputBtn to={`/search/${inputSearch}`} />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import img from "../img/wanted.png";
 import like from "../img/like.png";
 
@@ -94,7 +95,7 @@ function CollectPlace({ data }) {
 			.doc(`${data.locationName}`)
 			.delete()
 			.then(() => {
-				alert("取消收藏😤😤");
+				Swal.fire("取消收藏😤😤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);

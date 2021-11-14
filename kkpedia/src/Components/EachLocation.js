@@ -4,6 +4,7 @@ import firebase from "../utils/firebase";
 import Popup from "reactjs-popup";
 import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
+import Swal from "sweetalert2";
 import Map from "./Map";
 import LookMore from "./LookMore";
 import WriteComment from "./WriteComment";
@@ -383,7 +384,7 @@ function EachLocation({ title }) {
 			.doc(`${locationName}`)
 			.set(placeData[0])
 			.then(() => {
-				alert("收藏進口袋聖地囉🎉🎊");
+				Swal.fire("收進口袋聖地囉🎉🎊");
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);
@@ -397,7 +398,7 @@ function EachLocation({ title }) {
 			.doc(`${location}`)
 			.delete()
 			.then(() => {
-				alert("移出口袋聖地囉😤😤");
+				Swal.fire("移出口袋聖地囉😤😤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);

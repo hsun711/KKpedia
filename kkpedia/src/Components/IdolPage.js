@@ -8,6 +8,7 @@ import {
 	useParams,
 	useRouteMatch,
 } from "react-router-dom";
+import Swal from "sweetalert2";
 import Place from "./Place";
 import Picture from "./Picture";
 import Calender from "./Calender";
@@ -19,8 +20,6 @@ import fb from "../img/facebook.png";
 import ig from "../img/instagram.png";
 import twitter from "../img/twitter.png";
 import youtube from "../img/youtube.png";
-import board from "../img/cork-board.png";
-import pin from "../img/pin-map.png";
 import check from "../img/checked.png";
 import changeimg from "../img/photo-camera.png";
 import add from "../img/add.png";
@@ -193,6 +192,7 @@ const PlaceContainer = styled.div`
 	width: 100%;
 	@media screen and (max-width: 1200px) {
 		margin-top: 3vmin;
+		margin: 5vmin auto;
 	}
 `;
 
@@ -247,7 +247,8 @@ function IdolPage({ topic }) {
 				});
 			});
 		});
-		alert("更新成功🎊🎊");
+		// alert("更新成功🎊🎊");
+		Swal.fire("更新成功🎊🎊");
 	};
 
 	const ChangeOk = () => {
@@ -273,7 +274,8 @@ function IdolPage({ topic }) {
 				});
 			});
 		});
-		alert("更新成功🎊🎊");
+		// alert("更新成功🎊🎊");
+		Swal.fire("更新成功🎊🎊");
 	};
 
 	const AddSns = (sns) => {
@@ -423,22 +425,10 @@ function IdolPage({ topic }) {
 						</Person>
 
 						<MenuBar>
-							<MenuLink to={`${url}`}>
-								{/* <MenuImage /> */}
-								聖地
-							</MenuLink>
-							<MenuLink to={`${url}/picture`}>
-								{/* <MenuImage /> */}
-								圖片區
-							</MenuLink>
-							<MenuLink to={`${url}/calender`}>
-								{/* <MenuImage /> */}
-								日程表
-							</MenuLink>
-							<MenuLink to={`${url}/post`}>
-								{/* <MenuImage /> */}
-								留言區
-							</MenuLink>
+							<MenuLink to={`${url}`}>聖地</MenuLink>
+							<MenuLink to={`${url}/picture`}>圖片區</MenuLink>
+							<MenuLink to={`${url}/calender`}>日程表</MenuLink>
+							<MenuLink to={`${url}/post`}>留言區</MenuLink>
 						</MenuBar>
 						<PlaceContainer>
 							<Switch>

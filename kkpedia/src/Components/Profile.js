@@ -9,6 +9,8 @@ import {
 	HashRouter,
 	useParams,
 } from "react-router-dom";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
 import PersonalCollection from "./PersonalCollection";
@@ -217,6 +219,7 @@ function Profile() {
 	const [bannerFile, setBannerFile] = useState(null);
 	const previewURL = file ? URL.createObjectURL(file) : userImg;
 	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
+	const MySwal = withReactContent(Swal);
 
 	useEffect(() => {
 		docRef.onSnapshot((doc) => {
@@ -240,7 +243,18 @@ function Profile() {
 				});
 			});
 		});
-		alert("更新成功🎊🎊");
+		// alert("更新成功🎊🎊");
+		MySwal.fire({
+			title: <p>Hello World</p>,
+			footer: "Copyright 2018",
+			didOpen: () => {
+				// `MySwal` is a subclass of `Swal`
+				//   with all the same instance & static methods
+				MySwal.clickConfirm();
+			},
+		}).then(() => {
+			return MySwal.fire(<p>更新成功🎊🎊</p>);
+		});
 	};
 
 	const ChangeOk = () => {

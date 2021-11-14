@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
+import Swal from "sweetalert2";
 import RenderPost from "./RenderPost";
 import cancel from "../img/trash.png";
 
@@ -59,15 +60,28 @@ function PersonalPost() {
 	}, []);
 
 	const handleDelete = (e) => {
-		db.collection("posts")
-			.doc(`${e.target.dataset.id}`)
-			.delete()
-			.then(() => {
-				alert("被刪除了留言已回不來了😢😢");
-			})
-			.catch((error) => {
-				console.error("Error removing document: ", error);
-			});
+		Swal.fire({
+			title: "確定要刪除嗎?",
+			text: "刪除就回不來了喔!",
+			icon: "warning",
+			showCancelButton: true,
+			confirmButtonColor: "#3085d6",
+			cancelButtonColor: "#d33",
+			confirmButtonText: "Yes!",
+		}).then((result) => {
+			if (result.isConfirmed) {
+				db.collection("posts")
+					.doc(`${e.target.dataset.id}`)
+					.delete()
+					.then(() => {
+						// alert("被刪除了留言已回不來了😢😢");
+						Swal.fire("刪除成功!", "被刪除了留言已回不來了😢😢", "success");
+					})
+					.catch((error) => {
+						console.error("Error removing document: ", error);
+					});
+			}
+		});
 	};
 
 	return (

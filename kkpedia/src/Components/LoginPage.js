@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
 import Loading from "./Loading";
 import socialMediaAuth from "../utils/socialMediaAuth";
@@ -201,16 +202,19 @@ function LoginPage() {
 						{ merge: true }
 					)
 					.then((docRef) => {
-						console.log("😁😁😁😁");
+						Swal.fire("註冊成功😁😁😁😁");
+						// console.log("😁😁😁😁");
 					});
 			})
 			.catch((error) => {
 				switch (error.code) {
 					case "auth/email-already-in-use":
-						setErrorMsg("Email帳號已經註冊過囉🤨🤨🤨");
+						Swal.fire("Email帳號已經註冊過囉🤨🤨🤨");
+						// setErrorMsg("Email帳號已經註冊過囉🤨🤨🤨");
 						break;
 					case "auth/invalid-email":
-						setErrorMsg("Email格式錯誤囉😈😈😈😈");
+						Swal.fire("Email格式錯誤囉😈😈😈😈");
+						// setErrorMsg("Email格式錯誤囉😈😈😈😈");
 						break;
 					default:
 				}
@@ -231,13 +235,16 @@ function LoginPage() {
 			.catch((error) => {
 				switch (error.code) {
 					case "auth/invalid-email":
-						setErrorMsg("Email格式錯囉💀💀💀💀");
+						Swal.fire("Email格式錯囉💀💀💀💀");
+						// setErrorMsg("Email格式錯囉💀💀💀💀");
 						break;
 					case "auth/user-not-found":
-						setErrorMsg("Email帳號不存在喔👻👻👻👻");
+						Swal.fire("Email帳號不存在喔👻👻👻👻");
+						// setErrorMsg("Email帳號不存在喔👻👻👻👻");
 						break;
 					case "auth/wrong-password":
-						setErrorMsg("密碼錯了唷😱😱😱😱");
+						Swal.fire("密碼錯了唷😱😱😱😱");
+						// setErrorMsg("密碼錯了唷😱😱😱😱");
 						break;
 					default:
 				}
@@ -294,7 +301,7 @@ function LoginPage() {
 						<CheckBtn onClick={Register}>註冊</CheckBtn>
 					</BottomBtn>
 					{loading && <Loading />}
-					{errorMsg && <ErrorText>{errorMsg}</ErrorText>}
+					{/* {errorMsg && <ErrorText>{errorMsg}</ErrorText>} */}
 				</WelcomeArea>
 			</WelcomeRigth>
 		</Container>

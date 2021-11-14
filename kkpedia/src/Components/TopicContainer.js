@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import sticker from "../img/sticker2.png";
 import idol from "../img/wanted.png";
 import unlike from "../img/unlike.png";
@@ -75,6 +77,7 @@ const LikeIcon = styled.img`
 
 function TopicContainer({ topic, item }) {
 	// const [titleName, setTitileName] = useState([]);
+	const MySwal = withReactContent(Swal);
 	const [follow, setFollow] = useState(false);
 	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
@@ -94,7 +97,18 @@ function TopicContainer({ topic, item }) {
 				topic: item.star.topic,
 			})
 			.then(() => {
-				alert("追蹤成功🎉🎊");
+				// alert("追蹤成功🎉🎊");
+				MySwal.fire({
+					title: <p>Hello World</p>,
+					footer: "Copyright 2018",
+					didOpen: () => {
+						// `MySwal` is a subclass of `Swal`
+						//   with all the same instance & static methods
+						MySwal.clickConfirm();
+					},
+				}).then(() => {
+					return MySwal.fire(<p>追蹤成功🎉🎊</p>);
+				});
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);
@@ -108,7 +122,8 @@ function TopicContainer({ topic, item }) {
 			.doc(`${item.star.title}`)
 			.delete()
 			.then(() => {
-				alert("取消追蹤😤😤");
+				// alert("取消追蹤😤😤");
+				Swal.fire("取消追蹤😤😤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);

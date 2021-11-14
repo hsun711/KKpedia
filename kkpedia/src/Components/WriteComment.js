@@ -3,7 +3,7 @@ import styled from "styled-components";
 import firebase from "../utils/firebase";
 import star from "../img/star.png";
 import paper from "../img/rm429-013.png";
-// import paper from "../img/rm429-016.png";
+import Swal from "sweetalert2";
 
 const Container = styled.div`
 	width: 50vmin;
@@ -159,9 +159,6 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 	};
 
 	const SendComment = () => {
-		// console.log("SendComment");
-		// console.log(title);
-		// console.log(location);
 		const data = {
 			uid: user.uid,
 			postUserImg: userImg,
@@ -176,7 +173,7 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 			.doc()
 			.set(data, { merge: true })
 			.then(() => {
-				alert("留言成功👍👌");
+				Swal.fire("留言成功👍👌");
 				setPopUpWriteComment(false);
 			});
 	};

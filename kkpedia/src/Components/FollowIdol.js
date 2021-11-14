@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import cover from "../img/wanted.png";
 import like from "../img/like.png";
 
@@ -80,7 +81,8 @@ function FellowIdol({ title, image, topic }) {
 			.doc(`${title}`)
 			.delete()
 			.then(() => {
-				alert("取消追蹤😤😤");
+				// alert("取消追蹤😤😤");
+				Swal.fire("取消追蹤😤😤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);
