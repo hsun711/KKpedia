@@ -64,7 +64,7 @@ const BannerCheck = styled(BannerChange)`
 const Container = styled.div`
 	width: 95%;
 	height: 100%;
-	margin: -3vmin auto;
+	margin: -1vmin auto;
 	padding-bottom: 7vmin;
 	/* border: 2px solid black; */
 	@media screen and (max-width: 1200px) {
@@ -90,7 +90,8 @@ const Person = styled.div`
 `;
 
 const PersonName = styled.p`
-	font-size: 4vmin;
+	font-size: 4.5vmin;
+	font-weight: 600;
 	text-align: center;
 	align-self: center;
 	@media screen and (max-width: 1200px) {
@@ -177,10 +178,10 @@ const MenuLink = styled(Link)`
 	text-decoration: none;
 	color: #404040;
 	display: flex;
-	/* align-items: center; */
 	margin-right: 4vmin;
 	@media screen and (max-width: 1200px) {
 		margin-right: 0vmin;
+		font-size: 4vmin;
 	}
 `;
 
@@ -200,6 +201,7 @@ function IdolPage({ topic }) {
 	let { path, url } = useRouteMatch();
 	let { title } = useParams();
 	const [sns, setSns] = useState([]);
+	const [activeItem, setActiveItem] = useState("idolplace");
 	const [mainImage, setMainImage] = useState("");
 	const [photoChange, setPhotoChange] = useState(false);
 	const [bannerImg, setBannerImg] = useState("");
@@ -248,7 +250,7 @@ function IdolPage({ topic }) {
 			});
 		});
 		// alert("更新成功🎊🎊");
-		Swal.fire("更新成功🎊🎊");
+		Swal.fire("更新成功");
 	};
 
 	const ChangeOk = () => {
@@ -275,12 +277,21 @@ function IdolPage({ topic }) {
 			});
 		});
 		// alert("更新成功🎊🎊");
-		Swal.fire("更新成功🎊🎊");
+		Swal.fire("更新成功");
 	};
 
-	const AddSns = (sns) => {
+	const AddSns = async (sns) => {
 		if (sns === "facebook") {
-			let url = prompt(`請輸入${sns}網址`);
+			let { value: text } = await Swal.fire({
+				title: `請輸入${sns}網址`,
+				input: "text",
+				inputPlaceholder: "",
+			});
+
+			if (text === undefined) {
+				return;
+			}
+			let url = text;
 			if (!url) {
 				url = "";
 			} else {
@@ -289,7 +300,15 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "instagram") {
-			let url = prompt(`請輸入${sns}網址`);
+			let { value: text } = await Swal.fire({
+				title: `請輸入${sns}網址`,
+				input: "text",
+				inputPlaceholder: "",
+			});
+			if (text === undefined) {
+				return;
+			}
+			let url = text;
 			if (!url) {
 				url = "";
 			} else {
@@ -298,7 +317,16 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "twitter") {
-			let url = prompt(`請輸入${sns}網址`);
+			let { value: text } = await Swal.fire({
+				title: `請輸入${sns}網址`,
+				input: "text",
+				inputPlaceholder: "",
+			});
+
+			if (text === undefined) {
+				return;
+			}
+			let url = text;
 			if (!url) {
 				url = "";
 			} else {
@@ -307,7 +335,16 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "youtube") {
-			let url = prompt(`請輸入${sns}網址`);
+			let { value: text } = await Swal.fire({
+				title: `請輸入${sns}網址`,
+				input: "text",
+				inputPlaceholder: "",
+			});
+
+			if (text === undefined) {
+				return;
+			}
+			let url = text;
 			if (!url) {
 				url = "";
 			} else {
@@ -316,6 +353,10 @@ function IdolPage({ topic }) {
 				});
 			}
 		}
+	};
+
+	const active = {
+		borderBottom: "3px solid #404040",
 	};
 
 	return (
@@ -425,10 +466,42 @@ function IdolPage({ topic }) {
 						</Person>
 
 						<MenuBar>
-							<MenuLink to={`${url}`}>聖地</MenuLink>
-							<MenuLink to={`${url}/picture`}>圖片區</MenuLink>
-							<MenuLink to={`${url}/calender`}>日程表</MenuLink>
-							<MenuLink to={`${url}/post`}>留言區</MenuLink>
+							<MenuLink
+								to={`${url}`}
+								onClick={() => {
+									setActiveItem("idolplace");
+								}}
+								style={activeItem === "idolplace" ? active : []}
+							>
+								聖地
+							</MenuLink>
+							<MenuLink
+								to={`${url}/picture`}
+								onClick={() => {
+									setActiveItem("idolphoto");
+								}}
+								style={activeItem === "idolphoto" ? active : []}
+							>
+								圖片區
+							</MenuLink>
+							<MenuLink
+								to={`${url}/calender`}
+								onClick={() => {
+									setActiveItem("idolschedule");
+								}}
+								style={activeItem === "idolschedule" ? active : []}
+							>
+								日程表
+							</MenuLink>
+							<MenuLink
+								to={`${url}/post`}
+								onClick={() => {
+									setActiveItem("idolpost");
+								}}
+								style={activeItem === "idolpost" ? active : []}
+							>
+								留言區
+							</MenuLink>
 						</MenuBar>
 						<PlaceContainer>
 							<Switch>

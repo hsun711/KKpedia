@@ -6,23 +6,49 @@ import paper from "../img/rm429-013.png";
 import Loading from "./Loading";
 
 const Container = styled.div`
-	width: 70vmin;
+	width: 80vmin;
 	background-image: url(${paper});
 	background-repeat: no-repeat;
 	background-size: 100% 100%;
 	position: fixed;
 	top: 50%;
 	left: 50%;
-	margin-left: -35vmin;
-	margin-top: -44vmin;
-	padding: 10vmin 7vmin 0vmin;
+	margin-left: -40vmin;
+	margin-top: -40vh;
+	padding: 7vmin 5vmin 0vmin;
+	display: flex;
+	flex-direction: column;
+	z-index: 5;
+	@media screen and (max-width: 1200px) {
+		width: 90vmin;
+		margin-left: -45vmin;
+	}
+	/* width: 40vw;
+	height: 80vh;
+	background-image: url(${paper});
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	margin-left: -20vw;
+	margin-top: -40vh;
+	padding: 7vmin 7vmin;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-evenly;
 	z-index: 5;
 	@media screen and (max-width: 1200px) {
-		margin-top: -55vmin;
-	}
+		width: 80vw;
+		height: 90vh;
+		margin-left: -40vw;
+		margin-top: -40vh;
+	} */
+`;
+
+const InsideContainer = styled.div`
+	width: 100%;
+	height: 100%;
 `;
 
 const InputTitle = styled.p`
@@ -39,7 +65,6 @@ const InputTitle = styled.p`
 const LongTitle = styled(InputTitle)`
 	@media screen and (max-width: 520px) {
 		width: 100vmin;
-		font-size: 1vmin;
 		line-height: 4vmin;
 	}
 `;
@@ -48,11 +73,12 @@ const InputArea = styled.input`
 	border-radius: 5px;
 	width: 100%;
 	height: 4vmin;
-	margin: 15px 0px;
+	margin: 2vmin 0;
 	padding-left: 10px;
 	font-size: 2vmin;
 	@media screen and (max-width: 1200px) {
 		font-size: 1.5vmin;
+		height: 5vmin;
 	}
 `;
 
@@ -62,12 +88,25 @@ const ArtistName = styled.div`
 	display: flex;
 	align-items: center;
 	@media screen and (max-width: 1200px) {
-		margin-top: 1vmin;
+		margin-top: 2vmin;
+		flex-direction: column;
+		align-items: flex-start;
 	}
 `;
 
 const ShortTitle = styled(InputTitle)`
 	width: 20vmin;
+`;
+
+const ArtistImage = styled(ArtistName)`
+	@media screen and (max-width: 1200px) {
+		flex-direction: row;
+		align-items: center;
+	}
+`;
+
+const ImageTitle = styled(ShortTitle)`
+	width: fit-content;
 `;
 
 const Add = styled.button`
@@ -135,98 +174,121 @@ function NewOne({ topic, setPopAddOne }) {
 	const SendNewOn = () => {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
-		const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
-		const metadata = {
-			contentType: file.type,
-		};
 
-		fileRef.put(file, metadata).then(() => {
-			fileRef.getDownloadURL().then((imageUrl) => {
-				const mainimage = file ? imageUrl : "";
-				documentRef
-					.set(
-						{
-							topic: topic,
-							title: title,
-							facebook: fb,
-							instagram: ig,
-							twitter: twitter,
-							youtube: youtube,
-							main_image: mainimage,
-							main_banner: "",
-						},
-						{ merge: true }
-					)
-					.then((docRef) => {
-						setLoading(false);
-						setPopAddOne(false);
-					});
+		if (file === null) {
+			documentRef
+				.set(
+					{
+						topic: topic,
+						title: title,
+						facebook: fb,
+						instagram: ig,
+						twitter: twitter,
+						youtube: youtube,
+						main_image: "",
+						main_banner: "",
+					},
+					{ merge: true }
+				)
+				.then((docRef) => {
+					setLoading(false);
+					setPopAddOne(false);
+				});
+		} else {
+			const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
+			const metadata = {
+				contentType: file.type,
+			};
+			fileRef.put(file, metadata).then(() => {
+				fileRef.getDownloadURL().then((imageUrl) => {
+					const mainimage = file ? imageUrl : "";
+					documentRef
+						.set(
+							{
+								topic: topic,
+								title: title,
+								facebook: fb,
+								instagram: ig,
+								twitter: twitter,
+								youtube: youtube,
+								main_image: mainimage,
+								main_banner: "",
+							},
+							{ merge: true }
+						)
+						.then((docRef) => {
+							setLoading(false);
+							setPopAddOne(false);
+						});
+				});
 			});
-		});
+		}
 	};
 
 	return (
 		<Container>
-			<InputTitle>類別：{topic}</InputTitle>
-			<ArtistName>
-				<LongTitle>藝人 / 戲劇 / 綜藝名稱：</LongTitle>
-				<InputArea
-					value={title}
-					onChange={(e) => {
-						setTitle(e.target.value);
-					}}
-				/>
-			</ArtistName>
-			<ArtistName>
-				<ShortTitle>instagram：</ShortTitle>
-				<InputArea
-					value={ig}
-					onChange={(e) => {
-						setIg(e.target.value);
-					}}
-				/>
-			</ArtistName>
-			<ArtistName>
-				<ShortTitle>facebook：</ShortTitle>
-				<InputArea
-					value={fb}
-					onChange={(e) => {
-						setFb(e.target.value);
-					}}
-				/>
-			</ArtistName>
-			<ArtistName>
-				<ShortTitle>twitter：</ShortTitle>
-				<InputArea
-					value={twitter}
-					onChange={(e) => {
-						setTwitter(e.target.value);
-					}}
-				/>
-			</ArtistName>
-			<ArtistName>
-				<ShortTitle>youtube：</ShortTitle>
-				<InputArea
-					value={youtube}
-					onChange={(e) => {
-						setYoutube(e.target.value);
-					}}
-				/>
-			</ArtistName>
-			<ArtistName>
-				<ShortTitle>上傳封面圖：</ShortTitle>
-				<Add as="label" htmlFor="postImage" />
-				<input
-					type="file"
-					id="postImage"
-					style={{ display: "none" }}
-					onChange={(e) => {
-						setFile(e.target.files[0]);
-					}}
-				/>
-				<CoverImage src={previewURL} />
-			</ArtistName>
-			<SendBtn onClick={SendNewOn}>新增</SendBtn>
+			<InsideContainer>
+				<InputTitle>類別：{topic}</InputTitle>
+				<ArtistName>
+					<LongTitle>藝人 / 戲劇 / 綜藝名稱：</LongTitle>
+					<InputArea
+						value={title}
+						onChange={(e) => {
+							setTitle(e.target.value);
+						}}
+					/>
+				</ArtistName>
+				<ArtistName>
+					<ShortTitle>instagram：</ShortTitle>
+					<InputArea
+						value={ig}
+						onChange={(e) => {
+							setIg(e.target.value);
+						}}
+					/>
+				</ArtistName>
+				<ArtistName>
+					<ShortTitle>facebook：</ShortTitle>
+					<InputArea
+						value={fb}
+						onChange={(e) => {
+							setFb(e.target.value);
+						}}
+					/>
+				</ArtistName>
+				<ArtistName>
+					<ShortTitle>twitter：</ShortTitle>
+					<InputArea
+						value={twitter}
+						onChange={(e) => {
+							setTwitter(e.target.value);
+						}}
+					/>
+				</ArtistName>
+				<ArtistName>
+					<ShortTitle>youtube：</ShortTitle>
+					<InputArea
+						value={youtube}
+						onChange={(e) => {
+							setYoutube(e.target.value);
+						}}
+					/>
+				</ArtistName>
+				<ArtistImage>
+					<ImageTitle>上傳封面圖：</ImageTitle>
+					<Add as="label" htmlFor="postImage" />
+					<input
+						type="file"
+						id="postImage"
+						style={{ display: "none" }}
+						onChange={(e) => {
+							setFile(e.target.files[0]);
+						}}
+					/>
+					<CoverImage src={previewURL} />
+				</ArtistImage>
+				<SendBtn onClick={SendNewOn}>新增</SendBtn>
+			</InsideContainer>
 			{loading && <Loading />}
 		</Container>
 	);

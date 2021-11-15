@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import NewPicture from "./NewPicture";
 import ImageCarousel from "./ImageCarousel";
+import ImageViewer from "react-simple-image-viewer";
+import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
+import EachPictures from "./EachPictures";
 
 const Container = styled.div`
 	width: 100%;
@@ -54,62 +57,8 @@ const EachPhoto = styled.div`
 	width: 100%;
 	border-radius: 10px;
 	margin-bottom: 2vmin;
-`;
-
-const PosterInfo = styled.div`
-	display: flex;
-	justify-content: space-between;
-`;
-
-const ImageHolder = styled.p`
-	font-size: 4vmin;
-	line-height: 5vmin;
-	font-weight: 600;
-	margin-left: 2.5vmin;
-`;
-
-const TimeStamp = styled.div`
-	font-size: 1.5vmin;
-`;
-
-const ImageDescription = styled.p`
-	font-size: 2vmin;
-	margin-left: 2.5vmin;
-	color: #57606f;
 	@media screen and (max-width: 1200px) {
-		font-size: 1.75vmin;
-	}
-`;
-
-const PhotosArea = styled.div`
-	width: 100%;
-	margin: 0vmin auto;
-	@media screen and (max-width: 1200px) {
-		margin: 2vmin auto;
-	}
-`;
-const NoCarouselImg = styled.div`
-	width: 80%;
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-evenly;
-	margin: 0vmin auto;
-`;
-
-const MultiPhoto = styled.div`
-	margin: 3vmin 0vmin 2vmin 10vmin;
-	@media screen and (max-width: 1200px) {
-		margin: 3vmin 0vmin 0vmin 7vmin;
-	}
-`;
-
-const Photos = styled.img`
-	max-width: 20vmin;
-	max-height: 20vmin;
-	@media screen and (max-width: 1200px) {
-		max-width: 15vmin;
-		max-height: 15vmin;
+		width: 80%;
 	}
 `;
 
@@ -160,9 +109,9 @@ function Picture({ title }) {
 
 	return (
 		<>
-			{userLevel <= 20 ? (
+			{userLevel < 20 ? (
 				<EachPhoto>
-					<p>請再加把勁，貢獻聖地解鎖圖片區唷🤪🤪</p>
+					<h3>20 等以上才能進入唷~請再加把勁，貢獻聖地解鎖圖片區吧!!!</h3>
 				</EachPhoto>
 			) : (
 				<>
@@ -177,6 +126,9 @@ function Picture({ title }) {
 					) : (
 						<Container>
 							{photos.map((item) => {
+								return <EachPictures item={item} key={uuidv4()} />;
+							})}
+							{/* {photos.map((item) => {
 								return (
 									<EachPhoto key={uuidv4()}>
 										<PosterInfo>
@@ -189,9 +141,25 @@ function Picture({ title }) {
 										<PhotosArea>
 											{item.images.length <= 4 ? (
 												<NoCarouselImg>
-													{item.images.map((img) => {
-														return <Photos src={img} key={uuidv4()} />;
-													})}
+													{item.images.map((img, index) => (
+														<Photos
+															src={img}
+															key={index}
+															onClick={() => openImageViewer(index)}
+														/>
+													))}
+													{isViewerOpen && (
+														<ImageViewer
+															src={item.images}
+															currentIndex={currentImage}
+															onClose={closeImageViewer}
+															disableScroll={false}
+															backgroundStyle={{
+																backgroundColor: "rgba(0,0,0,0.5)",
+															}}
+															closeOnClickOutside={true}
+														/>
+													)}
 												</NoCarouselImg>
 											) : (
 												<MultiPhoto>
@@ -201,7 +169,7 @@ function Picture({ title }) {
 										</PhotosArea>
 									</EachPhoto>
 								);
-							})}
+							})} */}
 						</Container>
 					)}
 				</>

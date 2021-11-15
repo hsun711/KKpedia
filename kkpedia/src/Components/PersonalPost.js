@@ -24,16 +24,12 @@ const DeletePost = styled.div`
 	width: 4vmin;
 	height: 4vmin;
 	position: absolute;
-	top: 8vmin;
-	right: 13vmin;
+	top: 4vmin;
+	right: 9vmin;
 	cursor: pointer;
-	@media screen and (max-width: 1024px) {
-		top: 8vmin;
-		right: 11vmin;
-	}
-	@media screen and (max-width: 500px) {
-		top: 10vmin;
-		right: 9vmin;
+	@media screen and (max-width: 1200px) {
+		right: 7vmin;
+		top: 5vmin;
 	}
 `;
 

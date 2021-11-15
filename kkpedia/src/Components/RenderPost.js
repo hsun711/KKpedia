@@ -237,7 +237,6 @@ function RenderPost({ item }) {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					item.push(doc.data());
-					console.log(doc.data());
 				});
 
 				setShowReply(item[0]);

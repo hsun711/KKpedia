@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import styled from "styled-components";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -19,6 +19,8 @@ const ImgContainer = styled.div`
 	height: 25vmin;
 	display: flex;
 	margin-top: 1vmin;
+	overflow: hidden;
+	/* outline: 2px solid black; */
 	@media screen and (max-width: 1200px) {
 		width: 20vmin;
 		height: 15vmin;
@@ -26,11 +28,12 @@ const ImgContainer = styled.div`
 `;
 
 const Image = styled.img`
-	width: 80%;
+	width: 90%;
 	height: 100%;
 	margin: 0vmin auto;
+	object-fit: cover;
 	@media screen and (max-width: 1200px) {
-		height: 90%;
+		height: 100%;
 	}
 `;
 const Arrow = styled.img`
@@ -49,12 +52,10 @@ export default function ImageCarousel({ images, showNum }) {
 		nextArrow: <Arrow src={rightarrow} />,
 		prevArrow: <Arrow src={leftarrow} />,
 	};
-
-	// console.log(images.length);
 	return (
 		<Images>
 			<Slider {...settings}>
-				{images.map((image) => {
+				{images.map((image, index) => {
 					return (
 						<ImgContainer key={uuidv4()}>
 							<Image src={image || coverImage} />

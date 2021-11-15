@@ -11,7 +11,6 @@ import Profile from "./Components/Profile";
 import SearchResult from "./Components/SearchResult";
 import Home from "./Components/Home";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Loading from "./Components/Loading";
 
 const MainContainer = styled.div`
 	max-width: 1560px;
@@ -23,8 +22,6 @@ const MainContainer = styled.div`
 
 const Container = styled.div`
 	width: 100%;
-	/* height: 90vh; */
-	/* outline: 5px soild black; */
 `;
 
 function App() {
@@ -97,7 +94,6 @@ function App() {
 						</MainContainer>
 					</>
 				) : (
-					/* <Loading /> */
 					<LandingPage />
 				)}
 			</>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import add from "../img/addimage.png";
 import paper from "../img/rm429-013.png";
@@ -95,7 +96,6 @@ const CoverImges = styled.div`
 	width: 10vmin;
 	height: 10vmin;
 	margin: 2vmin;
-	outline: 5px solid black;
 `;
 
 const CoverImage = styled.img`
@@ -246,6 +246,7 @@ function NewPicture({ title, AddPicture }) {
 			.then(() => {
 				setLoading(false);
 				AddPicture(false);
+				Swal.fire("貢獻值加 7 點~");
 			})
 			.catch((err) => console.log(err));
 	};

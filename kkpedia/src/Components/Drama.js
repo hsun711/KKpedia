@@ -35,8 +35,7 @@ const Add = styled.div`
 	cursor: pointer;
 	display: inline-block;
 	font-weight: 600;
-	font-size: 2vmin;
-	/* line-height: 3vmin; */
+	font-size: 2.75vmin;
 	text-align: center;
 	text-decoration: none;
 	user-select: none;
@@ -50,6 +49,7 @@ const Add = styled.div`
 	@media screen and (max-width: 1200px) {
 		box-shadow: #422800 2px 2px 0 0;
 		padding: 0vmin 3vmin;
+		margin-top: 3.5vmin;
 	}
 `;
 

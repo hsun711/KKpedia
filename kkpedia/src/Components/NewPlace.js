@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
+import Swal from "sweetalert2";
 import add from "../img/addimage.png";
 import paper from "../img/rm429-013.png";
 import firebase from "../utils/firebase";
@@ -41,7 +42,7 @@ const InputArea = styled.input`
 	padding-top: 0.25vmin;
 	font-size: 2vmin;
 	@media screen and (max-width: 1200px) {
-		height: 5vmin;
+		height: 5.5vmin;
 		margin: 1vmin 0vmin;
 	}
 `;
@@ -58,15 +59,24 @@ const Title = styled.div`
 `;
 
 const ShortTitle = styled(InputTitle)`
-	width: 25vmin;
+	width: 28vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 2.5vmin;
+	}
+`;
+
+const ImageTitle = styled(Title)`
+	@media screen and (max-width: 1200px) {
+		flex-direction: row;
+		align-items: center;
+	}
 `;
 
 const AddImagesTitle = styled.p`
-	width: 18.5vmin;
+	width: fit-content;
 	font-size: 2.5vmin;
 	font-weight: 600;
 	@media screen and (max-width: 1200px) {
-		width: 100%;
 		font-size: 2vmin;
 	}
 `;
@@ -296,6 +306,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 			.then(() => {
 				setLoading(false);
 				setPopAddPlace(false);
+				Swal.fire("貢獻值加 5 點~");
 			})
 			.catch((err) => console.log(err));
 	};
@@ -328,7 +339,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 				<ShortTitle>詳細地址：</ShortTitle>
 				<MapAutocomplete placeaddress={GetAddress} />
 			</Title>
-			<Title>
+			<ImageTitle>
 				<AddImagesTitle>上傳照片：</AddImagesTitle>
 				<AddImages as="label" htmlFor="postImages" />
 				<input
@@ -338,7 +349,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 					style={{ display: "none" }}
 					onChange={OnFileChange}
 				/>
-			</Title>
+			</ImageTitle>
 			<MultiImgs>
 				{files.map((file) => {
 					return <Images src={URL.createObjectURL(file)} key={file.id} />;

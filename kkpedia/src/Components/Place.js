@@ -34,7 +34,8 @@ const Container = styled.div`
 	margin: 3vmin;
 
 	@media screen and (max-width: 1200px) {
-		margin: 3vmin 7vmin;
+		width: 35vmin;
+		height: 37vmin;
 	}
 `;
 
@@ -58,8 +59,8 @@ const ImgContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	@media screen and (max-width: 1200px) {
-		width: 15vmin;
-		height: 15vmin;
+		width: 21vmin;
+		height: 21vmin;
 	}
 `;
 
@@ -72,7 +73,7 @@ const PlaceImage = styled.img`
 const PlaceText = styled.div`
 	max-width: 20vmin;
 	min-height: 7vmin;
-	margin-top: -2vmin;
+	margin-top: -2.5vmin;
 	transform: rotateZ(7deg);
 	display: flex;
 	flex-direction: column;
@@ -80,27 +81,28 @@ const PlaceText = styled.div`
 	margin-left: -2.5vmin;
 	@media screen and (max-width: 1200px) {
 		padding-top: 1vmin;
+		max-width: 25vmin;
+		margin-top: -3vmin;
 	}
 `;
 
 const PlaceTitle = styled.p`
-	font-size: 3vmin;
+	font-size: 2.5vmin;
 	font-weight: 600;
-	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 3.2vmin;
 	}
 `;
 const PlaceDesp = styled.p`
-	/* margin-top: 0.75vmin; */
-	font-size: 1.5vmin;
+	font-size: 2vmin;
 	color: #34495e;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 2.2vmin;
 	}
 `;
 

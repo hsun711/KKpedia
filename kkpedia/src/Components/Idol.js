@@ -26,7 +26,7 @@ const Add = styled.div`
 	margin-top: 2.5vmin;
 	margin-bottom: 8px;
 	margin-left: 2vmin;
-	padding: 0vmin 1vmin;
+	padding: 0vmin 1.5vmin;
 	background-color: #f8eedb;
 	border: 2px solid #422800;
 	border-radius: 30px;
@@ -35,8 +35,7 @@ const Add = styled.div`
 	cursor: pointer;
 	display: inline-block;
 	font-weight: 600;
-	font-size: 2vmin;
-	/* line-height: 3vmin; */
+	font-size: 2.75vmin;
 	text-align: center;
 	text-decoration: none;
 	user-select: none;
@@ -50,6 +49,7 @@ const Add = styled.div`
 	@media screen and (max-width: 1200px) {
 		box-shadow: #422800 2px 2px 0 0;
 		padding: 0vmin 3vmin;
+		margin-top: 3.5vmin;
 	}
 `;
 
@@ -82,15 +82,6 @@ const EachContainer = styled.div`
 	@media screen and (max-width: 1200px) {
 	}
 `;
-
-// const TopicImg = styled.div`
-// 	background-image: url(${artist});
-// 	background-repeat: no-repeat;
-// 	background-size: contain;
-// 	width: 30vmin;
-// 	height: 30vmin;
-// 	transform: rotateZ(-30deg);
-// `;
 
 function Idol() {
 	const [popAddOne, setPopAddOne] = useState(false);

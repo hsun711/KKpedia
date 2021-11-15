@@ -35,13 +35,34 @@ const LinkNav = styled(Link)`
 	}
 `;
 
-function SideMenu() {
+function SideMenu({ setSideBar }) {
 	return (
 		<MenuBar>
 			<Topic>
-				<LinkNav to="/idol">藝人</LinkNav>
-				<LinkNav to="/drama">戲劇</LinkNav>
-				<LinkNav to="/tvshow">綜藝</LinkNav>
+				<LinkNav
+					to="/idol"
+					onClick={() => {
+						setSideBar(false);
+					}}
+				>
+					藝人
+				</LinkNav>
+				<LinkNav
+					to="/drama"
+					onClick={() => {
+						setSideBar(false);
+					}}
+				>
+					戲劇
+				</LinkNav>
+				<LinkNav
+					to="/tvshow"
+					onClick={() => {
+						setSideBar(false);
+					}}
+				>
+					綜藝
+				</LinkNav>
 			</Topic>
 		</MenuBar>
 	);

@@ -29,6 +29,24 @@ const Container = styled.div`
 	}
 `;
 
+const NoResult = styled.div`
+	width: 80%;
+	height: 30vmin;
+	font-size: 8vmin;
+	margin: 20vmin auto;
+	background-color: rgba(256, 256, 256, 0.8);
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.25);
+	border-radius: 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-wrap: wrap;
+	@media screen and (max-width: 1200px) {
+		width: 90%;
+		font-size: 5vmin;
+	}
+`;
+
 const EachIdol = styled.div`
 	background-image: url(${sticker});
 	background-size: 100%;
@@ -91,7 +109,29 @@ function SearchResult({ allCategory }) {
 
 	return (
 		<>
-			<Container>
+			{resultData.length === 0 ? (
+				<NoResult>
+					<p>此藝人/戲劇/綜藝還沒被建立唷!</p>
+				</NoResult>
+			) : (
+				<Container>
+					{resultData.map((result) => {
+						return (
+							<EachIdol key={result.title}>
+								<LinkNav
+									onClick={() => {
+										history.push(`/${result.topic}/${result.title}`);
+									}}
+								>
+									<IdolImage src={result.main_image || idol} />
+									<LinkTxt>{result.title}</LinkTxt>
+								</LinkNav>
+							</EachIdol>
+						);
+					})}
+				</Container>
+			)}
+			{/* <Container>
 				{resultData.map((result) => {
 					return (
 						<EachIdol key={result.title}>
@@ -106,7 +146,7 @@ function SearchResult({ allCategory }) {
 						</EachIdol>
 					);
 				})}
-			</Container>
+			</Container> */}
 			{loading && <Loading />}
 		</>
 	);

@@ -93,6 +93,9 @@ export default function RenderCalender({ title }) {
 			inputPlaceholder: "",
 		});
 
+		if (text === undefined) {
+			return;
+		}
 		let event = text;
 		let selectedDate = date.dateStr;
 		// let selectedDate = new Date(date.dateStr + "T00:00:00");
@@ -136,7 +139,7 @@ export default function RenderCalender({ title }) {
 					.then((querySnapshot) => {
 						querySnapshot.forEach((doc) => {
 							doc.ref.delete();
-							Swal.fire("刪除成功!", "被刪除了行程已回不來了😢😢", "success");
+							Swal.fire("刪除成功!", "被刪除了行程已回不來了", "success");
 							// console.log(doc.ref);
 						});
 					});

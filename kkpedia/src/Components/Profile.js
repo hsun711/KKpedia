@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
+import styled, { withTheme } from "styled-components";
 import {
 	BrowserRouter,
 	Route,
@@ -10,7 +10,6 @@ import {
 	useParams,
 } from "react-router-dom";
 import Swal from "sweetalert2";
-import withReactContent from "sweetalert2-react-content";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
 import PersonalCollection from "./PersonalCollection";
@@ -48,7 +47,7 @@ const BannerChange = styled.div`
 	align-self: flex-end;
 	background-image: url(${changeimg});
 	background-repeat: no-repeat;
-	background-size: 60%;
+	background-size: 55%;
 	background-position: center center;
 	background-color: #3a3b3c;
 	border-radius: 50%;
@@ -99,6 +98,7 @@ const UserNameDiv = styled.div`
 	font-size: 6vmin;
 	font-weight: 600;
 	margin-left: 2vmin;
+	cursor: pointer;
 `;
 
 const PersonName = styled.input`
@@ -207,7 +207,7 @@ function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
-	const [activeItem, setActiveItem] = useState("");
+	const [activeItem, setActiveItem] = useState("data");
 	const [readOnly, setReadOnly] = useState(true);
 	const [userName, setUserName] = useState("");
 	const [userImg, setUserImg] = useState("");
@@ -219,7 +219,6 @@ function Profile() {
 	const [bannerFile, setBannerFile] = useState(null);
 	const previewURL = file ? URL.createObjectURL(file) : userImg;
 	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
-	const MySwal = withReactContent(Swal);
 
 	useEffect(() => {
 		docRef.onSnapshot((doc) => {
@@ -244,17 +243,7 @@ function Profile() {
 			});
 		});
 		// alert("更新成功🎊🎊");
-		MySwal.fire({
-			title: <p>Hello World</p>,
-			footer: "Copyright 2018",
-			didOpen: () => {
-				// `MySwal` is a subclass of `Swal`
-				//   with all the same instance & static methods
-				MySwal.clickConfirm();
-			},
-		}).then(() => {
-			return MySwal.fire(<p>更新成功🎊🎊</p>);
-		});
+		Swal.fire("更新成功🎊🎊");
 	};
 
 	const ChangeOk = () => {
@@ -287,6 +276,10 @@ function Profile() {
 		} else {
 			setReadOnly(false);
 		}
+	};
+
+	const active = {
+		borderBottom: "3px solid #404040",
 	};
 
 	return (
@@ -350,9 +343,33 @@ function Profile() {
 				<BrowserRouter>
 					<>
 						<MenuBar>
-							<MenuLink to={`${url}`}>個人資料</MenuLink>
-							<MenuLink to="/myCollection">收藏景點</MenuLink>
-							<MenuLink to="/myPost">過往PO文</MenuLink>
+							<MenuLink
+								to={`${url}`}
+								onClick={() => {
+									setActiveItem("data");
+								}}
+								style={activeItem === "data" ? active : []}
+							>
+								個人資料
+							</MenuLink>
+							<MenuLink
+								to="/myCollection"
+								onClick={() => {
+									setActiveItem("likeplace");
+								}}
+								style={activeItem === "likeplace" ? active : []}
+							>
+								收藏景點
+							</MenuLink>
+							<MenuLink
+								to="/myPost"
+								onClick={() => {
+									setActiveItem("pastpost");
+								}}
+								style={activeItem === "pastpost" ? active : []}
+							>
+								過往PO文
+							</MenuLink>
 						</MenuBar>
 						<Switch>
 							<Route exact path={`${url}`}>

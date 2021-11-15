@@ -4,6 +4,7 @@ import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
 import img from "../img/wanted.png";
 import like from "../img/like.png";
+import { useHistory } from "react-router";
 
 const EachPlace = styled.div`
 	display: flex;
@@ -19,8 +20,8 @@ const EachPlace = styled.div`
 	margin: 2vmin;
 	padding-bottom: 1vmin;
 	@media screen and (max-width: 1200px) {
-		width: 35vmin;
-		height: 40vmin;
+		width: 30vmin;
+		height: 35vmin;
 	}
 `;
 
@@ -64,8 +65,8 @@ const PlaceDescription = styled.div`
 `;
 
 const NormalTxt = styled.p`
-	font-size: 1vmin;
-	margin-top: 1vmin;
+	font-size: 2vmin;
+	margin: 1vmin 0;
 	@media screen and (max-width: 1200px) {
 		font-size: 2vmin;
 	}
@@ -73,6 +74,17 @@ const NormalTxt = styled.p`
 		font-size: 1vmin;
 	}
 `;
+
+const SmallTxt = styled.p`
+	font-size: 1.5vmin;
+	color: #34495e;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+`;
+
 const LikeIcon = styled.img`
 	width: 3vmin;
 	height: 3vmin;
@@ -87,7 +99,6 @@ function CollectPlace({ data }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
-
 	const RemoveMyLikes = () => {
 		db.collection("users")
 			.doc(`${user.uid}`)
@@ -95,7 +106,7 @@ function CollectPlace({ data }) {
 			.doc(`${data.locationName}`)
 			.delete()
 			.then(() => {
-				Swal.fire("取消收藏😤😤");
+				Swal.fire("取消收藏");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);
@@ -122,14 +133,18 @@ function CollectPlace({ data }) {
 
 	return (
 		<EachPlace>
-			<PlaceImg>
+			<PlaceImg
+				onClick={() => {
+					window.location.href = `${data.topic}/${data.title}/${data.locationName}`;
+				}}
+			>
 				<Image src={data.images.length === 0 ? img : data.images[0]} />
 			</PlaceImg>
 			<PlaceTxt>
 				<TitleTxt>{data.locationName}</TitleTxt>
 				<NormalTxt>{data.title}</NormalTxt>
 				<PlaceDescription>
-					<NormalTxt>{data.description}</NormalTxt>
+					<SmallTxt>{data.description}</SmallTxt>
 				</PlaceDescription>
 			</PlaceTxt>
 			<LikeIcon src={like} onClick={ToggleCollect} />

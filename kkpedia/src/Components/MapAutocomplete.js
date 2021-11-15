@@ -21,8 +21,7 @@ const Input = styled.input`
 	padding-top: 0.25vmin;
 	font-size: 2vmin;
 	@media screen and (max-width: 1200px) {
-		height: 5vmin;
-		/* font-size: 1.5vmin; */
+		height: 5.5vmin;
 	}
 `;
 function MapAutocomplete(props) {
