@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
-import AlertPopUp from "./AlertPopUp.js";
+import Swal from "sweetalert2";
 import sticker from "../img/sticker2.png";
 import idol from "../img/wanted.png";
 import unlike from "../img/unlike.png";
@@ -19,7 +19,7 @@ const EachIdol = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	position: relative;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		width: 35vmin;
 		height: 35vmin;
 		margin: 1vmin auto;
@@ -31,8 +31,6 @@ const LinkNav = styled(Link)`
 	text-decoration: none;
 	display: flex;
 	flex-direction: column;
-	@media screen and (max-width: 1024px) {
-	}
 `;
 
 const IdolImage = styled.img`
@@ -45,7 +43,7 @@ const IdolImage = styled.img`
 		transition: all 0.3s;
 		cursor: pointer;
 	}
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin-top: 6.5vmin;
 		margin-left: 6.5vmin;
 	}
@@ -57,7 +55,7 @@ const LinkTxt = styled.p`
 	font-size: 2.5vmin;
 	font-weight: 600;
 	margin-top: 2vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin-top: 3.5vmin;
 	}
 `;
@@ -68,9 +66,9 @@ const LikeIcon = styled.img`
 	margin-top: 1vmin;
 	cursor: pointer;
 	position: absolute;
-	bottom: 0.75vmin;
+	top: 0.75vmin;
 	right: 3vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		width: 6vmin;
 		height: 6vmin;
 	}
@@ -97,7 +95,8 @@ function TopicContainer({ topic, item }) {
 				topic: item.star.topic,
 			})
 			.then(() => {
-				alert("追蹤成功🎉🎊");
+				// alert("追蹤成功🎉🎊");
+				Swal.fire("追蹤成功🎉🎊");
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);
@@ -111,7 +110,8 @@ function TopicContainer({ topic, item }) {
 			.doc(`${item.star.title}`)
 			.delete()
 			.then(() => {
-				alert("取消追蹤😤😤");
+				// alert("取消追蹤😤😤");
+				Swal.fire("取消追蹤😤😤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);

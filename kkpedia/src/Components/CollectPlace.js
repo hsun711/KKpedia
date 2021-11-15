@@ -1,51 +1,104 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import img from "../img/wanted.png";
 import like from "../img/like.png";
+import { useHistory } from "react-router";
 
 const EachPlace = styled.div`
 	display: flex;
-	margin: 5vmin 3vmin 2vmin 0vmin;
-	padding: 2vmin 3vmin;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background-color: rgba(256, 256, 256, 0.7);
+	border-radius: 10px;
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	width: 25vmin;
+	height: 30vmin;
+	display: flex;
+	margin: 2vmin;
+	padding-bottom: 1vmin;
+	@media screen and (max-width: 1200px) {
+		width: 30vmin;
+		height: 35vmin;
+	}
 `;
 
-const PlaceImg = styled.img`
-	width: 8vmin;
-	height: 8vmin;
+const PlaceImg = styled.div`
+	width: 100%;
+	height: 50%;
+	overflow: hidden;
+	border-radius: 10px 10px 0 0;
+`;
+
+const Image = styled.img`
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 `;
 
 const PlaceTxt = styled.div`
+	height: 50%;
+	width: 90%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	margin-left: 1vmin;
-`;
-const Title = styled.div`
-	display: flex;
 	align-items: center;
+	@media screen and (max-width: 1200px) {
+		margin-top: 1vmin;
+	}
 `;
+
 const TitleTxt = styled.p`
-	font-size: 2vmin;
+	font-size: 3vmin;
 	font-weight: 600;
+	@media screen and (max-width: 1200px) {
+		font-size: 3.5vmin;
+	}
+`;
+
+const PlaceDescription = styled.div`
+	width: fit-content;
+	word-wrap: break-word;
+	text-align: center;
 `;
 
 const NormalTxt = styled.p`
-	font-size: 1vmin;
-	margin-top: 1vmin;
+	font-size: 2vmin;
+	margin: 1vmin 0;
+	@media screen and (max-width: 1200px) {
+		font-size: 2vmin;
+	}
+	@media screen and (max-width: 500px) {
+		font-size: 1vmin;
+	}
 `;
+
+const SmallTxt = styled.p`
+	font-size: 1.5vmin;
+	color: #34495e;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+`;
+
 const LikeIcon = styled.img`
-	width: 2vmin;
-	height: 2vmin;
-	margin-left: 1vmin;
+	width: 3vmin;
+	height: 3vmin;
 	cursor: pointer;
+	@media screen and (max-width: 1200px) {
+		align-self: flex-end;
+		margin-right: 1.5vmin;
+	}
 `;
 
 function CollectPlace({ data }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
-
 	const RemoveMyLikes = () => {
 		db.collection("users")
 			.doc(`${user.uid}`)
@@ -53,7 +106,7 @@ function CollectPlace({ data }) {
 			.doc(`${data.locationName}`)
 			.delete()
 			.then(() => {
-				alert("取消收藏😤😤");
+				Swal.fire("取消收藏");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);
@@ -80,15 +133,21 @@ function CollectPlace({ data }) {
 
 	return (
 		<EachPlace>
-			<PlaceImg src={data.images.length === 0 ? img : data.images[0]} />
+			<PlaceImg
+				onClick={() => {
+					window.location.href = `${data.topic}/${data.title}/${data.locationName}`;
+				}}
+			>
+				<Image src={data.images.length === 0 ? img : data.images[0]} />
+			</PlaceImg>
 			<PlaceTxt>
-				<Title>
-					<TitleTxt>{data.locationName}</TitleTxt>
-					<LikeIcon src={like} onClick={ToggleCollect} />
-				</Title>
+				<TitleTxt>{data.locationName}</TitleTxt>
 				<NormalTxt>{data.title}</NormalTxt>
-				<NormalTxt>{data.description}</NormalTxt>
+				<PlaceDescription>
+					<SmallTxt>{data.description}</SmallTxt>
+				</PlaceDescription>
 			</PlaceTxt>
+			<LikeIcon src={like} onClick={ToggleCollect} />
 		</EachPlace>
 	);
 }

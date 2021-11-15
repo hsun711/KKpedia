@@ -4,7 +4,6 @@ import idolimage from "../img/wanted.png";
 import firebase from "../utils/firebase";
 import { Link, useRouteMatch } from "react-router-dom";
 import board from "../img/cork-board.png";
-import add from "../img/plus.png";
 import sticker from "../img/sticker6.png";
 import NewPlace from "./NewPlace";
 
@@ -17,7 +16,7 @@ const OutsideContainer = styled.div`
 	justify-content: center;
 	flex-wrap: wrap;
 	padding: 3vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		margin: 3vmin;
 	}
 `;
@@ -34,8 +33,9 @@ const Container = styled.div`
 	justify-content: center;
 	margin: 3vmin;
 
-	@media screen and (max-width: 1024px) {
-		margin: 3vmin 7vmin;
+	@media screen and (max-width: 1200px) {
+		width: 35vmin;
+		height: 37vmin;
 	}
 `;
 
@@ -58,9 +58,9 @@ const ImgContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	@media screen and (max-width: 1024px) {
-		width: 15vmin;
-		height: 15vmin;
+	@media screen and (max-width: 1200px) {
+		width: 21vmin;
+		height: 21vmin;
 	}
 `;
 
@@ -73,48 +73,68 @@ const PlaceImage = styled.img`
 const PlaceText = styled.div`
 	max-width: 20vmin;
 	min-height: 7vmin;
-	margin-top: -2vmin;
+	margin-top: -2.5vmin;
 	transform: rotateZ(7deg);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	margin-left: -2.5vmin;
-	@media screen and (max-width: 1024px) {
+	@media screen and (max-width: 1200px) {
 		padding-top: 1vmin;
+		max-width: 25vmin;
+		margin-top: -3vmin;
 	}
 `;
 
 const PlaceTitle = styled.p`
-	font-size: 3vmin;
+	font-size: 2.5vmin;
 	font-weight: 600;
-	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 3.2vmin;
 	}
 `;
 const PlaceDesp = styled.p`
-	/* margin-top: 0.75vmin; */
-	font-size: 1.5vmin;
+	font-size: 2vmin;
 	color: #34495e;
 	display: -webkit-box;
 	-webkit-line-clamp: 1;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 2.2vmin;
 	}
 `;
 
 const Add = styled.div`
-	background-image: url(${add});
-	background-repeat: no-repeat;
-	background-size: 100%;
-	width: 7vmin;
-	height: 7vmin;
+	background-color: #f8eedb;
+	border: 2px solid #422800;
+	border-radius: 30px;
+	box-shadow: #422800 4px 4px 0 0;
+	color: #422800;
+	cursor: pointer;
 	position: fixed;
 	bottom: 3vmin;
-	right: 3vmin;
-	cursor: pointer;
+	right: 2vmin;
+	display: inline-block;
+	font-weight: 600;
+	font-size: 2vmin;
+	padding: 0 2vmin;
+	line-height: 4.2vmin;
+	text-align: center;
+	text-decoration: none;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	&:hover {
+		background-color: #f3f4f6;
+		box-shadow: #422800 2px 2px 0 0;
+		transform: translate(2px, 2px);
+	}
+	@media screen and (max-width: 1200px) {
+		line-height: 5vmin;
+		padding: 0.75vmin 2vmin;
+	}
 `;
 
 const Cover = styled.div`
@@ -161,7 +181,9 @@ function Place({ title, topic }) {
 	}, []);
 	return (
 		<OutsideContainer>
-			<Add onClick={AddSomePlace} topic="Idol" />
+			<Add onClick={AddSomePlace} topic="Idol">
+				新增聖地
+			</Add>
 			{popAddPlace ? (
 				<div>
 					<Cover onClick={AddSomePlace} />

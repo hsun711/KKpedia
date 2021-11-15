@@ -8,8 +8,10 @@ const Container = styled.div`
 	flex-direction: column;
 	cursor: pointer;
 	padding: 1vmin;
+	background-color: #fff;
 	&:hover {
-		background-color: #dff9fb;
+		background-color: #f8eedb;
+		box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
 	}
 `;
 
@@ -24,8 +26,9 @@ function Notification({ data }) {
 			.collection("news")
 			.doc(`${data.docid}`)
 			.delete()
-			.then(() => {});
-		history.push(`/${data.topic}/${data.title}`);
+			.then(() => {
+				history.push(`/${data.topic}/${data.title}`);
+			});
 	};
 	return (
 		<Container onClick={deleteNews}>{data.title} 有更新景點囉~~</Container>

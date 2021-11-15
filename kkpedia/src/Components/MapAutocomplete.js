@@ -7,18 +7,21 @@ import PlacesAutocomplete, {
 
 const InputArea = styled.div`
 	width: 100%;
-	margin: 15px 0px;
+	margin: 2vmin 0px;
+	@media screen and (max-width: 1200px) {
+		margin: 1vmin 0vmin;
+	}
 `;
 
 const Input = styled.input`
 	border-radius: 5px;
 	width: 100%;
 	height: 4vmin;
-	padding-left: 10px;
-	padding-top: 0.5vmin;
+	padding-left: 1vmin;
+	padding-top: 0.25vmin;
 	font-size: 2vmin;
-	@media screen and (max-width: 800px) {
-		font-size: 1.5vmin;
+	@media screen and (max-width: 1200px) {
+		height: 5.5vmin;
 	}
 `;
 function MapAutocomplete(props) {
@@ -49,12 +52,12 @@ function MapAutocomplete(props) {
 						{/* <p>Latitude：{coordinates.lat}</p> */}
 						{/* <p>Longitude：{coordinates.lng}</p> */}
 
-						<Input {...getInputProps({ placeholder: "Type address" })} />
+						<Input {...getInputProps({ placeholder: "請輸入地址" })} />
 						<div>
 							{loading ? <div>...loading</div> : null}
 							{suggestions.map((suggestion) => {
 								const style = {
-									backgroundColor: suggestion.active ? "#16A085" : "#fff",
+									backgroundColor: suggestion.active ? "#DCC7A6" : "#fff",
 								};
 
 								return (

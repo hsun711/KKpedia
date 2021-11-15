@@ -2,66 +2,85 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import RenderPost from "./RenderPost";
-import send from "../img/submit.png";
 
 const Container = styled.div`
 	display: flex;
 	flex-direction: column;
-	background-color: beige;
 	width: 100%;
-	padding: 5vmin 7vmin;
 	border-radius: 10px;
+	@media screen and (max-width: 1200px) {
+		width: 90%;
+	}
 `;
 const Title = styled.p`
 	font-size: 4vmin;
 	font-weight: 600;
-	margin-bottom: 2vmin;
+	margin: 2vmin 0vmin;
 `;
 
 const TextArea = styled.textarea`
-	width: 90%;
-	height: 10vmin;
-	font-size: 2vmin;
-	margin-left: 4vmin;
+	width: 100%;
+	height: 20vmin;
+	font-size: 3vmin;
+	border: none;
 	border-radius: 7px;
 	padding: 1vmin;
 	align-self: center;
 `;
 
 const Send = styled.div`
-	background-image: url(${send});
-	background-size: 90%;
-	background-repeat: no-repeat;
-	width: 10vmin;
-	height: 10vmin;
-	border-radius: 10px;
-	margin-left: 90%;
+	align-self: flex-end;
+	background-color: transparent;
+	background-image: linear-gradient(to bottom, #fff, #f8eedb);
+	border: 0 solid #e5e7eb;
+	border-radius: 8px;
+	box-sizing: border-box;
+	color: #482307;
+	column-gap: 1rem;
 	cursor: pointer;
+	display: flex;
+	font-size: 2.5vmin;
+	font-weight: 700;
+	line-height: 2.5vmin;
+	margin: 2vmin;
+	outline: 2px solid transparent;
+	padding: 1vmin 2vmin;
+	text-align: center;
+	text-transform: none;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	box-shadow: 6px 8px 10px rgba(81, 41, 10, 0.1),
+		0px 2px 2px rgba(81, 41, 10, 0.2);
 	&:hover {
-		background-position-x: 2px;
-		background-position-y: 2px;
+		background-color: #f3f4f6;
+		box-shadow: 1px 2px 5px rgba(81, 41, 10, 0.15),
+			0px 1px 1px rgba(81, 41, 10, 0.15);
+		transform: translateY(0.125rem);
 	}
 `;
 
 function Post({ title }) {
 	const [postMsg, setPostMsg] = useState("");
-	const [userName, setUserName] = useState("");
+	const [userData, setUserData] = useState("");
 	const [post, setPost] = useState([]);
 	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
 	const userId = firebase.auth().currentUser.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
 
-	docRef.get().then((doc) => {
-		if (doc.exists) {
-			setUserName(doc.data().userName);
-		} else {
-			// doc.data() will be undefined in this case
-			console.log("No such document!");
-		}
-	});
-
 	useEffect(() => {
+		docRef.get().then((doc) => {
+			if (doc.exists) {
+				// console.log(doc.data());
+				setUserData(doc.data());
+			} else {
+				// doc.data() will be undefined in this case
+				console.log("No such document!");
+			}
+		});
+
 		db.collection("posts")
 			.where("title", "==", `${title}`)
 			.orderBy("postTime", "desc")
@@ -87,7 +106,8 @@ function Post({ title }) {
 			content: postMsg,
 			title: title,
 			postTime: new Date().getTime(),
-			displayName: userName,
+			displayName: userData.userName,
+			userImage: userData.userImage,
 			userId: userId,
 			userMail: user.email,
 			likedBy: [],
@@ -113,7 +133,7 @@ function Post({ title }) {
 					setPostMsg(e.target.value);
 				}}
 			/>
-			<Send onClick={SendMsg} />
+			<Send onClick={SendMsg}>送出</Send>
 			{post.map((item) => {
 				return <RenderPost item={item} key={item.id} />;
 			})}

@@ -4,22 +4,27 @@ import firebase from "../utils/firebase";
 import MultiMap from "./MultiMap";
 import CollectPlace from "./CollectPlace";
 import img from "../img/wanted.png";
+import board from "../img/cork-board.png";
 
 const ProfileContainer = styled.div`
-	background-color: #c7ecee;
-	margin-top: 5vmin;
+	width: 100%;
 	padding: 4vmin;
+	/* outline: 2px solid black; */
 `;
 
 const MapArea = styled.div`
 	width: 100%;
-	height: 50vmin;
-	margin: 1vmin 0px;
+	height: 60vmin;
 `;
 
 const CollectionArea = styled.div`
 	display: flex;
 	flex-wrap: wrap;
+	padding: 2vmin;
+	margin: 3vmin 0;
+	/* background-image: url(${board}); */
+	/* box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2); */
+	/* border-radius: 10px; */
 `;
 
 function PersonalCollection() {

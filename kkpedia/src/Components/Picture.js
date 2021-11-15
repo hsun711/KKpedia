@@ -1,63 +1,65 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import NewPicture from "./NewPicture";
 import ImageCarousel from "./ImageCarousel";
+import ImageViewer from "react-simple-image-viewer";
+import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
-import add from "../img/plus.png";
+import EachPictures from "./EachPictures";
 
 const Container = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: column;
+	@media screen and (max-width: 1200px) {
+		width: 90%;
+	}
 `;
 
 const Add = styled.div`
-	background-image: url(${add});
-	background-repeat: no-repeat;
-	background-size: 100%;
-	width: 7vmin;
-	height: 7vmin;
+	background-color: #f8eedb;
+	border: 2px solid #422800;
+	border-radius: 30px;
+	box-shadow: #422800 4px 4px 0 0;
+	color: #422800;
+	cursor: pointer;
 	position: fixed;
 	bottom: 3vmin;
-	right: 3vmin;
-	cursor: pointer;
+	right: 2vmin;
+	display: inline-block;
+	font-weight: 600;
+	font-size: 2vmin;
+	padding: 0 2vmin;
+	line-height: 4.2vmin;
+	text-align: center;
+	text-decoration: none;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	&:hover {
+		background-color: #f3f4f6;
+		box-shadow: #422800 2px 2px 0 0;
+		transform: translate(2px, 2px);
+	}
+	@media screen and (max-width: 1200px) {
+		line-height: 5vmin;
+		padding: 0.75vmin 2vmin;
+	}
 `;
 
 const EachPhoto = styled.div`
 	display: flex;
 	flex-direction: column;
-	background-color: beige;
-	padding: 10px;
+	background-color: rgba(248, 239, 221, 0.7);
+	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+	padding: 2vmin;
 	width: 100%;
 	border-radius: 10px;
 	margin-bottom: 2vmin;
-`;
-
-const ImageHolder = styled.p`
-	font-size: 3vmin;
-`;
-
-const ImageDescription = styled.p`
-	font-size: 2vmin;
-	margin-left: 2.5vmin;
-`;
-
-const PhotosArea = styled.div`
-	width: 90%;
-	margin: 0vmin auto;
-	/* margin-left: 0.5vmin; */
-`;
-const NoCarouselImg = styled.div`
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-`;
-
-const Photos = styled.img`
-	max-width: 20vmin;
-	max-height: 20vmin;
-	margin: 2vmin;
+	@media screen and (max-width: 1200px) {
+		width: 80%;
+	}
 `;
 
 const Cover = styled.div`
@@ -67,7 +69,7 @@ const Cover = styled.div`
 	top: 0;
 	left: 0;
 	background-color: black;
-	opacity: 0.8;
+	opacity: 0.6;
 	z-index: 2;
 `;
 
@@ -94,6 +96,7 @@ function Picture({ title }) {
 					// console.log(doc.data());
 					item.push(doc.data());
 				});
+				// console.log(item);
 				setPhotos(item);
 			});
 		db.collection("users")
@@ -106,40 +109,67 @@ function Picture({ title }) {
 
 	return (
 		<>
-			{userLevel <= 20 ? (
+			{userLevel < 20 ? (
 				<EachPhoto>
-					<p>請再加把勁，貢獻聖地解鎖圖片區唷🤪🤪</p>
+					<h3>20 等以上才能進入唷~請再加把勁，貢獻聖地解鎖圖片區吧!!!</h3>
 				</EachPhoto>
 			) : (
 				<>
-					<Add onClick={AddPicture} topic="Idol" />
+					<Add onClick={AddPicture} topic="Idol">
+						新增照片
+					</Add>
 					{popAddPicture ? (
-						<div>
+						<>
 							<Cover onClick={AddPicture} />
 							<NewPicture title={title} AddPicture={AddPicture} />
-						</div>
+						</>
 					) : (
 						<Container>
 							{photos.map((item) => {
+								return <EachPictures item={item} key={uuidv4()} />;
+							})}
+							{/* {photos.map((item) => {
 								return (
 									<EachPhoto key={uuidv4()}>
-										<ImageHolder>{item.postUser}</ImageHolder>
+										<PosterInfo>
+											<ImageHolder>{item.postUser}</ImageHolder>
+											<TimeStamp>
+												{new Date(item.postTime).toLocaleString()}
+											</TimeStamp>
+										</PosterInfo>
 										<ImageDescription>{item.description}</ImageDescription>
 										<PhotosArea>
-											{item.images.length < 4 ? (
+											{item.images.length <= 4 ? (
 												<NoCarouselImg>
-													{item.images.map((img) => {
-														return <Photos src={img} key={uuidv4()} />;
-													})}
+													{item.images.map((img, index) => (
+														<Photos
+															src={img}
+															key={index}
+															onClick={() => openImageViewer(index)}
+														/>
+													))}
+													{isViewerOpen && (
+														<ImageViewer
+															src={item.images}
+															currentIndex={currentImage}
+															onClose={closeImageViewer}
+															disableScroll={false}
+															backgroundStyle={{
+																backgroundColor: "rgba(0,0,0,0.5)",
+															}}
+															closeOnClickOutside={true}
+														/>
+													)}
 												</NoCarouselImg>
 											) : (
-												<ImageCarousel images={item.images} showNum={4} />
+												<MultiPhoto>
+													<ImageCarousel images={item.images} showNum={4} />
+												</MultiPhoto>
 											)}
 										</PhotosArea>
 									</EachPhoto>
 								);
-							})}
-							)
+							})} */}
 						</Container>
 					)}
 				</>

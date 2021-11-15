@@ -3,18 +3,43 @@ import styled from "styled-components";
 import firebase from "../utils/firebase";
 import menu from "../img/burgerMenu.png";
 import userIcon from "../img/user.png";
-import logo from "../img/logo1.png";
+import logo from "../img/logo02.png";
 import search from "../img/search.png";
 import SideMenu from "./SideMenu";
 import Notification from "./Notification";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import logout from "../img/logout.png";
 import bell from "../img/bell.png";
 
-const HeaderContent = styled.div`
-	background-color: rgba(256, 256, 256);
+const HeaderContainer = styled.div`
 	display: flex;
-	border: 1px solid #dfe6e9;
+	flex-direction: column;
+	position: sticky;
+	top: 0;
+	z-index: 3;
+`;
+
+const Notify = styled.div`
+	box-shadow: 0px -5px 10px 0px rgba(255, 255, 255, 0.75);
+	width: 50%;
+	align-self: flex-end;
+	position: absolute;
+	right: 0px;
+	top: 3.1vmin;
+	z-index: 3;
+	@media screen and (max-width: 1200px) {
+		width: 60%;
+	}
+	@media screen and (max-width: 992px) {
+		top: 6.1vmin;
+		width: 80%;
+	}
+`;
+
+const HeaderContent = styled.div`
+	background-color: rgb(256, 256, 256);
+	box-shadow: 0 0 5px 5px rgba(256, 256, 256, 0.9);
+	display: flex;
 	width: 100%;
 	height: 7vmin;
 	margin: 0px auto;
@@ -22,6 +47,9 @@ const HeaderContent = styled.div`
 	top: 0px;
 	z-index: 2;
 	justify-content: space-between;
+	@media screen and (max-width: 992px) {
+		height: 10vmin;
+	}
 `;
 
 const HeaderNav = styled.div`
@@ -31,34 +59,43 @@ const HeaderNav = styled.div`
 
 const Logo = styled.div`
 	background-image: url(${logo});
-	background-size: 100%;
+	background-size: 90%;
 	background-repeat: no-repeat;
-	margin-left: 2.5vmin;
+	margin: 2vmin 0vmin 0vmin 1vmin;
 	width: 15vmin;
 	height: 7vmin;
+	@media screen and (max-width: 1200px) {
+		width: 18vmin;
+		margin: 0.5vmin 0vmin 0vmin 1vmin;
+	}
 `;
 
 const BurgerMenu = styled.div`
 	background-image: url(${menu});
 	background-size: 100%;
 	background-repeat: no-repeat;
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 	margin: auto 2.5vmin;
 	cursor: pointer;
-	/* @media screen and (max-width: 992px) {
-		display: block;
-	} */
+	@media screen and (max-width: 1200px) {
+		width: 5vmin;
+		height: 5vmin;
+	}
 `;
 
 const Member = styled.img`
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 	margin-top: 0.5vmin;
 	margin-right: 2.5vmin;
 	margin-left: 2.5vmin;
 	border-radius: 50%;
 	cursor: pointer;
+	@media screen and (max-width: 1200px) {
+		width: 6vmin;
+		height: 6vmin;
+	}
 `;
 
 const Search = styled.div`
@@ -68,16 +105,17 @@ const Search = styled.div`
 
 const SearchInput = styled.input`
 	border-radius: 20px;
-	border: 2px solid #8a4b35;
+	border: 2px solid #7b612a;
 	width: 25vmin;
 	height: 4vmin;
 	padding: 8px 48px 8px 20px;
 	outline: none;
 	font-size: 2vmin;
-	@media screen and (max-width: 992px) {
-		width: 20vmin;
-		height: 3vmin;
+	@media screen and (max-width: 1200px) {
+		width: 30vmin;
+		height: 6vmin;
 		padding: 2vmin;
+		font-size: 3.2vmin;
 	}
 `;
 
@@ -90,8 +128,10 @@ const InputBtn = styled(Link)`
 	position: absolute;
 	right: 1vmin;
 	cursor: pointer;
-	@media screen and (max-width: 992px) {
-		top: 0.5vmin;
+	@media screen and (max-width: 1200px) {
+		top: 0.25vmin;
+		width: 6vmin;
+		height: 6vmin;
 	}
 `;
 
@@ -105,47 +145,54 @@ const Bell = styled.div`
 	background-image: url(${bell});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 	margin-left: 2vmin;
 	cursor: pointer;
 	position: relative;
+	@media screen and (max-width: 1200px) {
+		width: 6vmin;
+		height: 6vmin;
+	}
 `;
 
 const AlertNum = styled.div`
-	font-size: 1.75vmin;
-	font-weight: 600;
+	font-size: 2vmin;
+	line-height: 2vmin;
 	background-color: red;
+	color: #fff;
 	width: 2vmin;
 	height: 2vmin;
 	border-radius: 50%;
-	border: 1px solid black;
+	outline: 1px solid white;
 	text-align: center;
 	position: absolute;
-	bottom: -5px;
-	right: -10px;
+	bottom: -0.5vmin;
+	right: -0.5vmin;
+	@media screen and (max-width: 1200px) {
+		font-size: 3vmin;
+		line-height: 3vmin;
+		width: 3vmin;
+		height: 3vmin;
+	}
 `;
 
 const Logout = styled.div`
 	background-image: url(${logout});
 	background-repeat: no-repeat;
 	background-size: 100%;
-	width: 3vmin;
-	height: 3vmin;
+	width: 4vmin;
+	height: 4vmin;
 	margin-right: 2vmin;
 	cursor: pointer;
-`;
-
-const Notify = styled.div`
-	border: 1px solid #dfe6e9;
-	box-shadow: 1px 1px 3px #95a5a6;
-	width: 30vmin;
-	position: absolute;
-	right: 0px;
-	top: 7vmin;
+	@media screen and (max-width: 1200px) {
+		width: 6vmin;
+		height: 6vmin;
+	}
 `;
 
 function Header() {
+	const history = useHistory();
 	const [sideBar, setSideBar] = useState(false);
 	const [inputSearch, setInputSearch] = useState("");
 	const [userData, setUserData] = useState({});
@@ -179,54 +226,66 @@ function Header() {
 
 	const showNewAlert = () => {
 		setRenderNews(!renderNews);
-		// setNewAlert(0);
-		// console.log(newsData);
 	};
+
+	// console.log(userData);
 
 	return (
 		<>
-			<HeaderContent>
-				<HeaderNav>
-					<BurgerMenu onClick={showSidebar} />
-					<LinkNav to="/">
-						<Logo />
-					</LinkNav>
-				</HeaderNav>
-				<HeaderNav>
-					<Search>
-						<SearchInput
-							value={inputSearch}
-							onChange={(e) => {
-								setInputSearch(e.target.value);
+			<HeaderContainer>
+				<HeaderContent>
+					<HeaderNav>
+						<BurgerMenu onClick={showSidebar} />
+						<LinkNav to="/">
+							<Logo />
+						</LinkNav>
+					</HeaderNav>
+					<HeaderNav>
+						<Search>
+							<SearchInput
+								value={inputSearch}
+								onChange={(e) => {
+									setInputSearch(e.target.value);
+								}}
+								onKeyDown={(e) => {
+									if (e.keyCode === 13) {
+										history.push(`/search/${inputSearch}`);
+										e.target.value = "";
+									}
+								}}
+							/>
+							<InputBtn to={`/search/${inputSearch}`} />
+						</Search>
+						<Bell onClick={showNewAlert}>
+							{newAlert !== 0 ? <AlertNum>{newAlert}</AlertNum> : <></>}
+						</Bell>
+						<LinkNav to="/profile">
+							<Member
+								src={
+									userData?.userImage !== null ? userData?.userImage : userIcon
+								}
+							/>
+						</LinkNav>
+						<Logout
+							onClick={() => {
+								firebase.auth().signOut();
 							}}
 						/>
-						<InputBtn to={`/search/${inputSearch}`} />
-					</Search>
-					<Bell onClick={showNewAlert}>
-						{newAlert !== 0 ? <AlertNum>{newAlert}</AlertNum> : <></>}
-					</Bell>
-					<LinkNav to="/profile">
-						<Member
-							src={userData.userImage !== null ? userData.userImage : userIcon}
-						/>
-					</LinkNav>
-					<Logout
-						onClick={() => {
-							firebase.auth().signOut();
-						}}
-					/>
-				</HeaderNav>
-				{renderNews ? (
-					<Notify>
-						{newsData.map((data) => {
-							return <Notification data={data} key={data.docid} />;
-						})}
-					</Notify>
-				) : (
-					<></>
-				)}
-			</HeaderContent>
-			{sideBar ? <SideMenu /> : <div></div>}
+					</HeaderNav>
+				</HeaderContent>
+				<Notify>
+					{renderNews ? (
+						<Notify>
+							{newsData.map((data) => {
+								return <Notification data={data} key={data.docid} />;
+							})}
+						</Notify>
+					) : (
+						<></>
+					)}
+				</Notify>
+			</HeaderContainer>
+			{sideBar ? <SideMenu setSideBar={setSideBar} /> : <></>}
 		</>
 	);
 }

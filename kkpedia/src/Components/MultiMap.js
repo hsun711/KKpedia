@@ -5,11 +5,22 @@ import { Key } from "../key";
 import styled from "styled-components";
 import pin from "../img/pin-map.png";
 
-const MyPositionMarker = ({ text }) => <Pin />;
-
+// const MyPositionMarker = ({ text }) => <Pin />;
+const MyPositionMarker = ({ text }) => (
+	<PlaceDetail>
+		<Pin />
+		<PlaceText>{text}</PlaceText>
+	</PlaceDetail>
+);
 const Container = styled.div`
 	width: 100%;
-	height: 50vmin;
+	height: 60vmin;
+`;
+
+const PlaceDetail = styled.div`
+	display: flex;
+	min-width: 15vmin;
+	align-items: center;
 `;
 
 const Pin = styled.div`
@@ -20,11 +31,25 @@ const Pin = styled.div`
 	height: 2vmin;
 `;
 
+const PlaceText = styled.div`
+	font-size: 1.75vmin;
+	font-weight: 600;
+	background-color: rgba(224, 217, 207, 0.8);
+	padding: 0.5vmin;
+	border-radius: 8px;
+	margin-left: 0.5vmin;
+	&:hover {
+		background-color: white;
+		transform: scale(1.1);
+		z-index: 2;
+	}
+`;
+
 // Map
 const SimpleMap = (props) => {
 	const handleApiLoaded = (map, maps) => {
 		// use map and maps objects
-		console.log("載入完成!"); // 印出「載入完成」
+		// console.log("載入完成!"); // 印出「載入完成」
 	};
 
 	const [collectPlace, setCollectPlace] = useState([]);
@@ -32,7 +57,7 @@ const SimpleMap = (props) => {
 	const db = firebase.firestore();
 	const userId = user.uid;
 	const docRef = db.collection("users").doc(`${userId}`);
-
+	// console.log(collectPlace);
 	useEffect(() => {
 		docRef.collection("likes").onSnapshot((snapshot) => {
 			const item = [];
@@ -58,7 +83,7 @@ const SimpleMap = (props) => {
 							key={item.placeId}
 							lat={item.latitude.lat}
 							lng={item.latitude.lng}
-							text=""
+							text={item.locationName}
 						/>
 					);
 				})}
@@ -73,7 +98,7 @@ SimpleMap.defaultProps = {
 		lat: 25.04,
 		lng: 121.5,
 	},
-	zoom: 5,
+	zoom: 7,
 };
 
 // App

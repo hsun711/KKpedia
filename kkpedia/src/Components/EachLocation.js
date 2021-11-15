@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Popup from "reactjs-popup";
 import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
+import Swal from "sweetalert2";
 import Map from "./Map";
 import LookMore from "./LookMore";
+import ImageViewer from "react-simple-image-viewer";
 import WriteComment from "./WriteComment";
 import coverImage from "../img/wanted.png";
 import unlike from "../img/unlike.png";
 import like from "../img/like.png";
-import board from "../img/cork-board.png";
-import background from "../img/20800062.jpg";
+import background from "../img/20800062.png";
 import star from "../img/star.png";
 import edit from "../img/pencil.png";
 import check from "../img/checked.png";
@@ -80,7 +81,7 @@ const TitleName = styled.p`
 	font-size: 5vmin;
 	font-weight: 600;
 	line-height: 7vmin;
-	color: #482307;
+	color: #404040;
 	@media screen and (max-width: 1200px) {
 		font-size: 6vmin;
 		line-height: 10vmin;
@@ -151,7 +152,7 @@ const SubTitle = styled.p`
 	font-weight: 600;
 	margin-top: 4vmin;
 	margin-bottom: 1vmin;
-	color: #482307;
+	color: #404040;
 `;
 
 const PlaceMap = styled.div`
@@ -163,6 +164,7 @@ const PlaceMap = styled.div`
 const MoreImage = styled.div`
 	width: 100%;
 	display: flex;
+	flex-wrap: wrap;
 	justify-content: space-evenly;
 	align-items: center;
 	margin-top: 7vmin;
@@ -171,15 +173,18 @@ const MoreImage = styled.div`
 
 const SingleImg = styled.div`
 	display: flex;
-	width: 20vmin;
+	justify-content: center;
+	width: 15vmin;
 	height: 20vmin;
-	margin: 3vmin;
+	cursor: pointer;
+	overflow: hidden;
 	/* outline: 5px solid black; */
 `;
 
 const Image = styled.img`
 	max-width: 100%;
 	height: 100%;
+	object-fit: cover;
 	/* margin: 2vmin; */
 `;
 
@@ -252,9 +257,6 @@ const CheckBtn = styled.div`
 	column-gap: 1rem;
 	cursor: pointer;
 	display: flex;
-	font-family: ui-sans-serif, system-ui, -apple-system, system-ui, "Segoe UI",
-		Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
-		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 	font-size: 2vmin;
 	font-weight: 700;
 	line-height: 2vmin;
@@ -313,6 +315,8 @@ function EachLocation({ title }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
 	const user = firebase.auth().currentUser;
+	const [currentImage, setCurrentImage] = useState(0);
+	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
 	useEffect(() => {
 		docRef
@@ -387,7 +391,7 @@ function EachLocation({ title }) {
 			.doc(`${locationName}`)
 			.set(placeData[0])
 			.then(() => {
-				alert("收藏進口袋聖地囉🎉🎊");
+				Swal.fire("收進口袋聖地囉🎉🎊");
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);
@@ -401,7 +405,7 @@ function EachLocation({ title }) {
 			.doc(`${location}`)
 			.delete()
 			.then(() => {
-				alert("移出口袋聖地囉😤😤");
+				Swal.fire("移出口袋聖地囉😤😤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);
@@ -471,6 +475,16 @@ function EachLocation({ title }) {
 		}
 	};
 
+	const openImageViewer = useCallback((index) => {
+		setCurrentImage(index);
+		setIsViewerOpen(true);
+	}, []);
+
+	const closeImageViewer = () => {
+		setCurrentImage(0);
+		setIsViewerOpen(false);
+	};
+
 	return (
 		<MainContainer>
 			<Container>
@@ -528,19 +542,58 @@ function EachLocation({ title }) {
 								<Map latitude={data.latitude} placeId={data.placeId} />
 							</PlaceMap>
 							<MoreImage>
-								{data.images.length <= 3 ? (
+								{data.images.map((image, index) => {
+									return (
+										<SingleImg key={uuidv4()}>
+											<Image
+												src={image}
+												key={index}
+												onClick={() => openImageViewer(index)}
+											/>
+											{isViewerOpen && (
+												<ImageViewer
+													src={data.images}
+													currentIndex={currentImage}
+													onClose={closeImageViewer}
+													disableScroll={false}
+													backgroundStyle={{
+														backgroundColor: "rgba(0,0,0,0.9)",
+													}}
+													closeOnClickOutside={true}
+												/>
+											)}
+										</SingleImg>
+									);
+								})}
+								{/* {data.images.length <= 3 ? (
 									<>
-										{data.images.map((image) => {
+										{data.images.map((image, index) => {
 											return (
 												<SingleImg key={uuidv4()}>
-													<Image src={image} />
+													<Image
+														src={image}
+														key={index}
+														onClick={() => openImageViewer(index)}
+													/>
+													{isViewerOpen && (
+														<ImageViewer
+															src={data.images}
+															currentIndex={currentImage}
+															onClose={closeImageViewer}
+															disableScroll={false}
+															backgroundStyle={{
+																backgroundColor: "rgba(0,0,0,0.6)",
+															}}
+															closeOnClickOutside={true}
+														/>
+													)}
 												</SingleImg>
 											);
 										})}
 									</>
 								) : (
 									<ImageCarousel images={data.images} showNum={4} />
-								)}
+								)} */}
 							</MoreImage>
 						</div>
 					);

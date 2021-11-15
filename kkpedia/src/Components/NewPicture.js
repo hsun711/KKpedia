@@ -1,41 +1,52 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
-import add from "../img/plus.png";
-import send from "../img/submit.png";
-import cover from "../img/wanted.png";
+import add from "../img/addimage.png";
+import paper from "../img/rm429-013.png";
 import Loading from "./Loading";
 
 const Container = styled.div`
 	width: 70vmin;
-	background-color: beige;
+	background-image: url(${paper});
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
 	position: fixed;
 	top: 50%;
 	left: 50%;
 	margin-left: -35vmin;
 	margin-top: -40vh;
-	padding: 5vmin 7vmin;
+	padding: 7vmin 5vmin 0vmin;
 	display: flex;
 	flex-direction: column;
 	z-index: 5;
+	@media screen and (max-width: 1200px) {
+		width: 80vmin;
+		margin-left: -40vmin;
+	}
 `;
 
 const InputTitle = styled.p`
 	width: 55vmin;
 	font-size: 2.5vmin;
 	font-weight: 600;
+	@media screen and (max-width: 1200px) {
+		width: 100%;
+		margin-top: 2vmin;
+		font-size: 3vmin;
+	}
 `;
 
 const InputArea = styled.input`
 	border-radius: 5px;
 	width: 100%;
 	height: 4vmin;
-	margin: 15px 0px;
+	margin: 2vmin 0px;
 	padding-left: 10px;
 	font-size: 2vmin;
-	@media screen and (max-width: 800px) {
-		font-size: 1.5vmin;
+	@media screen and (max-width: 1200px) {
+		height: 5vmin;
 	}
 `;
 
@@ -44,10 +55,25 @@ const ArtistName = styled.div`
 	margin-top: 3vmin;
 	display: flex;
 	align-items: center;
+	@media screen and (max-width: 1200px) {
+		flex-direction: column;
+		align-items: flex-start;
+		margin-top: 0vmin;
+	}
 `;
 
 const ShortTitle = styled(InputTitle)`
 	width: 20vmin;
+`;
+
+const AddImagesTitle = styled.p`
+	width: 15vmin;
+	font-size: 2.5vmin;
+	font-weight: 600;
+	@media screen and (max-width: 1200px) {
+		width: 100%;
+		font-size: 2vmin;
+	}
 `;
 
 const Add = styled.div`
@@ -61,32 +87,56 @@ const Add = styled.div`
 
 const MultiImgs = styled.div`
 	display: flex;
+	max-height: 15vmin;
 	flex-wrap: wrap;
+	overflow-y: scroll;
 `;
 
 const CoverImges = styled.div`
 	width: 10vmin;
 	height: 10vmin;
-	margin: 3vmin;
+	margin: 2vmin;
 `;
 
 const CoverImage = styled.img`
-	max-width: 100%;
-	max-heigh: 100%;
+	width: 100%;
+	height: 100%;
 `;
 
 const SendBtn = styled.div`
-	background-image: url(${send});
-	background-size: 95%;
-	background-repeat: no-repeat;
-	width: 10vmin;
-	height: 10vmin;
-	border-radius: 10px;
-	margin-left: 45vmin;
+	width: 100%;
+	margin: 5vmin auto;
+	background-color: transparent;
+	background-image: linear-gradient(to bottom, #9c8879, #482307);
+	border: 0 solid #e5e7eb;
+	border-radius: 0.5rem;
+	box-sizing: border-box;
+	color: #f8eedb;
+	column-gap: 1rem;
 	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	font-size: 2.5vmin;
+	font-weight: 700;
+	line-height: 2vmin;
+	outline: 2px solid transparent;
+	padding: 1.3vmin 2.3vmin;
+	text-transform: none;
+	transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+	box-shadow: 6px 8px 10px rgba(81, 41, 10, 0.1),
+		0px 2px 2px rgba(81, 41, 10, 0.2);
 	&:hover {
-		background-position-x: 2px;
-		background-position-y: 2px;
+		background-color: #f3f4f6;
+		box-shadow: 1px 2px 5px rgba(81, 41, 10, 0.15),
+			0px 1px 1px rgba(81, 41, 10, 0.15);
+		transform: translateY(0.125rem);
+	}
+
+	@media screen and (max-width: 550px) {
+		padding: 2.5vmin 3.2vmin;
 	}
 `;
 
@@ -130,12 +180,12 @@ function NewPicture({ title, AddPicture }) {
 		});
 	};
 	// console.log(files);
-
 	const handleUpload = () => {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const promises = [];
 		const docid = documentRef.collection("photos").doc().id;
+
 		const data = {
 			postUser: userName,
 			uid: user.uid,
@@ -196,6 +246,7 @@ function NewPicture({ title, AddPicture }) {
 			.then(() => {
 				setLoading(false);
 				AddPicture(false);
+				Swal.fire("貢獻值加 7 點~");
 			})
 			.catch((err) => console.log(err));
 	};
@@ -213,7 +264,7 @@ function NewPicture({ title, AddPicture }) {
 				/>
 			</ArtistName>
 			<ArtistName>
-				<ShortTitle>上傳照片：</ShortTitle>
+				<AddImagesTitle>上傳照片：</AddImagesTitle>
 				<Add as="label" htmlFor="uploadImage" />
 				<input
 					type="file"
@@ -226,13 +277,13 @@ function NewPicture({ title, AddPicture }) {
 			<MultiImgs>
 				{files.map((file) => {
 					return (
-						<CoverImges>
-							<CoverImage src={URL.createObjectURL(file)} key={file.id} />
+						<CoverImges key={file.id}>
+							<CoverImage src={URL.createObjectURL(file)} />
 						</CoverImges>
 					);
 				})}
 			</MultiImgs>
-			<SendBtn onClick={handleUpload} />
+			<SendBtn onClick={handleUpload}>新增</SendBtn>
 			{loading && <Loading />}
 		</Container>
 	);
