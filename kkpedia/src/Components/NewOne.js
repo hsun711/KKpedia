@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
+import Compressor from "compressorjs";
 import add from "../img/addimage.png";
 import paper from "../img/rm429-013.png";
 import Loading from "./Loading";
@@ -163,7 +165,7 @@ const SendBtn = styled.div`
 function NewOne({ topic, setPopAddOne }) {
 	const db = firebase.firestore();
 	const [loading, setLoading] = useState(false);
-	const [title, setTitle] = useState();
+	const [title, setTitle] = useState("");
 	const [ig, setIg] = useState("");
 	const [fb, setFb] = useState("");
 	const [twitter, setTwitter] = useState("");
@@ -173,35 +175,21 @@ function NewOne({ topic, setPopAddOne }) {
 
 	const SendNewOn = () => {
 		setLoading(true);
+		if (title === "") {
+			Swal.fire("藝人 / 戲劇 / 綜藝名稱沒有填喔!");
+			setLoading(false);
+			return;
+		}
 		const documentRef = db.collection("categories").doc(`${title}`);
 
-		if (file === null) {
-			documentRef
-				.set(
-					{
-						topic: topic,
-						title: title,
-						facebook: fb,
-						instagram: ig,
-						twitter: twitter,
-						youtube: youtube,
-						main_image: "",
-						main_banner: "",
-					},
-					{ merge: true }
-				)
-				.then((docRef) => {
-					setLoading(false);
-					setPopAddOne(false);
-				});
-		} else {
-			const fileRef = firebase.storage().ref("cover_images/" + documentRef.id);
-			const metadata = {
-				contentType: file.type,
-			};
-			fileRef.put(file, metadata).then(() => {
-				fileRef.getDownloadURL().then((imageUrl) => {
-					const mainimage = file ? imageUrl : "";
+		documentRef.get().then((doc) => {
+			if (doc.exists) {
+				Swal.fire(`${title}已經存在了喔`);
+				setLoading(false);
+				return;
+			} else {
+				// doc.data() will be undefined in this case
+				if (file === null) {
 					documentRef
 						.set(
 							{
@@ -211,7 +199,7 @@ function NewOne({ topic, setPopAddOne }) {
 								instagram: ig,
 								twitter: twitter,
 								youtube: youtube,
-								main_image: mainimage,
+								main_image: "",
 								main_banner: "",
 							},
 							{ merge: true }
@@ -220,9 +208,46 @@ function NewOne({ topic, setPopAddOne }) {
 							setLoading(false);
 							setPopAddOne(false);
 						});
-				});
-			});
-		}
+				} else {
+					const fileRef = firebase
+						.storage()
+						.ref("cover_images/" + documentRef.id);
+					const metadata = {
+						contentType: file.type,
+					};
+					new Compressor(file, {
+						quality: 0.8,
+						success: (compressedResult) => {
+							// compressedResult has the compressed file.
+							// Use the compressed file to upload the images to your server.
+							fileRef.put(compressedResult, metadata).then(() => {
+								fileRef.getDownloadURL().then((imageUrl) => {
+									const mainimage = compressedResult ? imageUrl : "";
+									documentRef
+										.set(
+											{
+												topic: topic,
+												title: title,
+												facebook: fb,
+												instagram: ig,
+												twitter: twitter,
+												youtube: youtube,
+												main_image: mainimage,
+												main_banner: "",
+											},
+											{ merge: true }
+										)
+										.then((docRef) => {
+											setLoading(false);
+											setPopAddOne(false);
+										});
+								});
+							});
+						},
+					});
+				}
+			}
+		});
 	};
 
 	return (
@@ -281,8 +306,18 @@ function NewOne({ topic, setPopAddOne }) {
 						type="file"
 						id="postImage"
 						style={{ display: "none" }}
+						accept="image/*"
 						onChange={(e) => {
-							setFile(e.target.files[0]);
+							if (e.target.files[0].type === undefined) {
+								return;
+							}
+							const fileType = e.target.files[0].type.slice(0, 5);
+							if (fileType !== "image") {
+								Swal.fire("請上傳圖片檔");
+								return;
+							} else {
+								setFile(e.target.files[0]);
+							}
 						}}
 					/>
 					<CoverImage src={previewURL} />

@@ -145,6 +145,7 @@ function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
 	const [loading, setLoading] = useState(false);
+
 	const db = firebase.firestore();
 
 	const HandleLogin = async (provider) => {
@@ -155,6 +156,16 @@ function LoginPage() {
 	const Register = () => {
 		setLoading(true);
 		setErrorMsg("");
+		if (userName === "") {
+			Swal.fire("請輸入暱稱");
+			setLoading(false);
+			return;
+		}
+		if (password.length < 6) {
+			Swal.fire("密碼請大於6碼");
+			setLoading(false);
+			return;
+		}
 		firebase
 			.auth()
 			.createUserWithEmailAndPassword(email, password)
@@ -165,7 +176,7 @@ function LoginPage() {
 				setPassword(password);
 				setUserData(response);
 				setEmail(email);
-				// AddtoFirsebase(response);
+
 				db.collection("users")
 					.doc(`${response.user.uid}`)
 					.set(
@@ -199,6 +210,7 @@ function LoginPage() {
 				}
 				setLoading(false);
 			});
+		// props.setLoginState("login");
 	};
 
 	const Signin = () => {
@@ -229,7 +241,9 @@ function LoginPage() {
 				}
 				setLoading(false);
 			});
+		// props.setLoginState("login");
 	};
+
 	return (
 		<Container>
 			<WelcomePage>

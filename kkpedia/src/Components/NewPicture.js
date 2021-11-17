@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
+import Compressor from "compressorjs";
 import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import add from "../img/addimage.png";
@@ -169,9 +170,15 @@ function NewPicture({ title, AddPicture }) {
 		// Get Files
 		for (let i = 0; i < e.target.files.length; i++) {
 			const newFile = e.target.files[i];
-			const id = uuidv4();
-			newFile["id"] = id;
-			setFiles((prevState) => [...prevState, newFile]);
+			const fileType = newFile.type.slice(0, 5);
+			if (fileType !== "image") {
+				Swal.fire("請上傳圖片檔");
+				return;
+			} else {
+				const id = uuidv4();
+				newFile["id"] = id;
+				setFiles((prevState) => [...prevState, newFile]);
+			}
 		}
 	};
 	const UpdateLevel = () => {
@@ -202,7 +209,50 @@ function NewPicture({ title, AddPicture }) {
 			});
 
 		files.map((file) => {
-			// console.log(file);
+			// new Compressor(file, {
+			// 	quality: 0.8,
+			// 	success: (compressedResult) => {
+			// 		console.log(compressedResult);
+			// 		const uploadTask = firebase
+			// 			.storage()
+			// 			.ref(`idol_images/${documentRef.id}/${compressedResult.id}`)
+			// 			.put(compressedResult);
+			// 		promises.push(uploadTask);
+			// 		uploadTask.on(
+			// 			"state_changed",
+			// 			function progress(snapshot) {
+			// 				const progress =
+			// 					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+			// 				if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+			// 					console.log(`Progress: ${progress}%`);
+			// 				}
+			// 			},
+			// 			function error(error) {
+			// 				console.log(error);
+			// 			},
+			// 			function complete() {
+			// 				firebase
+			// 					.storage()
+			// 					.ref(`idol_images/${documentRef.id}/`)
+			// 					.child(`${compressedResult.id}`)
+			// 					.getDownloadURL()
+			// 					.then((imgUrls) => {
+			// 						documentRef
+			// 							.collection("photos")
+			// 							.doc(`${docid}`)
+			// 							.update({
+			// 								images: firebase.firestore.FieldValue.arrayUnion(
+			// 									`${imgUrls}`
+			// 								),
+			// 							})
+			// 							.then(() => {
+			// 								// console.log(user.uid);
+			// 							});
+			// 					});
+			// 			}
+			// 		);
+			// 	},
+			// });
 			const uploadTask = firebase
 				.storage()
 				.ref(`idol_images/${documentRef.id}/${file.id}`)
@@ -270,6 +320,7 @@ function NewPicture({ title, AddPicture }) {
 					type="file"
 					id="uploadImage"
 					multiple
+					accept="image/*"
 					style={{ display: "none" }}
 					onChange={OnFileChange}
 				/>

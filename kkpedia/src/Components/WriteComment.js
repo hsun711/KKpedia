@@ -159,6 +159,16 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 	};
 
 	const SendComment = () => {
+		if (comment === "") {
+			Swal.fire("請輸入評論內容");
+			return;
+		}
+
+		if (score === "0") {
+			Swal.fire("至少給個一分唷~");
+			return;
+		}
+
 		const data = {
 			uid: user.uid,
 			postUserImg: userImg,

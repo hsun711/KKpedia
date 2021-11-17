@@ -109,11 +109,12 @@ function SearchResult({ allCategory }) {
 
 	return (
 		<>
-			{resultData.length === 0 ? (
+			{!loading && resultData.length === 0 && (
 				<NoResult>
 					<p>此藝人/戲劇/綜藝還沒被建立唷!</p>
 				</NoResult>
-			) : (
+			)}
+			{!loading && resultData.length > 0 && (
 				<Container>
 					{resultData.map((result) => {
 						return (
