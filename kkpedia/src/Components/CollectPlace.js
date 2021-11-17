@@ -4,7 +4,6 @@ import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
 import img from "../img/wanted.png";
 import like from "../img/like.png";
-import { useHistory } from "react-router";
 
 const EachPlace = styled.div`
 	display: flex;
@@ -25,7 +24,7 @@ const EachPlace = styled.div`
 	}
 `;
 
-const PlaceImg = styled.div`
+const PlaceImg = styled.a`
 	width: 100%;
 	height: 50%;
 	overflow: hidden;
@@ -134,9 +133,8 @@ function CollectPlace({ data }) {
 	return (
 		<EachPlace>
 			<PlaceImg
-				onClick={() => {
-					window.location.href = `${data.topic}/${data.title}/${data.locationName}`;
-				}}
+				href={`/${data.topic}/${data.title}/${data.locationName}`}
+				target="_blank"
 			>
 				<Image src={data.images.length === 0 ? img : data.images[0]} />
 			</PlaceImg>

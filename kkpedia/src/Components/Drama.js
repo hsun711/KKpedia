@@ -65,31 +65,25 @@ const Cover = styled.div`
 `;
 
 const DramaContainer = styled.div`
-	width: 90%;
+	width: 100%;
 	height: 100%;
 	margin: 7vmin auto;
 	position: relative;
+	@media screen and (max-width: 1200px) {
+		width: 90%;
+	}
 `;
 const EachContainer = styled.div`
-	min-width: 100%;
+	width: 100%;
 	background-image: url(${board});
 	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
 	border-radius: 10px;
 	display: flex;
+	justify-content: space-between;
 	flex-wrap: wrap;
 	margin-top: 3vmin;
-	@media screen and (max-width: 1200px) {
-	}
+	padding: 3vmin;
 `;
-
-// const TopicImg = styled.div`
-// 	background-image: url(${dramaMedal});
-// 	background-repeat: no-repeat;
-// 	background-size: contain;
-// 	width: 30vmin;
-// 	height: 30vmin;
-// 	transform: rotateZ(-15deg);
-// `;
 
 function Drama() {
 	const [popAddOne, setPopAddOne] = useState(false);

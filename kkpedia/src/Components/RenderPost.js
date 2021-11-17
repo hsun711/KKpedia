@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import ungood from "../img/unthumbs-up.png";
 import dogood from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
@@ -258,6 +259,10 @@ function RenderPost({ item }) {
 
 	const SendReply = async () => {
 		setReplyComment("");
+		if (replyComment === "") {
+			Swal.fire("請輸入內容");
+			return;
+		}
 		const data = {
 			content: replyComment,
 			docid: item.id,

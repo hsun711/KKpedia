@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 import firebase from "../utils/firebase";
+import Swal from "sweetalert2";
 import menu from "../img/burgerMenu.png";
 import userIcon from "../img/user.png";
 import logo from "../img/logo02.png";
@@ -29,9 +30,10 @@ const Notify = styled.div`
 	z-index: 3;
 	@media screen and (max-width: 1200px) {
 		width: 60%;
+		top: 3.6vmin;
 	}
 	@media screen and (max-width: 992px) {
-		top: 6.1vmin;
+		top: 5vmin;
 		width: 80%;
 	}
 `;
@@ -84,18 +86,26 @@ const BurgerMenu = styled.div`
 	}
 `;
 
-const Member = styled.img`
-	width: 4vmin;
-	height: 4vmin;
+const MemberImgDiv = styled.div`
+	width: 4.2vmin;
+	height: 4.2vmin;
 	margin-top: 0.5vmin;
 	margin-right: 2.5vmin;
 	margin-left: 2.5vmin;
 	border-radius: 50%;
 	cursor: pointer;
+	overflow: hidden;
+	/* outline: 2px solid black; */
 	@media screen and (max-width: 1200px) {
 		width: 6vmin;
 		height: 6vmin;
 	}
+`;
+
+const Member = styled.img`
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 `;
 
 const Search = styled.div`
@@ -119,7 +129,7 @@ const SearchInput = styled.input`
 	}
 `;
 
-const InputBtn = styled(Link)`
+const InputBtn = styled.div`
 	background-image: url(${search});
 	background-repeat: no-repeat;
 	background-size: 100%;
@@ -247,24 +257,43 @@ function Header() {
 								onChange={(e) => {
 									setInputSearch(e.target.value);
 								}}
-								onKeyDown={(e) => {
-									if (e.keyCode === 13) {
+								onKeyPress={(e) => {
+									if (e.key === "Enter") {
+										if (e.target.value === "") {
+											Swal.fire("請輸入搜尋對象");
+											return;
+										} else {
+											history.push(`/search/${inputSearch}`);
+											e.target.value = "";
+										}
+									}
+								}}
+							/>
+							<InputBtn
+								onClick={(e) => {
+									if (e.target.value === "") {
+										Swal.fire("請輸入搜尋對象");
+										return;
+									} else {
 										history.push(`/search/${inputSearch}`);
 										e.target.value = "";
 									}
 								}}
 							/>
-							<InputBtn to={`/search/${inputSearch}`} />
 						</Search>
 						<Bell onClick={showNewAlert}>
 							{newAlert !== 0 ? <AlertNum>{newAlert}</AlertNum> : <></>}
 						</Bell>
 						<LinkNav to="/profile">
-							<Member
-								src={
-									userData?.userImage !== null ? userData?.userImage : userIcon
-								}
-							/>
+							<MemberImgDiv>
+								<Member
+									src={
+										userData?.userImage !== null
+											? userData?.userImage
+											: userIcon
+									}
+								/>
+							</MemberImgDiv>
 						</LinkNav>
 						<Logout
 							onClick={() => {

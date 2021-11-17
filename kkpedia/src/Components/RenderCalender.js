@@ -22,17 +22,52 @@ const CalenderArea = styled.div`
 	width: 100%;
 	height: 100%;
 	z-index: 0;
+	margin: 0 auto;
+	overflow-y: hidden;
 	.fc-button.fc-prev-button,
 	.fc-button.fc-next-button {
 		background: rgb(245, 245, 243);
 		background-image: none;
 	}
-	.fc-day-grid-event {
-		width: 20vmin;
-		min-height: 20vmin;
+	.fc-daygrid-day {
+		/* outline: 2px solid green; */
+		word-break: keep-all;
 	}
+
+	.fc-daygrid-event {
+		white-space: wrap;
+	}
+	.fc-daygrid-day-frame {
+		cursor: pointer;
+		/* background-color: rgba(0, 0, 0, 0.5); */
+		/* outline: 2px solid blue; */
+		/* width: 20vmin;
+		min-height: 20vmin;
+		width: fit-content;*/
+		/* width: fit-content; */
+	}
+	.fc-event-main-frame {
+		/* outline: 2px solid red; */
+		/* width: 15vmin; */
+		.fc-event-title-container {
+			word-break: break-word;
+			.fc-event-title {
+				font-size: 2vmin;
+				white-space: break-spaces;
+			}
+		}
+		@media screen and (max-width: 1200px) {
+			/* width: 10vmin; */
+			.fc-event-title-container {
+				/* .fc-event-title {
+					font-size: 1.2vmin;
+				} */
+			}
+		}
+	}
+
 	.fc-event {
-		height: 5vmin;
+		/* outline: 2px solid blue; */
 		border-radius: 10px;
 		font-size: 3vmin;
 		font-weight: 600;
@@ -42,12 +77,16 @@ const CalenderArea = styled.div`
 		justify-content: center;
 		border: none;
 		background-color: #fab1a0;
+		padding: 1vmin;
 		margin-bottom: 1vmin;
-		@media screen and (max-width: 1024px) {
-			height: 4vmin;
-			word-wrap: break-word;
+		cursor: pointer;
+		@media screen and (max-width: 1200px) {
+			text-align: center;
 		}
 	}
+	/* @media screen and (max-width: 1200px) {
+		height: 90vh;
+	} */
 `;
 
 export default function RenderCalender({ title }) {
@@ -96,6 +135,9 @@ export default function RenderCalender({ title }) {
 		if (text === undefined) {
 			return;
 		}
+		if (text === "") {
+			return;
+		}
 		let event = text;
 		let selectedDate = date.dateStr;
 		// let selectedDate = new Date(date.dateStr + "T00:00:00");
@@ -139,7 +181,7 @@ export default function RenderCalender({ title }) {
 					.then((querySnapshot) => {
 						querySnapshot.forEach((doc) => {
 							doc.ref.delete();
-							Swal.fire("刪除成功!", "被刪除了行程已回不來了", "success");
+							Swal.fire("刪除成功!", "被刪除的行程回不來囉", "success");
 							// console.log(doc.ref);
 						});
 					});

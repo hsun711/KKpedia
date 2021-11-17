@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
+import Compressor from "compressorjs";
 import add from "../img/addimage.png";
 import paper from "../img/rm429-013.png";
 import firebase from "../utils/firebase";
@@ -196,9 +197,15 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 		// Get Files
 		for (let i = 0; i < e.target.files.length; i++) {
 			const newFile = e.target.files[i];
-			const id = uuidv4();
-			newFile["id"] = id;
-			setFiles((prevState) => [...prevState, newFile]);
+			const fileType = e.target.files[i].type.slice(0, 5);
+			if (fileType !== "image") {
+				Swal.fire("請上傳圖片檔");
+				return;
+			} else {
+				const id = uuidv4();
+				newFile["id"] = id;
+				setFiles((prevState) => [...prevState, newFile]);
+			}
 		}
 	};
 
@@ -241,74 +248,150 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const promises = [];
-		const data = {
-			topic: topic,
-			title: title,
-			address: address,
-			latitude: latitude,
-			placeId: placeId,
-			description: description,
-			locationName: locationName,
-			postUser: userName,
-			uid: userId,
-			images: [],
-		};
+		if (locationName === "") {
+			Swal.fire("景點/餐廳名稱沒有填唷");
+			setLoading(false);
+			return;
+		}
+		if (description === "") {
+			Swal.fire("景點/餐廳描述沒有填唷");
+			setLoading(false);
+			return;
+		}
+		if (address === "") {
+			Swal.fire("地址沒有填唷");
+			setLoading(false);
+			return;
+		}
+		if (files.length < 1) {
+			Swal.fire("請至少上傳一張照片喔");
+			setLoading(false);
+			return;
+		}
 		documentRef
 			.collection("places")
 			.doc(`${locationName}`)
-			.set(data, { merge: true })
-			.then((docRef) => {
-				UpdateLevel();
-				SendAlert();
-			});
-		files.map((file) => {
-			// console.log(file);
-			const uploadTask = firebase
-				.storage()
-				.ref(`place_images/${documentRef.id}/${file.id}`)
-				.put(file);
-			promises.push(uploadTask);
-			uploadTask.on(
-				"state_changed",
-				function progress(snapshot) {
-					const progress =
-						(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-					if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-						console.log(`Progress: ${progress}%`);
-					}
-				},
-				function error(error) {
-					console.log(error);
-				},
-				function complete() {
-					firebase
-						.storage()
-						.ref(`place_images/${documentRef.id}/`)
-						.child(`${file.id}`)
-						.getDownloadURL()
-						.then((imgUrls) => {
-							documentRef
-								.collection("places")
-								.doc(`${locationName}`)
-								.update({
-									images: firebase.firestore.FieldValue.arrayUnion(
-										`${imgUrls}`
-									),
-								})
-								.then(() => {
-									// console.log(user.uid);
-								});
+			.get()
+			.then((doc) => {
+				if (doc.exists) {
+					Swal.fire(`${locationName}已經存在了喔`);
+					setLoading(false);
+					return;
+				} else {
+					const data = {
+						topic: topic,
+						title: title,
+						address: address,
+						latitude: latitude,
+						placeId: placeId,
+						description: description,
+						locationName: locationName,
+						postUser: userName,
+						uid: userId,
+						images: [],
+					};
+					documentRef
+						.collection("places")
+						.doc(`${locationName}`)
+						.set(data, { merge: true })
+						.then((docRef) => {
+							UpdateLevel();
+							SendAlert();
 						});
+					files.map((file) => {
+						// console.log(file);
+						// new Compressor(file, {
+						// 	quality: 0.8,
+						// 	success: (compressedResult) => {
+						// 		console.log(compressedResult);
+						// 		const uploadTask = firebase
+						// 			.storage()
+						// 			.ref(`place_images/${documentRef.id}/${compressedResult.id}`)
+						// 			.put(compressedResult);
+						// 		promises.push(uploadTask);
+						// 		uploadTask.on(
+						// 			"state_changed",
+						// 			function progress(snapshot) {
+						// 				const progress =
+						// 					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+						// 				if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+						// 					console.log(`Progress: ${progress}%`);
+						// 				}
+						// 			},
+						// 			function error(error) {
+						// 				console.log(error);
+						// 			},
+						// 			function complete() {
+						// 				firebase
+						// 					.storage()
+						// 					.ref(`place_images/${documentRef.id}/`)
+						// 					.child(`${compressedResult.id}`)
+						// 					.getDownloadURL()
+						// 					.then((imgUrls) => {
+						// 						documentRef
+						// 							.collection("places")
+						// 							.doc(`${locationName}`)
+						// 							.update({
+						// 								images: firebase.firestore.FieldValue.arrayUnion(
+						// 									`${imgUrls}`
+						// 								),
+						// 							})
+						// 							.then(() => {
+						// 								// console.log(user.uid);
+						// 							});
+						// 					});
+						// 			}
+						// 		);
+						// 	},
+						// });
+						const uploadTask = firebase
+							.storage()
+							.ref(`place_images/${documentRef.id}/${file.id}`)
+							.put(file);
+						promises.push(uploadTask);
+						uploadTask.on(
+							"state_changed",
+							function progress(snapshot) {
+								const progress =
+									(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+								if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+									console.log(`Progress: ${progress}%`);
+								}
+							},
+							function error(error) {
+								console.log(error);
+							},
+							function complete() {
+								firebase
+									.storage()
+									.ref(`place_images/${documentRef.id}/`)
+									.child(`${file.id}`)
+									.getDownloadURL()
+									.then((imgUrls) => {
+										documentRef
+											.collection("places")
+											.doc(`${locationName}`)
+											.update({
+												images: firebase.firestore.FieldValue.arrayUnion(
+													`${imgUrls}`
+												),
+											})
+											.then(() => {
+												// console.log(user.uid);
+											});
+									});
+							}
+						);
+					});
+					Promise.all(promises)
+						.then(() => {
+							setLoading(false);
+							setPopAddPlace(false);
+							Swal.fire("貢獻值加 5 點~");
+						})
+						.catch((err) => console.log(err));
 				}
-			);
-		});
-		Promise.all(promises)
-			.then(() => {
-				setLoading(false);
-				setPopAddPlace(false);
-				Swal.fire("貢獻值加 5 點~");
-			})
-			.catch((err) => console.log(err));
+			});
 	};
 	return (
 		<Container>
@@ -347,6 +430,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 					multiple
 					id="postImages"
 					style={{ display: "none" }}
+					accept="image/*"
 					onChange={OnFileChange}
 				/>
 			</ImageTitle>

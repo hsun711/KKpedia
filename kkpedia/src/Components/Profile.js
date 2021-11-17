@@ -9,6 +9,7 @@ import {
 	HashRouter,
 	useParams,
 } from "react-router-dom";
+import Compressor from "compressorjs";
 import Swal from "sweetalert2";
 import firebase from "../utils/firebase";
 import PersonalData from "./PersonalData";
@@ -18,7 +19,7 @@ import userIcon from "../img/user.png";
 import levelImg from "../img/level-up.png";
 import check from "../img/checked.png";
 import changeimg from "../img/photo-camera.png";
-import initbanner from "../img/NightSky.png";
+import initbanner from "../img/18034.jpg";
 
 const MainContainer = styled.div`
 	width: 100%;
@@ -127,16 +128,23 @@ const Photo = styled.div`
 	position: relative;
 `;
 
-const PersonImage = styled.img`
+const PersonImgDiv = styled.div`
 	margin-left: 2vmin;
 	width: 10vmin;
 	height: 10vmin;
 	border-radius: 50%;
 	cursor: pointer;
+	overflow: hidden;
 	@media screen and (max-width: 1200px) {
 		width: 15vmin;
 		height: 15vmin;
 	}
+`;
+
+const PersonImage = styled.img`
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
 `;
 const PhotoChange = styled.div`
 	background-image: url(${changeimg});
@@ -197,11 +205,6 @@ const MenuLink = styled(Link)`
 	}
 `;
 
-const MenuImage = styled.img`
-	width: 2vmin;
-	margin-right: 5px;
-`;
-
 function Profile() {
 	let { path, url } = useRouteMatch();
 	const user = firebase.auth().currentUser;
@@ -235,15 +238,20 @@ function Profile() {
 		const metadata = {
 			contentType: bannerFile.type,
 		};
-		fileRef.put(bannerFile, metadata).then(() => {
-			fileRef.getDownloadURL().then((imageUrl) => {
-				docRef.update({
-					user_banner: `${imageUrl}`,
+		new Compressor(bannerFile, {
+			quality: 0.8,
+			success: (compressedResult) => {
+				fileRef.put(compressedResult, metadata).then(() => {
+					fileRef.getDownloadURL().then((imageUrl) => {
+						docRef.update({
+							user_banner: `${imageUrl}`,
+						});
+					});
 				});
-			});
+				// alert("更新成功🎊🎊");
+				Swal.fire("更新成功");
+			},
 		});
-		// alert("更新成功🎊🎊");
-		Swal.fire("更新成功🎊🎊");
 	};
 
 	const ChangeOk = () => {
@@ -252,14 +260,19 @@ function Profile() {
 		const metadata = {
 			contentType: file.type,
 		};
-		fileRef.put(file, metadata).then(() => {
-			fileRef.getDownloadURL().then((imageUrl) => {
-				docRef.update({
-					userImage: `${imageUrl}`,
+		new Compressor(file, {
+			quality: 0.8,
+			success: (compressedResult) => {
+				fileRef.put(compressedResult, metadata).then(() => {
+					fileRef.getDownloadURL().then((imageUrl) => {
+						docRef.update({
+							userImage: `${imageUrl}`,
+						});
+					});
 				});
-			});
+				alert("更新成功");
+			},
 		});
-		alert("更新成功🎊🎊");
 	};
 
 	const ChangePhoto = () => {
@@ -295,16 +308,29 @@ function Profile() {
 					type="file"
 					id="uploadBanner"
 					style={{ display: "none" }}
+					accept="image/*"
 					onChange={(e) => {
-						setBannerFile(e.target.files[0]);
-						setBannerChange(true);
+						if (e.target.files[0] === null) {
+							return;
+						} else {
+							const fileType = e.target.files[0].type.slice(0, 5);
+							if (fileType !== "image") {
+								Swal.fire("請上傳圖片檔");
+								return;
+							} else {
+								setBannerFile(e.target.files[0]);
+								setBannerChange(true);
+							}
+						}
 					}}
 				/>
 			</BannerArea>
 			<Container>
 				<Person>
 					<Photo>
-						<PersonImage src={previewURL || userIcon} />
+						<PersonImgDiv>
+							<PersonImage src={previewURL || userIcon} />
+						</PersonImgDiv>
 						{photoChange ? (
 							<PhotoCheck as="label" htmlFor="uploadImage" onClick={ChangeOk} />
 						) : (
@@ -314,9 +340,20 @@ function Profile() {
 							type="file"
 							id="uploadImage"
 							style={{ display: "none" }}
+							accept="image/*"
 							onChange={(e) => {
-								setFile(e.target.files[0]);
-								ChangePhoto();
+								if (e.target.files[0] === null) {
+									return;
+								} else {
+									const fileType = e.target.files[0].type.slice(0, 5);
+									if (fileType !== "image") {
+										Swal.fire("請上傳圖片檔");
+										return;
+									} else {
+										setFile(e.target.files[0]);
+										ChangePhoto();
+									}
+								}
 							}}
 						/>
 					</Photo>

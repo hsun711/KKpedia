@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import firebase from "../utils/firebase";
 import styled from "styled-components";
 import concert from "../img/concert-list.jpg";
 import LoginPage from "./LoginPage";
@@ -105,17 +106,27 @@ const StartBtn = styled.div`
 `;
 
 function LandingPage() {
+	const users = firebase.auth().currentUser;
 	const [popUpsignin, setPopUpsignin] = useState(false);
+	const [login, setLogin] = useState("");
 	const ShowSignIn = () => {
 		setPopUpsignin(!popUpsignin);
 	};
+
+	const CheckLogin = (setLoginState) => {
+		setLogin(setLoginState);
+	};
+
+	// console.log(login);
+	// console.log(users);
+
 	return (
 		<Container>
 			<WelcomePage>
 				{popUpsignin ? (
 					<div>
 						<Cover onClick={ShowSignIn} />
-						<LoginPage />
+						<LoginPage setLoginState={CheckLogin} />
 					</div>
 				) : (
 					<WelcomeArea>

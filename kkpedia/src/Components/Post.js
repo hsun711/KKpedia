@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import RenderPost from "./RenderPost";
+import Swal from "sweetalert2";
 
 const Container = styled.div`
 	display: flex;
@@ -102,6 +103,10 @@ function Post({ title }) {
 
 	const SendMsg = () => {
 		setPostMsg("");
+		if (postMsg === "") {
+			Swal.fire("請輸入內容");
+			return;
+		}
 		const data = {
 			content: postMsg,
 			title: title,

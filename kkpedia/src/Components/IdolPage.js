@@ -9,6 +9,7 @@ import {
 	useRouteMatch,
 } from "react-router-dom";
 import Swal from "sweetalert2";
+import Compressor from "compressorjs";
 import Place from "./Place";
 import Picture from "./Picture";
 import Calender from "./Calender";
@@ -23,7 +24,7 @@ import youtube from "../img/youtube.png";
 import check from "../img/checked.png";
 import changeimg from "../img/photo-camera.png";
 import add from "../img/add.png";
-import initbanner from "../img/NightSky.png";
+import initbanner from "../img/18034.jpg";
 
 const BannerArea = styled.div`
 	display: flex;
@@ -215,18 +216,20 @@ function IdolPage({ topic }) {
 	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
 
 	useEffect(() => {
-		docRef.where("title", "==", `${title}`).onSnapshot((querySnapshot) => {
-			const item = [];
-			querySnapshot.forEach((doc) => {
-				// doc.data() is never undefined for query doc snapshots
-				// console.log(doc.data());
-				item.push({ star: doc.data() });
+		const unsubscribe = docRef
+			.where("title", "==", `${title}`)
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					// console.log(doc.data());
+					item.push({ star: doc.data() });
+				});
+				// console.log(item);
+				setSns(item);
+				setMainImage(item[0].star.main_image);
+				setBannerImg(item[0].star.main_banner);
 			});
-			// console.log(item);
-			setSns(item);
-			setMainImage(item[0].star.main_image);
-			setBannerImg(item[0].star.main_banner);
-		});
 
 		db.collection("categories")
 			.doc(`${title}`)
@@ -234,6 +237,8 @@ function IdolPage({ topic }) {
 			.then((doc) => {
 				setFollowUsers(doc.data().followedBy);
 			});
+
+		return () => unsubscribe();
 	}, []);
 	// console.log(title);
 	const BannerOk = () => {
@@ -242,15 +247,20 @@ function IdolPage({ topic }) {
 		const metadata = {
 			contentType: bannerFile.type,
 		};
-		fileRef.put(bannerFile, metadata).then(() => {
-			fileRef.getDownloadURL().then((imageUrl) => {
-				docRef.doc(`${title}`).update({
-					main_banner: `${imageUrl}`,
+		new Compressor(bannerFile, {
+			quality: 0.8,
+			success: (compressedResult) => {
+				fileRef.put(compressedResult, metadata).then(() => {
+					fileRef.getDownloadURL().then((imageUrl) => {
+						docRef.doc(`${title}`).update({
+							main_banner: `${imageUrl}`,
+						});
+					});
 				});
-			});
+				// alert("更新成功🎊🎊");
+				Swal.fire("更新成功");
+			},
 		});
-		// alert("更新成功🎊🎊");
-		Swal.fire("更新成功");
 	};
 
 	const ChangeOk = () => {
@@ -259,29 +269,35 @@ function IdolPage({ topic }) {
 		const metadata = {
 			contentType: file.type,
 		};
-		fileRef.put(file, metadata).then(() => {
-			fileRef.getDownloadURL().then((imageUrl) => {
-				docRef.doc(`${title}`).update({
-					main_image: `${imageUrl}`,
-				});
-
-				followUsers.forEach((user) => {
-					db.collection("users")
-						.doc(`${user}`)
-						.collection("follows")
-						.doc(`${title}`)
-						.update({
+		new Compressor(file, {
+			quality: 0.8,
+			success: (compressedResult) => {
+				fileRef.put(compressedResult, metadata).then(() => {
+					fileRef.getDownloadURL().then((imageUrl) => {
+						docRef.doc(`${title}`).update({
 							main_image: `${imageUrl}`,
 						});
+						if (followUsers.length !== 0) {
+							followUsers.forEach((user) => {
+								db.collection("users")
+									.doc(`${user}`)
+									.collection("follows")
+									.doc(`${title}`)
+									.update({
+										main_image: `${imageUrl}`,
+									});
+							});
+						}
+					});
 				});
-			});
+				Swal.fire("更新成功");
+			},
 		});
-		// alert("更新成功🎊🎊");
-		Swal.fire("更新成功");
 	};
 
 	const AddSns = async (sns) => {
 		if (sns === "facebook") {
+			const snsRegex = /^https\:\/\/www\.facebook\.com/;
 			let { value: text } = await Swal.fire({
 				title: `請輸入${sns}網址`,
 				input: "text",
@@ -291,6 +307,12 @@ function IdolPage({ topic }) {
 			if (text === undefined) {
 				return;
 			}
+
+			if (text.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的${sns}網址`);
+				return;
+			}
+
 			let url = text;
 			if (!url) {
 				url = "";
@@ -300,12 +322,17 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "instagram") {
+			const snsRegex = /^https\:\/\/www\.instagram\.com\//;
 			let { value: text } = await Swal.fire({
 				title: `請輸入${sns}網址`,
 				input: "text",
 				inputPlaceholder: "",
 			});
 			if (text === undefined) {
+				return;
+			}
+			if (text.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的${sns}網址`);
 				return;
 			}
 			let url = text;
@@ -317,6 +344,7 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "twitter") {
+			const snsRegex = /^https\:\/\/twitter\.com\//;
 			let { value: text } = await Swal.fire({
 				title: `請輸入${sns}網址`,
 				input: "text",
@@ -324,6 +352,10 @@ function IdolPage({ topic }) {
 			});
 
 			if (text === undefined) {
+				return;
+			}
+			if (text.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的${sns}網址`);
 				return;
 			}
 			let url = text;
@@ -335,6 +367,7 @@ function IdolPage({ topic }) {
 				});
 			}
 		} else if (sns === "youtube") {
+			const snsRegex = /^https\:\/\/www\.youtube\.com\//;
 			let { value: text } = await Swal.fire({
 				title: `請輸入${sns}網址`,
 				input: "text",
@@ -342,6 +375,10 @@ function IdolPage({ topic }) {
 			});
 
 			if (text === undefined) {
+				return;
+			}
+			if (text.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的${sns}網址`);
 				return;
 			}
 			let url = text;
@@ -372,9 +409,16 @@ function IdolPage({ topic }) {
 					type="file"
 					id="uploadBanner"
 					style={{ display: "none" }}
+					accept="image/*"
 					onChange={(e) => {
-						setBannerFile(e.target.files[0]);
-						setBannerChange(true);
+						const fileType = e.target.files[0].type.slice(0, 5);
+						if (fileType !== "image") {
+							Swal.fire("請上傳圖片檔");
+							return;
+						} else {
+							setBannerFile(e.target.files[0]);
+							setBannerChange(true);
+						}
 					}}
 				/>
 			</BannerArea>
@@ -457,9 +501,16 @@ function IdolPage({ topic }) {
 									type="file"
 									id="uploadCover"
 									style={{ display: "none" }}
+									accept="image/*"
 									onChange={(e) => {
-										setFile(e.target.files[0]);
-										setPhotoChange(true);
+										const fileType = e.target.files[0].type.slice(0, 5);
+										if (fileType !== "image") {
+											Swal.fire("請上傳圖片檔");
+											return;
+										} else {
+											setFile(e.target.files[0]);
+											setPhotoChange(true);
+										}
 									}}
 								/>
 							</Photo>
