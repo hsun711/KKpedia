@@ -62,28 +62,42 @@ const LinkNav = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	&:hover {
-		transform: scale(1.1);
-		transition: all 0.3s;
-		cursor: pointer;
-	}
 `;
 
 const IdolImage = styled.img`
 	align-self: center;
 	max-width: 15vmin;
 	height: 15vmin;
-	margin-top: 2.75vmin;
+	margin-top: 3.25vmin;
 	margin-right: 1.1vmin;
+	&:hover {
+		transform: scale(1.05);
+		transition: all 0.3s;
+		cursor: pointer;
+	}
 `;
-
-const LinkTxt = styled.p`
+const LinkTxt = styled.div`
+	/* outline: 2px solid blue; */
+	width: 22vmin;
 	color: #2d3436;
 	text-align: center;
+	margin-top: 2vmin;
+	margin-right: 1vmin;
+	align-self: center;
+	@media screen and (max-width: 1200px) {
+		font-size: 3vmin;
+		margin-top: 2vmin;
+	}
+`;
+
+const LinkTitle = styled.p`
 	font-size: 2.5vmin;
-	line-height: 2.5vmin;
 	font-weight: 600;
-	margin-top: 2.5vmin;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 `;
 
 function SearchResult({ allCategory }) {
@@ -125,29 +139,15 @@ function SearchResult({ allCategory }) {
 									}}
 								>
 									<IdolImage src={result.main_image || idol} />
-									<LinkTxt>{result.title}</LinkTxt>
+									<LinkTxt>
+										<LinkTitle>{result.title}</LinkTitle>
+									</LinkTxt>
 								</LinkNav>
 							</EachIdol>
 						);
 					})}
 				</Container>
 			)}
-			{/* <Container>
-				{resultData.map((result) => {
-					return (
-						<EachIdol key={result.title}>
-							<LinkNav
-								onClick={() => {
-									history.push(`/${result.topic}/${result.title}`);
-								}}
-							>
-								<IdolImage src={result.main_image || idol} />
-								<LinkTxt>{result.title}</LinkTxt>
-							</LinkNav>
-						</EachIdol>
-					);
-				})}
-			</Container> */}
 			{loading && <Loading />}
 		</>
 	);

@@ -63,7 +63,7 @@ const BannerCheck = styled(BannerChange)`
 `;
 
 const Container = styled.div`
-	width: 95%;
+	width: 90%;
 	height: 100%;
 	margin: -1vmin auto;
 	padding-bottom: 7vmin;
@@ -82,6 +82,7 @@ const ColumnDiv = styled.div`
 `;
 
 const Person = styled.div`
+	margin-left: 1vmin;
 	display: flex;
 	align-items: center;
 	@media screen and (max-width: 1200px) {
@@ -162,15 +163,12 @@ const PhotoCheck = styled(PhotoChange)`
 `;
 
 const MenuBar = styled.div`
+	margin-left: 1vmin;
 	margin-top: 7vmin;
 	display: flex;
 	@media screen and (max-width: 1200px) {
 		justify-content: space-evenly;
 	}
-`;
-
-const MenuImage = styled.img`
-	width: 3vmin;
 `;
 
 const MenuLink = styled(Link)`

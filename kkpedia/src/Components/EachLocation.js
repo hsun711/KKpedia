@@ -319,7 +319,7 @@ function EachLocation({ title }) {
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
 	useEffect(() => {
-		docRef
+		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("places")
 			.where("locationName", "==", `${location}`)
@@ -358,9 +358,12 @@ function EachLocation({ title }) {
 			.catch((error) => {
 				console.log("Error getting documents: ", error);
 			});
+		return () => unsubscribe();
+	}, []);
 
+	useEffect(() => {
 		// desc 遞減 | asc 遞增
-		docRef
+		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("reviews")
 			.where("locationName", "==", `${location}`)
@@ -375,14 +378,13 @@ function EachLocation({ title }) {
 				});
 				setComment(item);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	const popUp = () => {
 		setPopUpWriteComment(!popUpWriteComment);
 	};
 
-	// console.log(location);
-	// console.log(title);
 	const addToUserData = () => {
 		const locationName = placeData[0].locationName;
 		db.collection("users")
@@ -391,7 +393,12 @@ function EachLocation({ title }) {
 			.doc(`${locationName}`)
 			.set(placeData[0])
 			.then(() => {
-				Swal.fire("收進口袋聖地囉🎉🎊");
+				// Swal.fire("收進口袋聖地囉🎉🎊");
+				Swal.fire({
+					icon: "success",
+					title: "收進口袋聖地囉",
+					footer: '<a href="/profile/myCollection">前往口袋聖地</a>',
+				});
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);
@@ -405,7 +412,7 @@ function EachLocation({ title }) {
 			.doc(`${location}`)
 			.delete()
 			.then(() => {
-				Swal.fire("移出口袋聖地囉😤😤");
+				Swal.fire("移出口袋聖地囉");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);

@@ -8,10 +8,9 @@ const Container = styled.div`
 	flex-direction: column;
 	cursor: pointer;
 	padding: 1vmin;
-	background-color: #fff;
 	&:hover {
 		background-color: #f8eedb;
-		box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
+		/* box-shadow: 10px 10px 40px 5px rgba(0, 0, 0, 0.2); */
 	}
 `;
 

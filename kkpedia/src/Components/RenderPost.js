@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
+import ReplyPost from "./ReplyPost";
 import ungood from "../img/unthumbs-up.png";
 import dogood from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
@@ -191,9 +192,48 @@ function RenderPost({ item }) {
 	const [commentNum, setCommentNum] = useState("");
 	const db = firebase.firestore();
 	const userId = firebase.auth().currentUser.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
 
-	// console.log(item);
+	useEffect(() => {
+		const unsubscribe = db
+			.collection("posts")
+			.doc(`${item.id}`)
+			.collection("comments")
+			.orderBy("postTime", "desc")
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push(doc.data());
+				});
+				setShowReply(item[0]);
+				setRenderReply(item);
+				setCommentNum(item.length);
+			});
+
+		db.collection("users")
+			.doc(`${item.data.userId}`)
+			.get()
+			.then((doc) => {
+				setUserImg(doc.data().userImage);
+				setUserName(doc.data().userName);
+			});
+		return () => unsubscribe();
+	}, []);
+
+	useEffect(() => {
+		const unsubscribe = db
+			.collection("posts")
+			.doc(`${item.id}`)
+			.onSnapshot((doc) => {
+				if (doc.data()?.likedBy.includes(`${userId}`)) {
+					setGood(true);
+				} else {
+					setGood(false);
+				}
+				setGoodNum(doc.data()?.likedBy.length);
+			});
+		return () => unsubscribe();
+	}, []);
 
 	const AddGood = () => {
 		const liked = db.collection("posts").doc(`${item.id}`);
@@ -218,45 +258,6 @@ function RenderPost({ item }) {
 		setShowComment(!showComment);
 	};
 
-	docRef.get().then((doc) => {
-		if (doc.exists) {
-			setUserImg(doc.data().userImage);
-			setUserName(doc.data().userName);
-		} else {
-			// doc.data() will be undefined in this case
-			console.log("No such document!");
-		}
-	});
-
-	useEffect(() => {
-		db.collection("posts")
-			.doc(`${item.id}`)
-			.collection("comments")
-			.orderBy("postTime", "desc")
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					item.push(doc.data());
-				});
-
-				setShowReply(item[0]);
-				setRenderReply(item);
-				setCommentNum(item.length);
-			});
-
-		db.collection("posts")
-			.doc(`${item.id}`)
-			.onSnapshot((doc) => {
-				if (doc.data()?.likedBy.includes(`${userId}`)) {
-					setGood(true);
-				} else {
-					setGood(false);
-				}
-				setGoodNum(doc.data()?.likedBy.length);
-			});
-	}, []);
-
 	const SendReply = async () => {
 		setReplyComment("");
 		if (replyComment === "") {
@@ -266,9 +267,9 @@ function RenderPost({ item }) {
 		const data = {
 			content: replyComment,
 			docid: item.id,
-			replyUser: userName,
+			userName: userName,
 			postTime: new Date().getTime(),
-			userImg: userImg,
+			userId: userId,
 		};
 
 		await db
@@ -285,14 +286,12 @@ function RenderPost({ item }) {
 			});
 	};
 
-	// console.log(userImg);
-
 	return (
 		<CommentArea>
 			<PosterDetail>
-				<PosterImage src={item.data.userImage || userIcon} />
+				<PosterImage src={userImg || userIcon} />
 				<PosterText>
-					<PosterName>{item.data.displayName}</PosterName>
+					<PosterName>{userName}</PosterName>
 					<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
 				</PosterText>
 			</PosterDetail>
@@ -313,40 +312,12 @@ function RenderPost({ item }) {
 			{showComment ? (
 				<>
 					{renderReply.map((item) => {
-						return (
-							<Recomment key={uuidv4()}>
-								<ReplyImg src={item.userImg || userIcon} />
-								<ReplyComment>
-									<ReplyText>
-										<ReplyUserName>{item.replyUser}</ReplyUserName>
-									</ReplyText>
-									<Comment>{item.content}</Comment>
-									<SmallTxt>
-										{new Date(item.postTime).toLocaleString()}
-									</SmallTxt>
-								</ReplyComment>
-							</Recomment>
-						);
+						return <ReplyPost key={uuidv4()} item={item} />;
 					})}
 				</>
 			) : (
 				<>
-					{showReply !== undefined ? (
-						<Recomment>
-							<ReplyImg src={showReply.userImg || userIcon} />
-							<ReplyComment>
-								<ReplyText>
-									<ReplyUserName>{showReply.replyUser}</ReplyUserName>
-								</ReplyText>
-								<Comment>{showReply.content}</Comment>
-								<SmallTxt>
-									{new Date(showReply.postTime).toLocaleString()}
-								</SmallTxt>
-							</ReplyComment>
-						</Recomment>
-					) : (
-						<></>
-					)}
+					{renderReply.length > 1 ? <ReplyPost item={renderReply[0]} /> : <></>}
 				</>
 			)}
 

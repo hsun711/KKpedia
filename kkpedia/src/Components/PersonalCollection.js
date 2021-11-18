@@ -35,13 +35,16 @@ function PersonalCollection() {
 	const [collectPlace, setCollectPlace] = useState([]);
 
 	useEffect(() => {
-		docRef.collection("likes").onSnapshot((querySnapshot) => {
-			const item = [];
-			querySnapshot.forEach((doc) => {
-				item.push(doc.data());
+		const unsubscribe = docRef
+			.collection("likes")
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					item.push(doc.data());
+				});
+				setCollectPlace(item);
 			});
-			setCollectPlace(item);
-		});
+		return () => unsubscribe();
 	}, []);
 
 	return (

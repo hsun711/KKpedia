@@ -74,7 +74,6 @@ const Cover = styled.div`
 `;
 
 function Picture({ title }) {
-	// let { category } = useParams();
 	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
 	const [popAddPicture, setPopAddPicture] = useState(false);
@@ -86,7 +85,8 @@ function Picture({ title }) {
 	};
 
 	useEffect(() => {
-		db.collection("categories")
+		const unsubscribe = db
+			.collection("categories")
 			.doc(`${title}`)
 			.collection("photos")
 			.orderBy("postTime", "desc")
@@ -105,6 +105,7 @@ function Picture({ title }) {
 			.then((doc) => {
 				setUserLevel(doc.data().userLevel);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	return (
@@ -128,48 +129,6 @@ function Picture({ title }) {
 							{photos.map((item) => {
 								return <EachPictures item={item} key={uuidv4()} />;
 							})}
-							{/* {photos.map((item) => {
-								return (
-									<EachPhoto key={uuidv4()}>
-										<PosterInfo>
-											<ImageHolder>{item.postUser}</ImageHolder>
-											<TimeStamp>
-												{new Date(item.postTime).toLocaleString()}
-											</TimeStamp>
-										</PosterInfo>
-										<ImageDescription>{item.description}</ImageDescription>
-										<PhotosArea>
-											{item.images.length <= 4 ? (
-												<NoCarouselImg>
-													{item.images.map((img, index) => (
-														<Photos
-															src={img}
-															key={index}
-															onClick={() => openImageViewer(index)}
-														/>
-													))}
-													{isViewerOpen && (
-														<ImageViewer
-															src={item.images}
-															currentIndex={currentImage}
-															onClose={closeImageViewer}
-															disableScroll={false}
-															backgroundStyle={{
-																backgroundColor: "rgba(0,0,0,0.5)",
-															}}
-															closeOnClickOutside={true}
-														/>
-													)}
-												</NoCarouselImg>
-											) : (
-												<MultiPhoto>
-													<ImageCarousel images={item.images} showNum={4} />
-												</MultiPhoto>
-											)}
-										</PhotosArea>
-									</EachPhoto>
-								);
-							})} */}
 						</Container>
 					)}
 				</>

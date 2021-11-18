@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import styled from "styled-components";
+import Swal from "sweetalert2";
 import firebase from "../utils/firebase";
 import mainImage from "../img/wanted.png";
 import star from "../img/star.png";
@@ -96,7 +97,7 @@ function LookMore({ title, location }) {
 	const [comment, setComment] = useState([]);
 
 	useEffect(() => {
-		docRef
+		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("reviews")
 			.where("locationName", "==", `${location}`)
@@ -104,12 +105,11 @@ function LookMore({ title, location }) {
 			.onSnapshot((querySnapshot) => {
 				const item = [];
 				querySnapshot.forEach((doc) => {
-					// console.log(doc.data());
 					item.push(doc.data());
-					// setComment([doc.data()]);
 				});
 				setComment(item);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	return (

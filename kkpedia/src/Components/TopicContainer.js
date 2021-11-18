@@ -97,7 +97,6 @@ const LikeIcon = styled.img`
 `;
 
 function TopicContainer({ topic, item }) {
-	// const [titleName, setTitileName] = useState([]);
 	const [follow, setFollow] = useState(false);
 	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
@@ -105,6 +104,32 @@ function TopicContainer({ topic, item }) {
 	const previewURL = item.star.main_image
 		? `${item.star.main_image}`
 		: `${idol}`;
+
+	useEffect(() => {
+		docRef
+			.where("title", "==", `${item.star.title}`)
+			.where("followedBy", "array-contains", `${user.uid}`)
+			.get()
+			.then((querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					const followedBy = doc.data().followedBy;
+					const follow = followedBy.some((item) => {
+						const result = item === user.uid;
+						return result;
+					});
+					if (follow) {
+						setFollow(true);
+					} else {
+						// doc.data() will be undefined in this case
+						setFollow(false);
+					}
+				});
+			})
+			.catch((error) => {
+				console.log("Error getting documents: ", error);
+			});
+	}, []);
 
 	const AddtoMyFollow = () => {
 		db.collection("users")
@@ -170,32 +195,6 @@ function TopicContainer({ topic, item }) {
 			AddtoFollowedBy();
 		}
 	};
-
-	useEffect(() => {
-		docRef
-			.where("title", "==", `${item.star.title}`)
-			.where("followedBy", "array-contains", `${user.uid}`)
-			.get()
-			.then((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					const followedBy = doc.data().followedBy;
-					const follow = followedBy.some((item) => {
-						const result = item === user.uid;
-						return result;
-					});
-					if (follow) {
-						setFollow(true);
-					} else {
-						// doc.data() will be undefined in this case
-						setFollow(false);
-					}
-				});
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
-			});
-	}, []);
 
 	return (
 		<EachIdol>

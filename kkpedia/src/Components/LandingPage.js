@@ -117,9 +117,6 @@ function LandingPage() {
 		setLogin(setLoginState);
 	};
 
-	// console.log(login);
-	// console.log(users);
-
 	return (
 		<Container>
 			<WelcomePage>

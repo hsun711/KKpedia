@@ -65,7 +65,7 @@ const Cover = styled.div`
 `;
 
 const DramaContainer = styled.div`
-	width: 100%;
+	width: 90%;
 	height: 100%;
 	margin: 7vmin auto;
 	position: relative;
@@ -96,14 +96,17 @@ function Drama() {
 	};
 
 	useEffect(() => {
-		docRef.where("topic", "==", "drama").onSnapshot((querySnapshot) => {
-			const item = [];
-			querySnapshot.forEach((doc) => {
-				// doc.data() is never undefined for query doc snapshots
-				item.push({ star: doc.data() });
+		const unsubscribe = docRef
+			.where("topic", "==", "drama")
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push({ star: doc.data() });
+				});
+				setTitileName(item);
 			});
-			setTitileName(item);
-		});
+		return () => unsubscribe();
 	}, []);
 
 	return (

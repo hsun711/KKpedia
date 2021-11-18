@@ -10,7 +10,7 @@ import rightphotos from "../img/135739274.png";
 import { Link } from "react-router-dom";
 
 const EachContainer = styled.div`
-	width: 80%;
+	width: 90%;
 	background-image: url(${board});
 	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.25);
 	border-radius: 10px;

@@ -59,13 +59,14 @@ const SimpleMap = (props) => {
 	const docRef = db.collection("users").doc(`${userId}`);
 	// console.log(collectPlace);
 	useEffect(() => {
-		docRef.collection("likes").onSnapshot((snapshot) => {
+		const unsubscribe = docRef.collection("likes").onSnapshot((snapshot) => {
 			const item = [];
 			snapshot.forEach((doc) => {
 				item.push(doc.data());
 			});
 			setCollectPlace(item);
 		});
+		return () => unsubscribe();
 	}, []);
 	return (
 		// Important! Always set the container height explicitly
@@ -95,10 +96,10 @@ const SimpleMap = (props) => {
 // 由於改寫成 functional component，故另外設定 defaultProps
 SimpleMap.defaultProps = {
 	center: {
-		lat: 25.04,
-		lng: 121.5,
+		lat: 32.19,
+		lng: 126.85,
 	},
-	zoom: 7,
+	zoom: 5,
 };
 
 // App

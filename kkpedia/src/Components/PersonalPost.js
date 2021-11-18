@@ -39,7 +39,8 @@ function PersonalPost() {
 	const [postData, setPostData] = useState([]);
 
 	useEffect(() => {
-		db.collection("posts")
+		const unsubscribe = db
+			.collection("posts")
 			.where("userId", "==", `${userId}`)
 			.orderBy("postTime", "desc")
 			.onSnapshot((querySnapshot) => {
@@ -53,6 +54,7 @@ function PersonalPost() {
 				});
 				setPostData(item);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	const handleDelete = (e) => {

@@ -147,6 +147,7 @@ function NewPicture({ title, AddPicture }) {
 	const [userName, setUserName] = useState("");
 	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
+	const [compressedFile, setCompressedFile] = useState(null);
 	const user = firebase.auth().currentUser;
 	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [imgDescription, setImgDescription] = useState("");
@@ -175,8 +176,6 @@ function NewPicture({ title, AddPicture }) {
 				Swal.fire("請上傳圖片檔");
 				return;
 			} else {
-				const id = uuidv4();
-				newFile["id"] = id;
 				setFiles((prevState) => [...prevState, newFile]);
 			}
 		}
@@ -186,7 +185,7 @@ function NewPicture({ title, AddPicture }) {
 			userLevel: userLevel + 7,
 		});
 	};
-	// console.log(files);
+
 	const handleUpload = () => {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
@@ -194,7 +193,7 @@ function NewPicture({ title, AddPicture }) {
 		const docid = documentRef.collection("photos").doc().id;
 
 		const data = {
-			postUser: userName,
+			// postUser: userName,
 			uid: user.uid,
 			description: imgDescription,
 			postTime: new Date().getTime(),
@@ -207,91 +206,53 @@ function NewPicture({ title, AddPicture }) {
 			.then((docRef) => {
 				UpdateLevel();
 			});
-
 		files.map((file) => {
-			// new Compressor(file, {
-			// 	quality: 0.8,
-			// 	success: (compressedResult) => {
-			// 		console.log(compressedResult);
-			// 		const uploadTask = firebase
-			// 			.storage()
-			// 			.ref(`idol_images/${documentRef.id}/${compressedResult.id}`)
-			// 			.put(compressedResult);
-			// 		promises.push(uploadTask);
-			// 		uploadTask.on(
-			// 			"state_changed",
-			// 			function progress(snapshot) {
-			// 				const progress =
-			// 					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-			// 				if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-			// 					console.log(`Progress: ${progress}%`);
-			// 				}
-			// 			},
-			// 			function error(error) {
-			// 				console.log(error);
-			// 			},
-			// 			function complete() {
-			// 				firebase
-			// 					.storage()
-			// 					.ref(`idol_images/${documentRef.id}/`)
-			// 					.child(`${compressedResult.id}`)
-			// 					.getDownloadURL()
-			// 					.then((imgUrls) => {
-			// 						documentRef
-			// 							.collection("photos")
-			// 							.doc(`${docid}`)
-			// 							.update({
-			// 								images: firebase.firestore.FieldValue.arrayUnion(
-			// 									`${imgUrls}`
-			// 								),
-			// 							})
-			// 							.then(() => {
-			// 								// console.log(user.uid);
-			// 							});
-			// 					});
-			// 			}
-			// 		);
-			// 	},
-			// });
-			const uploadTask = firebase
-				.storage()
-				.ref(`idol_images/${documentRef.id}/${file.id}`)
-				.put(file);
-			promises.push(uploadTask);
-			uploadTask.on(
-				"state_changed",
-				function progress(snapshot) {
-					const progress =
-						(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-					if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-						console.log(`Progress: ${progress}%`);
-					}
-				},
-				function error(error) {
-					console.log(error);
-				},
-				function complete() {
-					firebase
+			new Compressor(file, {
+				quality: 0.8,
+				success: (compressedResult) => {
+					const id = uuidv4();
+					const uploadTask = firebase
 						.storage()
-						.ref(`idol_images/${documentRef.id}/`)
-						.child(`${file.id}`)
-						.getDownloadURL()
-						.then((imgUrls) => {
-							documentRef
-								.collection("photos")
-								.doc(`${docid}`)
-								.update({
-									images: firebase.firestore.FieldValue.arrayUnion(
-										`${imgUrls}`
-									),
-								})
-								.then(() => {
-									// console.log(user.uid);
+						.ref(`idol_images/${documentRef.id}/${id}`)
+						.put(compressedResult);
+					promises.push(uploadTask);
+					uploadTask.on(
+						"state_changed",
+						function progress(snapshot) {
+							const progress =
+								(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+							if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+								console.log(`Progress: ${progress}%`);
+							}
+						},
+						function error(error) {
+							console.log(error);
+						},
+						function complete() {
+							firebase
+								.storage()
+								.ref(`idol_images/${documentRef.id}/`)
+								.child(`${id}`)
+								.getDownloadURL()
+								.then((imgUrls) => {
+									documentRef
+										.collection("photos")
+										.doc(`${docid}`)
+										.update({
+											images: firebase.firestore.FieldValue.arrayUnion(
+												`${imgUrls}`
+											),
+										})
+										.then(() => {
+											// console.log(user.uid);
+										});
 								});
-						});
-				}
-			);
+						}
+					);
+				},
+			});
 		});
+
 		Promise.all(promises)
 			.then(() => {
 				setLoading(false);
