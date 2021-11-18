@@ -92,7 +92,8 @@ function PersonalData() {
 	useEffect(() => {
 		// collectionGroup 可以跳過第一個 collection 直接到第二個 collection 去篩選指定的東西
 		// 就不用在第一個 collection 裡的 doc 裡一個一個篩選
-		db.collectionGroup("places")
+		const unsubscribe = db
+			.collectionGroup("places")
 			.where("uid", "==", `${user.uid}`)
 			.onSnapshot((querySnapshot) => {
 				const item = [];
@@ -102,7 +103,12 @@ function PersonalData() {
 				setContribution(item);
 			});
 
-		db.collection("users")
+		return () => unsubscribe();
+	}, []);
+
+	useEffect(() => {
+		const unsubscribe = db
+			.collection("users")
 			.doc(`${userId}`)
 			.collection("follows")
 			.onSnapshot((querySnapshot) => {
@@ -112,6 +118,7 @@ function PersonalData() {
 				});
 				setFollow(item);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	return (

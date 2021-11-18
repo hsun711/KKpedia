@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
+import ReplyPost from "./ReplyPost";
 import ungood from "../img/unthumbs-up.png";
 import dogood from "../img/thumbs-up.png";
 import comment from "../img/comment.png";
@@ -193,7 +194,8 @@ function RenderPost({ item }) {
 	const userId = firebase.auth().currentUser.uid;
 
 	useEffect(() => {
-		db.collection("posts")
+		const unsubscribe = db
+			.collection("posts")
 			.doc(`${item.id}`)
 			.collection("comments")
 			.orderBy("postTime", "desc")
@@ -208,7 +210,19 @@ function RenderPost({ item }) {
 				setCommentNum(item.length);
 			});
 
-		db.collection("posts")
+		db.collection("users")
+			.doc(`${item.data.userId}`)
+			.get()
+			.then((doc) => {
+				setUserImg(doc.data().userImage);
+				setUserName(doc.data().userName);
+			});
+		return () => unsubscribe();
+	}, []);
+
+	useEffect(() => {
+		const unsubscribe = db
+			.collection("posts")
 			.doc(`${item.id}`)
 			.onSnapshot((doc) => {
 				if (doc.data()?.likedBy.includes(`${userId}`)) {
@@ -218,14 +232,7 @@ function RenderPost({ item }) {
 				}
 				setGoodNum(doc.data()?.likedBy.length);
 			});
-
-		db.collection("users")
-			.doc(`${item.data.userId}`)
-			.get()
-			.then((doc) => {
-				setUserImg(doc.data().userImage);
-				setUserName(doc.data().userName);
-			});
+		return () => unsubscribe();
 	}, []);
 
 	const AddGood = () => {
@@ -260,7 +267,7 @@ function RenderPost({ item }) {
 		const data = {
 			content: replyComment,
 			docid: item.id,
-			replyUser: userName,
+			userName: userName,
 			postTime: new Date().getTime(),
 			userId: userId,
 		};
@@ -278,8 +285,6 @@ function RenderPost({ item }) {
 				console.error("Error adding document: ", error);
 			});
 	};
-
-	console.log(renderReply);
 
 	return (
 		<CommentArea>
@@ -307,40 +312,12 @@ function RenderPost({ item }) {
 			{showComment ? (
 				<>
 					{renderReply.map((item) => {
-						return (
-							<Recomment key={uuidv4()}>
-								<ReplyImg src={item.userImg || userIcon} />
-								<ReplyComment>
-									<ReplyText>
-										<ReplyUserName>{item.replyUser}</ReplyUserName>
-									</ReplyText>
-									<Comment>{item.content}</Comment>
-									<SmallTxt>
-										{new Date(item.postTime).toLocaleString()}
-									</SmallTxt>
-								</ReplyComment>
-							</Recomment>
-						);
+						return <ReplyPost key={uuidv4()} item={item} />;
 					})}
 				</>
 			) : (
 				<>
-					{showReply !== undefined ? (
-						<Recomment>
-							<ReplyImg src={showReply.userImg || userIcon} />
-							<ReplyComment>
-								<ReplyText>
-									<ReplyUserName>{showReply.replyUser}</ReplyUserName>
-								</ReplyText>
-								<Comment>{showReply.content}</Comment>
-								<SmallTxt>
-									{new Date(showReply.postTime).toLocaleString()}
-								</SmallTxt>
-							</ReplyComment>
-						</Recomment>
-					) : (
-						<></>
-					)}
+					{renderReply.length > 1 ? <ReplyPost item={renderReply[0]} /> : <></>}
 				</>
 			)}
 

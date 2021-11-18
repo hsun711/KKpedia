@@ -195,6 +195,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 
 	const OnFileChange = (e) => {
 		// Get Files
+
 		for (let i = 0; i < e.target.files.length; i++) {
 			const newFile = e.target.files[i];
 			const fileType = e.target.files[i].type.slice(0, 5);
@@ -266,6 +267,12 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 			setLoading(false);
 			return;
 		}
+
+		if (files.length > 5) {
+			Swal.fire("最多上傳5張照片喔");
+			setLoading(false);
+			return;
+		}
 		documentRef
 			.collection("places")
 			.doc(`${locationName}`)
@@ -297,7 +304,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 							SendAlert();
 						});
 					files.map((file) => {
-						console.log(file);
 						new Compressor(file, {
 							quality: 0.8,
 							success: (compressedResult) => {
@@ -383,7 +389,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 				<MapAutocomplete placeaddress={GetAddress} />
 			</Title>
 			<ImageTitle>
-				<AddImagesTitle>上傳照片：</AddImagesTitle>
+				<AddImagesTitle>上傳照片(最多上傳5張照片喔)：</AddImagesTitle>
 				<AddImages as="label" htmlFor="postImages" />
 				<input
 					type="file"

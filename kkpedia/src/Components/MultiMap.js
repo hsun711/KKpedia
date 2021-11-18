@@ -59,13 +59,14 @@ const SimpleMap = (props) => {
 	const docRef = db.collection("users").doc(`${userId}`);
 	// console.log(collectPlace);
 	useEffect(() => {
-		docRef.collection("likes").onSnapshot((snapshot) => {
+		const unsubscribe = docRef.collection("likes").onSnapshot((snapshot) => {
 			const item = [];
 			snapshot.forEach((doc) => {
 				item.push(doc.data());
 			});
 			setCollectPlace(item);
 		});
+		return () => unsubscribe();
 	}, []);
 	return (
 		// Important! Always set the container height explicitly

@@ -85,7 +85,8 @@ function Picture({ title }) {
 	};
 
 	useEffect(() => {
-		db.collection("categories")
+		const unsubscribe = db
+			.collection("categories")
 			.doc(`${title}`)
 			.collection("photos")
 			.orderBy("postTime", "desc")
@@ -104,6 +105,7 @@ function Picture({ title }) {
 			.then((doc) => {
 				setUserLevel(doc.data().userLevel);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	return (

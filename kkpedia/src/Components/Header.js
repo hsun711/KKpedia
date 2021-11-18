@@ -217,12 +217,19 @@ function Header() {
 	};
 
 	useEffect(() => {
-		db.collection("users")
+		const unsubscribe = db
+			.collection("users")
 			.doc(`${user.uid}`)
 			.onSnapshot((doc) => {
 				setUserData(doc.data());
 			});
-		db.collection("users")
+
+		return () => unsubscribe();
+	}, []);
+
+	useEffect(() => {
+		const unsubscribe = db
+			.collection("users")
 			.doc(`${user.uid}`)
 			.collection("news")
 			.onSnapshot((querySnapshot) => {
@@ -233,6 +240,7 @@ function Header() {
 				});
 				setNewsData(item);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	const showNewAlert = () => {

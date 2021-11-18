@@ -98,7 +98,7 @@ export default function RenderCalender({ title }) {
 
 	// console.log(events);
 	useEffect(() => {
-		docRef
+		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("calenders")
 			.onSnapshot((snapshot) => {
@@ -109,6 +109,7 @@ export default function RenderCalender({ title }) {
 				});
 				setEvents(enevtDetail);
 			});
+		return () => unsubscribe();
 	}, []);
 
 	// 設定可拖曳元素，並且設定將元素拖曳到行事曆上之後要顯示的文字

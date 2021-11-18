@@ -97,14 +97,17 @@ function Idol() {
 	};
 
 	useEffect(() => {
-		docRef.where("topic", "==", "idol").onSnapshot((querySnapshot) => {
-			const item = [];
-			querySnapshot.forEach((doc) => {
-				// doc.data() is never undefined for query doc snapshots
-				item.push({ star: doc.data() });
+		const unsubscribe = docRef
+			.where("topic", "==", "idol")
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push({ star: doc.data() });
+				});
+				setTitileName(item);
 			});
-			setTitileName(item);
-		});
+		return () => unsubscribe();
 	}, []);
 
 	return (

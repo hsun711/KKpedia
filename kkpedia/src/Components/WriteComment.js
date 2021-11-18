@@ -183,7 +183,7 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 			.doc()
 			.set(data, { merge: true })
 			.then(() => {
-				Swal.fire("留言成功👍👌");
+				Swal.fire("留言成功");
 				setPopUpWriteComment(false);
 			});
 	};

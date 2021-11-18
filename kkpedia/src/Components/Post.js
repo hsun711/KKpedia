@@ -82,7 +82,8 @@ function Post({ title }) {
 			}
 		});
 
-		db.collection("posts")
+		const unsubscribe = db
+			.collection("posts")
 			.where("title", "==", `${title}`)
 			.orderBy("postTime", "desc")
 			.onSnapshot((querySnapshot) => {
@@ -98,6 +99,7 @@ function Post({ title }) {
 				});
 				setPost(item);
 			});
+		return () => unsubscribe();
 	}, []);
 	// console.log(post);
 

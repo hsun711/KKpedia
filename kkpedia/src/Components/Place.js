@@ -163,8 +163,7 @@ function Place({ title, topic }) {
 	};
 
 	useEffect(() => {
-		let isMounted = true;
-		docRef
+		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("places")
 			.onSnapshot((snapshot) => {
@@ -175,9 +174,7 @@ function Place({ title, topic }) {
 				// console.log(placeDetail);
 				setPlace(placeDetail);
 			});
-		return () => {
-			isMounted = false;
-		};
+		return () => unsubscribe();
 	}, []);
 	return (
 		<OutsideContainer>

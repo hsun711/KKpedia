@@ -223,12 +223,13 @@ function Profile() {
 	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
 
 	useEffect(() => {
-		docRef.onSnapshot((doc) => {
+		const unsubscribe = docRef.onSnapshot((doc) => {
 			setBannerImg(doc.data().user_banner);
 			setUserName(doc.data().userName);
 			setUserImg(doc.data().userImage);
 			setLevel(doc.data().userLevel);
 		});
+		return () => unsubscribe();
 	}, []);
 
 	const BannerOk = () => {
