@@ -191,9 +191,42 @@ function RenderPost({ item }) {
 	const [commentNum, setCommentNum] = useState("");
 	const db = firebase.firestore();
 	const userId = firebase.auth().currentUser.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
 
-	// console.log(item);
+	useEffect(() => {
+		db.collection("posts")
+			.doc(`${item.id}`)
+			.collection("comments")
+			.orderBy("postTime", "desc")
+			.onSnapshot((querySnapshot) => {
+				const item = [];
+				querySnapshot.forEach((doc) => {
+					// doc.data() is never undefined for query doc snapshots
+					item.push(doc.data());
+				});
+				setShowReply(item[0]);
+				setRenderReply(item);
+				setCommentNum(item.length);
+			});
+
+		db.collection("posts")
+			.doc(`${item.id}`)
+			.onSnapshot((doc) => {
+				if (doc.data()?.likedBy.includes(`${userId}`)) {
+					setGood(true);
+				} else {
+					setGood(false);
+				}
+				setGoodNum(doc.data()?.likedBy.length);
+			});
+
+		db.collection("users")
+			.doc(`${item.data.userId}`)
+			.get()
+			.then((doc) => {
+				setUserImg(doc.data().userImage);
+				setUserName(doc.data().userName);
+			});
+	}, []);
 
 	const AddGood = () => {
 		const liked = db.collection("posts").doc(`${item.id}`);
@@ -218,45 +251,6 @@ function RenderPost({ item }) {
 		setShowComment(!showComment);
 	};
 
-	docRef.get().then((doc) => {
-		if (doc.exists) {
-			setUserImg(doc.data().userImage);
-			setUserName(doc.data().userName);
-		} else {
-			// doc.data() will be undefined in this case
-			console.log("No such document!");
-		}
-	});
-
-	useEffect(() => {
-		db.collection("posts")
-			.doc(`${item.id}`)
-			.collection("comments")
-			.orderBy("postTime", "desc")
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					// doc.data() is never undefined for query doc snapshots
-					item.push(doc.data());
-				});
-
-				setShowReply(item[0]);
-				setRenderReply(item);
-				setCommentNum(item.length);
-			});
-
-		db.collection("posts")
-			.doc(`${item.id}`)
-			.onSnapshot((doc) => {
-				if (doc.data()?.likedBy.includes(`${userId}`)) {
-					setGood(true);
-				} else {
-					setGood(false);
-				}
-				setGoodNum(doc.data()?.likedBy.length);
-			});
-	}, []);
-
 	const SendReply = async () => {
 		setReplyComment("");
 		if (replyComment === "") {
@@ -268,7 +262,7 @@ function RenderPost({ item }) {
 			docid: item.id,
 			replyUser: userName,
 			postTime: new Date().getTime(),
-			userImg: userImg,
+			userId: userId,
 		};
 
 		await db
@@ -285,14 +279,14 @@ function RenderPost({ item }) {
 			});
 	};
 
-	// console.log(userImg);
+	console.log(renderReply);
 
 	return (
 		<CommentArea>
 			<PosterDetail>
-				<PosterImage src={item.data.userImage || userIcon} />
+				<PosterImage src={userImg || userIcon} />
 				<PosterText>
-					<PosterName>{item.data.displayName}</PosterName>
+					<PosterName>{userName}</PosterName>
 					<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
 				</PosterText>
 			</PosterDetail>

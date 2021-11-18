@@ -11,6 +11,7 @@ import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
 import SearchResult from "./Components/SearchResult";
 import Home from "./Components/Home";
+import PagNotFound from "./Components/PagNotFound";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 const MainContainer = styled.div`
@@ -26,8 +27,7 @@ const Container = styled.div`
 `;
 
 function App() {
-	const users = firebase.auth().currentUser;
-	const [user, setUser] = useState(null);
+	const [user, setUser] = useState();
 	const db = firebase.firestore();
 	const [allCategory, setAllCategory] = useState([]);
 
@@ -48,66 +48,18 @@ function App() {
 			});
 	}, []);
 
-	// console.log(users);
+	// console.log(userlogin);
 	// console.log(isLogin);
 	// console.log(user);
 	return (
 		<BrowserRouter>
 			<>
 				{/* {isLogin ? null : <LandingPage setIsLogin={setIsLogin} />} */}
-
-				{user !== null ? (
-					<>
-						<Header />
-						<MainContainer>
-							<Switch>
-								<Route exact path="/">
-									<Container>
-										<Home />
-									</Container>
-								</Route>
-								<Route exact path="/idol">
-									<Container>
-										<Idol />
-									</Container>
-								</Route>
-								<Route exact path="/drama">
-									<Container>
-										<Drama />
-									</Container>
-								</Route>
-								<Route exact path="/tvshow">
-									<Container>
-										<TvShow />
-									</Container>
-								</Route>
-								<Route exact path="/profile">
-									<Container>
-										<Profile />
-									</Container>
-								</Route>
-								<Route path="/search/:search">
-									<SearchResult allCategory={allCategory} />
-								</Route>
-								<Route path="/tvshow/:title">
-									<IdolPage topic="tvshow" />
-								</Route>
-								<Route path="/idol/:title">
-									<IdolPage topic="idol" />
-								</Route>
-								<Route path="/drama/:title">
-									<IdolPage topic="drama" />
-								</Route>
-							</Switch>
-						</MainContainer>
-					</>
-				) : (
+				{user === null ? (
 					<LandingPage />
-				)}
-
-				{/* {user !== null ? (
+				) : (
 					<>
-						{(isLogin || user !== null) && (
+						{user !== undefined ? (
 							<>
 								<Header />
 								<MainContainer>
@@ -132,16 +84,16 @@ function App() {
 												<TvShow />
 											</Container>
 										</Route>
-										<Route exact path="/profile">
+										<Route path="/profile">
 											<Container>
 												<Profile />
 											</Container>
 										</Route>
-										<Route path="/tvshow/:title">
-											<IdolPage topic="tvshow" />
-										</Route>
 										<Route path="/search/:search">
 											<SearchResult allCategory={allCategory} />
+										</Route>
+										<Route path="/tvshow/:title">
+											<IdolPage topic="tvshow" />
 										</Route>
 										<Route path="/idol/:title">
 											<IdolPage topic="idol" />
@@ -149,63 +101,17 @@ function App() {
 										<Route path="/drama/:title">
 											<IdolPage topic="drama" />
 										</Route>
+										<Route path="">
+											<PagNotFound />
+										</Route>
 									</Switch>
 								</MainContainer>
 							</>
+						) : (
+							<Loading />
 						)}
-						{(!isLogin || user === null) && <Loading />}
 					</>
-				) : (
-					<Loading />
-				)} */}
-				{/* {user !== null ? (
-					<>
-						<Header />
-						<MainContainer>
-							<Switch>
-								<Route exact path="/">
-									<Container>
-										<Home />
-									</Container>
-								</Route>
-								<Route exact path="/idol">
-									<Container>
-										<Idol />
-									</Container>
-								</Route>
-								<Route exact path="/drama">
-									<Container>
-										<Drama />
-									</Container>
-								</Route>
-								<Route exact path="/tvshow">
-									<Container>
-										<TvShow />
-									</Container>
-								</Route>
-								<Route exact path="/profile">
-									<Container>
-										<Profile />
-									</Container>
-								</Route>
-								<Route path="/tvshow/:title">
-									<IdolPage topic="tvshow" />
-								</Route>
-								<Route path="/search/:search">
-									<SearchResult allCategory={allCategory} />
-								</Route>
-								<Route path="/idol/:title">
-									<IdolPage topic="idol" />
-								</Route>
-								<Route path="/drama/:title">
-									<IdolPage topic="drama" />
-								</Route>
-							</Switch>
-						</MainContainer>
-					</>
-				) : (
-					<LandingPage />
-				)} */}
+				)}
 			</>
 		</BrowserRouter>
 	);

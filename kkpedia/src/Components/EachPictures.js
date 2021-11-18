@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import firebase from "../utils/firebase";
 import styled from "styled-components";
 import ImageViewer from "react-simple-image-viewer";
 
@@ -75,8 +76,20 @@ const Photo = styled.img`
 `;
 
 function EachPictures({ item }) {
+	const db = firebase.firestore();
+	const [posterName, setPosterName] = useState("");
 	const [currentImage, setCurrentImage] = useState(0);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+	useEffect(() => {
+		db.collection("users")
+			.doc(`${item.uid}`)
+			.get()
+			.then((doc) => {
+				console.log(doc.data());
+				setPosterName(doc.data().userName);
+			});
+	}, []);
 
 	const openImageViewer = useCallback((index) => {
 		setCurrentImage(index);
@@ -90,7 +103,7 @@ function EachPictures({ item }) {
 	return (
 		<EachPhoto>
 			<PosterInfo>
-				<ImageHolder>{item.postUser}</ImageHolder>
+				<ImageHolder>{posterName}</ImageHolder>
 				<TimeStamp>{new Date(item.postTime).toLocaleString()}</TimeStamp>
 			</PosterInfo>
 			<ImageDescription>{item.description}</ImageDescription>

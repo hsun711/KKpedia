@@ -95,10 +95,10 @@ const SimpleMap = (props) => {
 // 由於改寫成 functional component，故另外設定 defaultProps
 SimpleMap.defaultProps = {
 	center: {
-		lat: 25.04,
-		lng: 121.5,
+		lat: 32.19,
+		lng: 126.85,
 	},
-	zoom: 7,
+	zoom: 5,
 };
 
 // App

@@ -21,16 +21,17 @@ const HeaderContainer = styled.div`
 `;
 
 const Notify = styled.div`
-	box-shadow: 0px -5px 10px 0px rgba(255, 255, 255, 0.75);
+	/* box-shadow: 0px -5px 30px 0px rgba(256, 256, 256, 0.9); */
+	background-color: #fff;
 	width: 50%;
+	border-radius: 0 0 10px 10px;
 	align-self: flex-end;
 	position: absolute;
 	right: 0px;
-	top: 3.1vmin;
-	z-index: 3;
+	top: 3.5vmin;
+	z-index: 2;
 	@media screen and (max-width: 1200px) {
 		width: 60%;
-		top: 3.6vmin;
 	}
 	@media screen and (max-width: 992px) {
 		top: 5vmin;
@@ -40,7 +41,7 @@ const Notify = styled.div`
 
 const HeaderContent = styled.div`
 	background-color: rgb(256, 256, 256);
-	box-shadow: 0 0 5px 5px rgba(256, 256, 256, 0.9);
+	/* box-shadow: 0 0 5px 5px rgba(256, 256, 256, 0.9); */
 	display: flex;
 	width: 100%;
 	height: 7vmin;

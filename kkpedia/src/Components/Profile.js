@@ -6,8 +6,7 @@ import {
 	Link,
 	Switch,
 	useRouteMatch,
-	HashRouter,
-	useParams,
+	useLocation,
 } from "react-router-dom";
 import Compressor from "compressorjs";
 import Swal from "sweetalert2";
@@ -210,7 +209,7 @@ function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
-	const [activeItem, setActiveItem] = useState("data");
+	const [activeItem, setActiveItem] = useState(path);
 	const [readOnly, setReadOnly] = useState(true);
 	const [userName, setUserName] = useState("");
 	const [userImg, setUserImg] = useState("");
@@ -248,7 +247,6 @@ function Profile() {
 						});
 					});
 				});
-				// alert("更新成功🎊🎊");
 				Swal.fire("更新成功");
 			},
 		});
@@ -270,7 +268,7 @@ function Profile() {
 						});
 					});
 				});
-				alert("更新成功");
+				Swal.fire("更新成功");
 			},
 		});
 	};
@@ -383,27 +381,27 @@ function Profile() {
 							<MenuLink
 								to={`${url}`}
 								onClick={() => {
-									setActiveItem("data");
+									setActiveItem("/profile");
 								}}
-								style={activeItem === "data" ? active : []}
+								style={activeItem === "/profile" ? active : []}
 							>
 								個人資料
 							</MenuLink>
 							<MenuLink
-								to="/myCollection"
+								to="/profile/myCollection"
 								onClick={() => {
-									setActiveItem("likeplace");
+									setActiveItem("/profile/myCollection");
 								}}
-								style={activeItem === "likeplace" ? active : []}
+								style={activeItem === "/profile/myCollection" ? active : []}
 							>
-								收藏景點
+								口袋聖地
 							</MenuLink>
 							<MenuLink
-								to="/myPost"
+								to="/profile/myPost"
 								onClick={() => {
-									setActiveItem("pastpost");
+									setActiveItem("/profile/myPost");
 								}}
-								style={activeItem === "pastpost" ? active : []}
+								style={activeItem === "/profile/myPost" ? active : []}
 							>
 								過往PO文
 							</MenuLink>
@@ -412,10 +410,10 @@ function Profile() {
 							<Route exact path={`${url}`}>
 								<PersonalData />
 							</Route>
-							<Route exact path="/myCollection">
+							<Route exact path="/profile/myCollection">
 								<PersonalCollection />
 							</Route>
-							<Route exact path="/myPost">
+							<Route exact path="/profile/myPost">
 								<PersonalPost />
 							</Route>
 						</Switch>

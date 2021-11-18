@@ -202,8 +202,6 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 				Swal.fire("請上傳圖片檔");
 				return;
 			} else {
-				const id = uuidv4();
-				newFile["id"] = id;
 				setFiles((prevState) => [...prevState, newFile]);
 			}
 		}
@@ -299,89 +297,51 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 							SendAlert();
 						});
 					files.map((file) => {
-						// console.log(file);
-						// new Compressor(file, {
-						// 	quality: 0.8,
-						// 	success: (compressedResult) => {
-						// 		console.log(compressedResult);
-						// 		const uploadTask = firebase
-						// 			.storage()
-						// 			.ref(`place_images/${documentRef.id}/${compressedResult.id}`)
-						// 			.put(compressedResult);
-						// 		promises.push(uploadTask);
-						// 		uploadTask.on(
-						// 			"state_changed",
-						// 			function progress(snapshot) {
-						// 				const progress =
-						// 					(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-						// 				if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-						// 					console.log(`Progress: ${progress}%`);
-						// 				}
-						// 			},
-						// 			function error(error) {
-						// 				console.log(error);
-						// 			},
-						// 			function complete() {
-						// 				firebase
-						// 					.storage()
-						// 					.ref(`place_images/${documentRef.id}/`)
-						// 					.child(`${compressedResult.id}`)
-						// 					.getDownloadURL()
-						// 					.then((imgUrls) => {
-						// 						documentRef
-						// 							.collection("places")
-						// 							.doc(`${locationName}`)
-						// 							.update({
-						// 								images: firebase.firestore.FieldValue.arrayUnion(
-						// 									`${imgUrls}`
-						// 								),
-						// 							})
-						// 							.then(() => {
-						// 								// console.log(user.uid);
-						// 							});
-						// 					});
-						// 			}
-						// 		);
-						// 	},
-						// });
-						const uploadTask = firebase
-							.storage()
-							.ref(`place_images/${documentRef.id}/${file.id}`)
-							.put(file);
-						promises.push(uploadTask);
-						uploadTask.on(
-							"state_changed",
-							function progress(snapshot) {
-								const progress =
-									(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-								if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-									console.log(`Progress: ${progress}%`);
-								}
-							},
-							function error(error) {
-								console.log(error);
-							},
-							function complete() {
-								firebase
+						console.log(file);
+						new Compressor(file, {
+							quality: 0.8,
+							success: (compressedResult) => {
+								const id = uuidv4();
+								const uploadTask = firebase
 									.storage()
-									.ref(`place_images/${documentRef.id}/`)
-									.child(`${file.id}`)
-									.getDownloadURL()
-									.then((imgUrls) => {
-										documentRef
-											.collection("places")
-											.doc(`${locationName}`)
-											.update({
-												images: firebase.firestore.FieldValue.arrayUnion(
-													`${imgUrls}`
-												),
-											})
-											.then(() => {
-												// console.log(user.uid);
+									.ref(`place_images/${documentRef.id}/${id}`)
+									.put(compressedResult);
+								promises.push(uploadTask);
+								uploadTask.on(
+									"state_changed",
+									function progress(snapshot) {
+										const progress =
+											(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+										if (snapshot.state === firebase.storage.TaskState.RUNNING) {
+											console.log(`Progress: ${progress}%`);
+										}
+									},
+									function error(error) {
+										console.log(error);
+									},
+									function complete() {
+										firebase
+											.storage()
+											.ref(`place_images/${documentRef.id}/`)
+											.child(`${id}`)
+											.getDownloadURL()
+											.then((imgUrls) => {
+												documentRef
+													.collection("places")
+													.doc(`${locationName}`)
+													.update({
+														images: firebase.firestore.FieldValue.arrayUnion(
+															`${imgUrls}`
+														),
+													})
+													.then(() => {
+														// console.log(user.uid);
+													});
 											});
-									});
-							}
-						);
+									}
+								);
+							},
+						});
 					});
 					Promise.all(promises)
 						.then(() => {

@@ -182,7 +182,6 @@ function LoginPage() {
 					.set(
 						{
 							email: response.user.email,
-							password: password,
 							userImage: response.user.photoURL,
 							userName: userName,
 							userId: response.user.uid,

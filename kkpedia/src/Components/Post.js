@@ -112,7 +112,7 @@ function Post({ title }) {
 			title: title,
 			postTime: new Date().getTime(),
 			displayName: userData.userName,
-			userImage: userData.userImage,
+			// userImage: userData.userImage,
 			userId: userId,
 			userMail: user.email,
 			likedBy: [],

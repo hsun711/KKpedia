@@ -391,7 +391,12 @@ function EachLocation({ title }) {
 			.doc(`${locationName}`)
 			.set(placeData[0])
 			.then(() => {
-				Swal.fire("收進口袋聖地囉🎉🎊");
+				// Swal.fire("收進口袋聖地囉🎉🎊");
+				Swal.fire({
+					icon: "success",
+					title: "收進口袋聖地囉",
+					footer: '<a href="/profile/myCollection">前往口袋聖地</a>',
+				});
 			})
 			.catch((error) => {
 				console.error("Error adding document: ", error);

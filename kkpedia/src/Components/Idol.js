@@ -65,7 +65,7 @@ const Cover = styled.div`
 `;
 
 const IdolContainer = styled.div`
-	width: 100%;
+	width: 90%;
 	height: 100%;
 	margin: 7vmin auto;
 	position: relative;
