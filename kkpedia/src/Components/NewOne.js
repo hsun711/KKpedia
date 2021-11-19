@@ -180,8 +180,10 @@ function NewOne({ topic, setPopAddOne }) {
 			setLoading(false);
 			return;
 		}
+		// if (ig !== "") {
+		// 	const snsRegex = /^https\:\/\/www\.instagram\.com\//;
+		// }
 		const documentRef = db.collection("categories").doc(`${title}`);
-
 		documentRef.get().then((doc) => {
 			if (doc.exists) {
 				Swal.fire(`${title}已經存在了喔`);

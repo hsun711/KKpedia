@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import firebase from "./utils/firebase";
 import Header from "./Components/Header";
@@ -13,6 +14,7 @@ import SearchResult from "./Components/SearchResult";
 import Home from "./Components/Home";
 import PagNotFound from "./Components/PagNotFound";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { getCurrentUser } from "./state/actions";
 
 const MainContainer = styled.div`
 	max-width: 1560px;
@@ -30,10 +32,12 @@ function App() {
 	const [user, setUser] = useState();
 	const db = firebase.firestore();
 	const [allCategory, setAllCategory] = useState([]);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		firebase.auth().onAuthStateChanged((currentUser) => {
 			setUser(currentUser);
+			dispatch(getCurrentUser(currentUser));
 		});
 
 		db.collection("categories")
@@ -48,13 +52,9 @@ function App() {
 			});
 	}, []);
 
-	// console.log(userlogin);
-	// console.log(isLogin);
-	// console.log(user);
 	return (
 		<BrowserRouter>
 			<>
-				{/* {isLogin ? null : <LandingPage setIsLogin={setIsLogin} />} */}
 				{user === null ? (
 					<LandingPage />
 				) : (

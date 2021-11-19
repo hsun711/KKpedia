@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
 import {
 	BrowserRouter,
 	Route,
@@ -209,7 +209,7 @@ function Profile() {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const docRef = db.collection("users").doc(`${user.uid}`);
-	const [activeItem, setActiveItem] = useState(path);
+	const [activeItem, setActiveItem] = useState(url);
 	const [readOnly, setReadOnly] = useState(true);
 	const [userName, setUserName] = useState("");
 	const [userImg, setUserImg] = useState("");
@@ -409,13 +409,13 @@ function Profile() {
 						</MenuBar>
 						<Switch>
 							<Route exact path={`${url}`}>
-								<PersonalData />
+								<PersonalData setActiveItem={setActiveItem} />
 							</Route>
 							<Route exact path="/profile/myCollection">
-								<PersonalCollection />
+								<PersonalCollection setActiveItem={setActiveItem} />
 							</Route>
 							<Route exact path="/profile/myPost">
-								<PersonalPost />
+								<PersonalPost setActiveItem={setActiveItem} />
 							</Route>
 						</Switch>
 					</>

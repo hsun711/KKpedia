@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
@@ -96,11 +97,12 @@ const LikeIcon = styled.img`
 
 function CollectPlace({ data }) {
 	const db = firebase.firestore();
+	const currentUser = useSelector((state) => state.currentUser);
 	const docRef = db.collection("categories");
-	const user = firebase.auth().currentUser;
+
 	const RemoveMyLikes = () => {
 		db.collection("users")
-			.doc(`${user.uid}`)
+			.doc(`${currentUser.uid}`)
 			.collection("likes")
 			.doc(`${data.locationName}`)
 			.delete()
@@ -118,7 +120,9 @@ function CollectPlace({ data }) {
 			.collection("places")
 			.doc(`${data.locationName}`)
 			.update({
-				collectedBy: firebase.firestore.FieldValue.arrayRemove(`${user.uid}`),
+				collectedBy: firebase.firestore.FieldValue.arrayRemove(
+					`${currentUser.uid}`
+				),
 			})
 			.then(() => {
 				// console.log(user.uid);

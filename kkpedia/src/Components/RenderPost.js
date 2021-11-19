@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import ReplyPost from "./ReplyPost";
 import ungood from "../img/unthumbs-up.png";
@@ -316,9 +317,7 @@ function RenderPost({ item }) {
 					})}
 				</>
 			) : (
-				<>
-					{renderReply.length > 1 ? <ReplyPost item={renderReply[0]} /> : <></>}
-				</>
+				<></>
 			)}
 
 			<TextArea

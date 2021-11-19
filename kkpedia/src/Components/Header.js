@@ -247,8 +247,6 @@ function Header() {
 		setRenderNews(!renderNews);
 	};
 
-	// console.log(userData);
-
 	return (
 		<>
 			<HeaderContainer>

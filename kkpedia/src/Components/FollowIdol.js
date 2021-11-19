@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
 import cover from "../img/wanted.png";
@@ -15,6 +16,7 @@ const EachFollow = styled.div`
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	margin: 3vmin;
 	@media screen and (max-width: 1200px) {
 		width: 30vmin;
 		height: 30vmin;
@@ -72,17 +74,18 @@ const NormalTxt = styled.p`
 function FellowIdol({ title, image, topic }) {
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
-	const user = firebase.auth().currentUser;
+	const currentUser = useSelector((state) => state.currentUser);
+	// const user = firebase.auth().currentUser;
 
 	const RemoveMyFollow = () => {
 		db.collection("users")
-			.doc(`${user.uid}`)
+			.doc(`${currentUser.uid}`)
 			.collection("follows")
 			.doc(`${title}`)
 			.delete()
 			.then(() => {
 				// alert("取消追蹤😤😤");
-				Swal.fire("取消追蹤😤😤");
+				Swal.fire("取消追蹤");
 			})
 			.catch((error) => {
 				console.error("Error removing document: ", error);
@@ -92,7 +95,9 @@ function FellowIdol({ title, image, topic }) {
 		docRef
 			.doc(`${title}`)
 			.update({
-				followedBy: firebase.firestore.FieldValue.arrayRemove(`${user.uid}`),
+				followedBy: firebase.firestore.FieldValue.arrayRemove(
+					`${currentUser.uid}`
+				),
 			})
 			.then(() => {
 				// console.log(user.uid);

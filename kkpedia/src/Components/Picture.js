@@ -1,12 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import NewPicture from "./NewPicture";
-import ImageCarousel from "./ImageCarousel";
-import ImageViewer from "react-simple-image-viewer";
-import Swal from "sweetalert2";
 import { v4 as uuidv4 } from "uuid";
 import EachPictures from "./EachPictures";
+import Loading from "./Loading";
 
 const Container = styled.div`
 	width: 100%;
@@ -73,9 +72,10 @@ const Cover = styled.div`
 	z-index: 2;
 `;
 
-function Picture({ title }) {
+function Picture({ title, setActiveItem }) {
 	const db = firebase.firestore();
 	const user = firebase.auth().currentUser;
+	const currentUser = useSelector((state) => state.currentUser);
 	const [popAddPicture, setPopAddPicture] = useState(false);
 	const [photos, setPhotos] = useState([]);
 	const [userLevel, setUserLevel] = useState(0);
@@ -83,6 +83,8 @@ function Picture({ title }) {
 	const AddPicture = () => {
 		setPopAddPicture(!popAddPicture);
 	};
+
+	// console.log(user);
 
 	useEffect(() => {
 		const unsubscribe = db
@@ -96,16 +98,19 @@ function Picture({ title }) {
 					// console.log(doc.data());
 					item.push(doc.data());
 				});
-				// console.log(item);
 				setPhotos(item);
 			});
+		setActiveItem("idolphoto");
+		return () => unsubscribe();
+	}, []);
+
+	useEffect(() => {
 		db.collection("users")
 			.doc(`${user.uid}`)
 			.get()
 			.then((doc) => {
 				setUserLevel(doc.data().userLevel);
 			});
-		return () => unsubscribe();
 	}, []);
 
 	return (

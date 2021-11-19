@@ -86,7 +86,7 @@ function EachPictures({ item }) {
 			.doc(`${item.uid}`)
 			.get()
 			.then((doc) => {
-				console.log(doc.data());
+				// console.log(doc.data());
 				setPosterName(doc.data().userName);
 			});
 	}, []);

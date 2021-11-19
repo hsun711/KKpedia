@@ -558,16 +558,16 @@ function IdolPage({ topic }) {
 									<Place title={title} topic={topic} />
 								</Route>
 								<Route exact path={`${url}/picture`}>
-									<Picture title={title} />
+									<Picture title={title} setActiveItem={setActiveItem} />
 								</Route>
 								<Route exact path={`${url}/calender`}>
-									<Calender title={title} />
+									<Calender title={title} setActiveItem={setActiveItem} />
 								</Route>
 								<Route exact path={`${url}/post`}>
-									<Post title={title} />
+									<Post title={title} setActiveItem={setActiveItem} />
 								</Route>
 								<Route path={`${url}/:location`}>
-									<EachLocation title={title} />
+									<EachLocation title={title} setActiveItem={setActiveItem} />
 								</Route>
 							</Switch>
 						</PlaceContainer>
