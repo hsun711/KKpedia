@@ -12,7 +12,7 @@ import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
 import SearchResult from "./Components/SearchResult";
 import Home from "./Components/Home";
-import PagNotFound from "./Components/PagNotFound";
+import PageNotFound from "./Components/PageNotFound";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { getCurrentUser } from "./state/actions";
 
@@ -102,7 +102,7 @@ function App() {
 											<IdolPage topic="drama" />
 										</Route>
 										<Route path="">
-											<PagNotFound />
+											<PageNotFound />
 										</Route>
 									</Switch>
 								</MainContainer>

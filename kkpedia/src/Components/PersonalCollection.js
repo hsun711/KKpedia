@@ -19,7 +19,6 @@ const MapArea = styled.div`
 const CollectionArea = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	padding: 2vmin;
 	margin: 3vmin 0;
 	/* outline: 3px solid red; */
 	@media screen and (max-width: 1024px) {

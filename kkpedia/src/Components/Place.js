@@ -13,11 +13,12 @@ const OutsideContainer = styled.div`
 	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
 	border-radius: 10px;
 	display: flex;
-	justify-content: center;
+	justify-content: flex-start;
 	flex-wrap: wrap;
-	padding: 3vmin;
+	padding: 2vmin;
 	@media screen and (max-width: 1200px) {
 		margin: 3vmin;
+		justify-content: center;
 	}
 `;
 
@@ -89,6 +90,11 @@ const PlaceText = styled.div`
 const PlaceTitle = styled.p`
 	font-size: 2.5vmin;
 	font-weight: 600;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	@media screen and (max-width: 1200px) {
 		font-size: 3.2vmin;
 	}

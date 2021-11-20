@@ -23,7 +23,6 @@ const FollowStar = styled.div`
 	display: flex;
 	justify-content: flex-start;
 	flex-wrap: wrap;
-	padding: 2vmin;
 	margin-bottom: 10vmin;
 	@media screen and (max-width: 1200px) {
 		justify-content: center;
@@ -80,6 +79,11 @@ const NormalTxt = styled.p`
 	font-weight: 600;
 	margin-bottom: 1vmin;
 	color: #1e272e;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	@media screen and (max-width: 1200px) {
 		font-size: 3vmin;
 	}

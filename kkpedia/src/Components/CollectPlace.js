@@ -53,6 +53,11 @@ const PlaceTxt = styled.div`
 const TitleTxt = styled.p`
 	font-size: 3vmin;
 	font-weight: 600;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	@media screen and (max-width: 1200px) {
 		font-size: 3.5vmin;
 	}

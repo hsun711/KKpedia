@@ -26,7 +26,8 @@ function Notification({ data }) {
 			.doc(`${data.docid}`)
 			.delete()
 			.then(() => {
-				history.push(`/${data.topic}/${data.title}`);
+				// history.push(`/${data.topic}/${data.title}`);
+				window.location.replace(`/${data.topic}/${data.title}`);
 			});
 	};
 	return (

@@ -145,7 +145,6 @@ function LoginPage() {
 	const [password, setPassword] = useState("");
 	const [errorMsg, setErrorMsg] = useState("");
 	const [loading, setLoading] = useState(false);
-
 	const db = firebase.firestore();
 
 	const HandleLogin = async (provider) => {
@@ -192,18 +191,17 @@ function LoginPage() {
 					)
 					.then((docRef) => {
 						Swal.fire("註冊成功");
-						// console.log("😁😁😁😁");
 					});
 			})
 			.catch((error) => {
 				switch (error.code) {
 					case "auth/email-already-in-use":
 						Swal.fire("Email帳號已經註冊過囉");
-						// setErrorMsg("Email帳號已經註冊過囉🤨🤨🤨");
+
 						break;
 					case "auth/invalid-email":
 						Swal.fire("Email格式錯誤囉");
-						// setErrorMsg("Email格式錯誤囉😈😈😈😈");
+
 						break;
 					default:
 				}
@@ -226,21 +224,20 @@ function LoginPage() {
 				switch (error.code) {
 					case "auth/invalid-email":
 						Swal.fire("Email格式錯囉");
-						// setErrorMsg("Email格式錯囉💀💀💀💀");
+
 						break;
 					case "auth/user-not-found":
 						Swal.fire("Email帳號不存在喔");
-						// setErrorMsg("Email帳號不存在喔👻👻👻👻");
+
 						break;
 					case "auth/wrong-password":
 						Swal.fire("密碼錯了唷");
-						// setErrorMsg("密碼錯了唷😱😱😱😱");
+
 						break;
 					default:
 				}
 				setLoading(false);
 			});
-		// props.setLoginState("login");
 	};
 
 	return (
