@@ -77,12 +77,6 @@ const ImageDiv = styled.div`
 		transition: all 0.3s;
 		cursor: pointer;
 	}
-	@media screen and (max-width: 1200px) {
-		max-width: 18vmin;
-		height: 18vmin;
-		margin-top: 4.75vmin;
-		margin-left: 8vmin;
-	}
 `;
 
 const IdolImage = styled.img`

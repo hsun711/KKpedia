@@ -275,7 +275,7 @@ function IdolPage({ topic }) {
 						docRef.doc(`${title}`).update({
 							main_image: `${imageUrl}`,
 						});
-						if (followUsers.length !== 0) {
+						if (followUsers?.length !== 0) {
 							followUsers.forEach((user) => {
 								db.collection("users")
 									.doc(`${user}`)
