@@ -4,3 +4,10 @@ export const getCurrentUser = (currentUser) => {
 		payload: currentUser,
 	};
 };
+
+export const getCategories = (categories) => {
+	return {
+		type: "ALL_CATEGORIES",
+		payload: categories,
+	};
+};

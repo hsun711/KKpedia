@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import firebase from "../utils/firebase";
 import algolia from "../utils/algolia";
 import styled from "styled-components";
@@ -64,18 +65,32 @@ const LinkNav = styled.div`
 	justify-content: center;
 `;
 
-const IdolImage = styled.img`
+const ImageDiv = styled.div`
 	align-self: center;
 	max-width: 15vmin;
 	height: 15vmin;
 	margin-top: 3.25vmin;
 	margin-right: 1.1vmin;
+	overflow: hidden;
 	&:hover {
 		transform: scale(1.05);
 		transition: all 0.3s;
 		cursor: pointer;
 	}
+	@media screen and (max-width: 1200px) {
+		max-width: 18vmin;
+		height: 18vmin;
+		margin-top: 4.75vmin;
+		margin-left: 8vmin;
+	}
 `;
+
+const IdolImage = styled.img`
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+`;
+
 const LinkTxt = styled.div`
 	/* outline: 2px solid blue; */
 	width: 22vmin;
@@ -100,18 +115,21 @@ const LinkTitle = styled.p`
 	text-overflow: ellipsis;
 `;
 
-function SearchResult({ allCategory }) {
+function SearchResult() {
+	const allCategories = useSelector((state) => state.allCategories);
 	const history = useHistory();
 	const { search } = useParams();
 	const [resultData, setResultData] = useState([]);
 	const [loading, setLoading] = useState(false);
+	// console.log(allCategories);
+	// console.log(allCategory);
 
 	useEffect(() => {
 		setLoading(true);
 		algolia.search(search).then((result) => {
 			const ar = [];
 			result.hits.map((hit) => {
-				const result = allCategory.filter((data) => {
+				const result = allCategories.filter((data) => {
 					return data.title === hit.title;
 				});
 				ar.push(...result);
@@ -138,7 +156,9 @@ function SearchResult({ allCategory }) {
 										history.push(`/${result.topic}/${result.title}`);
 									}}
 								>
-									<IdolImage src={result.main_image || idol} />
+									<ImageDiv>
+										<IdolImage src={result.main_image || idol} />
+									</ImageDiv>
 									<LinkTxt>
 										<LinkTitle>{result.title}</LinkTitle>
 									</LinkTxt>

@@ -72,11 +72,8 @@ const PlaceDescription = styled.div`
 const NormalTxt = styled.p`
 	font-size: 2vmin;
 	margin: 1vmin 0;
-	@media screen and (max-width: 1200px) {
-		font-size: 2vmin;
-	}
 	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+		font-size: 2.5vmin;
 	}
 `;
 
@@ -88,6 +85,9 @@ const SmallTxt = styled.p`
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	@media screen and (max-width: 1200px) {
+		font-size: 2vmin;
+	}
 `;
 
 const LikeIcon = styled.img`

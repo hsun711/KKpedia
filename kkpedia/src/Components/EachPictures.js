@@ -63,6 +63,7 @@ const Photos = styled.div`
 	height: 20vmin;
 	overflow: hidden;
 	margin: 1vmin;
+	cursor: pointer;
 	@media screen and (max-width: 1200px) {
 		max-width: 25vmin;
 		max-height: 25vmin;

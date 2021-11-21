@@ -18,7 +18,6 @@ function Notification({ data }) {
 	const db = firebase.firestore();
 	const history = useHistory();
 	const user = firebase.auth().currentUser;
-
 	const deleteNews = () => {
 		db.collection("users")
 			.doc(`${user.uid}`)
@@ -27,7 +26,9 @@ function Notification({ data }) {
 			.delete()
 			.then(() => {
 				// history.push(`/${data.topic}/${data.title}`);
-				window.location.replace(`/${data.topic}/${data.title}`);
+				window.location.replace(
+					`/${data.topic}/${data.title}/${data.locationName}`
+				);
 			});
 	};
 	return (

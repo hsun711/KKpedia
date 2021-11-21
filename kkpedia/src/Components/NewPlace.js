@@ -144,7 +144,7 @@ const SendBtn = styled.div`
 	}
 `;
 
-function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
+function NewPlace({ title, setPopAddPlace, topic }) {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;
@@ -236,6 +236,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 						title: title,
 						topic: topic,
 						docid: docid,
+						locationName: locationName,
 					},
 					{ merge: true }
 				)
@@ -319,7 +320,7 @@ function NewPlace({ title, setPopAddPlace, setPlaceName, topic }) {
 										const progress =
 											(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 										if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-											console.log(`Progress: ${progress}%`);
+											// console.log(`Progress: ${progress}%`);
 										}
 									},
 									function error(error) {

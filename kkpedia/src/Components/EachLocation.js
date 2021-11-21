@@ -116,11 +116,11 @@ const DescDiv = styled.div`
 	color: #57606f;
 	font-size: 2vmin;
 	@media screen and (max-width: 1200px) {
-		font-size: 2vmin;
+		font-size: 2.5vmin;
 	}
-	@media screen and (max-width: 450px) {
-		font-size: 1.2vmin;
-	}
+	/* @media screen and (max-width: 450px) {
+		font-size: 2.5vmin;
+	} */
 `;
 
 const NormalTxt = styled.p`
@@ -184,7 +184,9 @@ const Image = styled.img`
 	max-width: 100%;
 	height: 100%;
 	object-fit: cover;
-	/* margin: 2vmin; */
+	@media screen and (max-width: 1024px) {
+		margin: 2vmin;
+	}
 `;
 
 const CommentArea = styled.div`
@@ -320,7 +322,6 @@ function EachLocation({ title, setActiveItem }) {
 
 	useEffect(() => {
 		setActiveItem("idolplace");
-
 		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("places")

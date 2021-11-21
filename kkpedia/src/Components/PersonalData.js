@@ -88,12 +88,13 @@ const NormalTxt = styled.p`
 		font-size: 3vmin;
 	}
 	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+		font-size: 3.5vmin;
 	}
 `;
 
 function PersonalData({ setActiveItem }) {
-	const currentUser = useSelector((state) => state.currentUser);
+	// const currentUser = useSelector((state) => state.currentUser);
+	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const [contribution, setContribution] = useState([]);
 	const [follow, setFollow] = useState([]);
@@ -103,7 +104,7 @@ function PersonalData({ setActiveItem }) {
 		// 就不用在第一個 collection 裡的 doc 裡一個一個篩選
 		const unsubscribe = db
 			.collectionGroup("places")
-			.where("uid", "==", `${currentUser.uid}`)
+			.where("uid", "==", `${user.uid}`)
 			.onSnapshot((querySnapshot) => {
 				const item = [];
 				querySnapshot.forEach((doc) => {
@@ -113,12 +114,12 @@ function PersonalData({ setActiveItem }) {
 			});
 
 		return () => unsubscribe();
-	}, [currentUser]);
+	}, []);
 
 	useEffect(() => {
 		const unsubscribe = db
 			.collection("users")
-			.doc(`${currentUser.uid}`)
+			.doc(`${user.uid}`)
 			.collection("follows")
 			.onSnapshot((querySnapshot) => {
 				const item = [];
@@ -129,12 +130,12 @@ function PersonalData({ setActiveItem }) {
 			});
 		setActiveItem("/profile");
 		return () => unsubscribe();
-	}, [currentUser]);
+	}, []);
 
 	return (
 		<ProfileContainer>
 			<TitleText>Follow</TitleText>
-			{currentUser ? (
+			{user ? (
 				<FollowStar>
 					{follow.map((data) => {
 						return (

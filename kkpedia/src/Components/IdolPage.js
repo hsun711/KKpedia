@@ -222,7 +222,6 @@ function IdolPage({ topic }) {
 				const item = [];
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
-					// console.log(doc.data());
 					item.push({ star: doc.data() });
 				});
 				setSns(item);
