@@ -147,7 +147,6 @@ function NewPicture({ title, AddPicture }) {
 	const [userName, setUserName] = useState("");
 	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
-	const [compressedFile, setCompressedFile] = useState(null);
 	const user = firebase.auth().currentUser;
 	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [imgDescription, setImgDescription] = useState("");

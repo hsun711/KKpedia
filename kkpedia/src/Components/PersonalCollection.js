@@ -9,7 +9,6 @@ import board from "../img/cork-board.png";
 const ProfileContainer = styled.div`
 	width: 100%;
 	padding: 4vmin;
-	/* outline: 2px solid black; */
 `;
 
 const MapArea = styled.div`
@@ -20,14 +19,14 @@ const MapArea = styled.div`
 const CollectionArea = styled.div`
 	display: flex;
 	flex-wrap: wrap;
-	padding: 2vmin;
 	margin: 3vmin 0;
-	/* background-image: url(${board}); */
-	/* box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2); */
-	/* border-radius: 10px; */
+	/* outline: 3px solid red; */
+	@media screen and (max-width: 1024px) {
+		justify-content: center;
+	}
 `;
 
-function PersonalCollection() {
+function PersonalCollection({ setActiveItem }) {
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
 	const userId = user.uid;
@@ -44,6 +43,7 @@ function PersonalCollection() {
 				});
 				setCollectPlace(item);
 			});
+		setActiveItem("/profile/myCollection");
 		return () => unsubscribe();
 	}, []);
 

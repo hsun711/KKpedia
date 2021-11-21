@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import RenderCalender from "./RenderCalender";
 
@@ -15,7 +15,11 @@ const Schedule = styled.div`
 	}
 `;
 
-function Calender({ title }) {
+function Calender({ title, setActiveItem }) {
+	useEffect(() => {
+		setActiveItem("idolschedule");
+	}, []);
+
 	return (
 		<Schedule>
 			<RenderCalender title={title} />

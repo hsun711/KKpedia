@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
 import Swal from "sweetalert2";
 import RenderPost from "./RenderPost";
 import cancel from "../img/trash.png";
-
-const ProfileContainer = styled.div`
-	outline: 5px solid black;
-	padding: 4vmin;
-`;
 
 const Container = styled.div`
 	position: relative;
@@ -25,7 +21,7 @@ const DeletePost = styled.div`
 	height: 4vmin;
 	position: absolute;
 	top: 4vmin;
-	right: 9vmin;
+	right: 10.5vmin;
 	cursor: pointer;
 	@media screen and (max-width: 1200px) {
 		right: 7vmin;
@@ -33,15 +29,15 @@ const DeletePost = styled.div`
 	}
 `;
 
-function PersonalPost() {
+function PersonalPost({ setActiveItem }) {
 	const db = firebase.firestore();
-	const userId = firebase.auth().currentUser.uid;
+	const currentUser = useSelector((state) => state.currentUser);
 	const [postData, setPostData] = useState([]);
 
 	useEffect(() => {
 		const unsubscribe = db
 			.collection("posts")
-			.where("userId", "==", `${userId}`)
+			.where("userId", "==", `${currentUser.uid}`)
 			.orderBy("postTime", "desc")
 			.onSnapshot((querySnapshot) => {
 				const item = [];
@@ -54,6 +50,7 @@ function PersonalPost() {
 				});
 				setPostData(item);
 			});
+		setActiveItem("/profile/myPost");
 		return () => unsubscribe();
 	}, []);
 
@@ -73,7 +70,7 @@ function PersonalPost() {
 					.delete()
 					.then(() => {
 						// alert("被刪除了留言已回不來了😢😢");
-						Swal.fire("刪除成功!", "被刪除了留言已回不來了😢😢", "success");
+						Swal.fire("刪除成功!", "被刪除了留言已回不來了", "success");
 					})
 					.catch((error) => {
 						console.error("Error removing document: ", error);

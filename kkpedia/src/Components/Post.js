@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useSelector } from "react-redux";
 import firebase from "../utils/firebase";
 import RenderPost from "./RenderPost";
 import Swal from "sweetalert2";
@@ -62,16 +63,17 @@ const Send = styled.div`
 	}
 `;
 
-function Post({ title }) {
+function Post({ title, setActiveItem }) {
 	const [postMsg, setPostMsg] = useState("");
 	const [userData, setUserData] = useState("");
 	const [post, setPost] = useState([]);
 	const db = firebase.firestore();
+	const currentUser = useSelector((state) => state.currentUser);
 	const user = firebase.auth().currentUser;
-	const userId = firebase.auth().currentUser.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
+	const docRef = db.collection("users").doc(`${user.uid}`);
 
 	useEffect(() => {
+		setActiveItem("idolpost");
 		docRef.get().then((doc) => {
 			if (doc.exists) {
 				// console.log(doc.data());
@@ -114,9 +116,8 @@ function Post({ title }) {
 			title: title,
 			postTime: new Date().getTime(),
 			displayName: userData.userName,
-			// userImage: userData.userImage,
-			userId: userId,
-			userMail: user.email,
+			userId: currentUser.uid,
+			userMail: currentUser.email,
 			likedBy: [],
 		};
 

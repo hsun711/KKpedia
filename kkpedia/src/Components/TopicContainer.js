@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import firebase from "../utils/firebase";
 import styled from "styled-components";
 import Swal from "sweetalert2";
@@ -99,7 +100,8 @@ const LikeIcon = styled.img`
 function TopicContainer({ topic, item }) {
 	const [follow, setFollow] = useState(false);
 	const db = firebase.firestore();
-	const user = firebase.auth().currentUser;
+	const currentUser = useSelector((state) => state.currentUser);
+	// const user = firebase.auth().currentUser;
 	const docRef = db.collection("categories");
 	const previewURL = item.star.main_image
 		? `${item.star.main_image}`
@@ -108,14 +110,14 @@ function TopicContainer({ topic, item }) {
 	useEffect(() => {
 		docRef
 			.where("title", "==", `${item.star.title}`)
-			.where("followedBy", "array-contains", `${user.uid}`)
+			.where("followedBy", "array-contains", `${currentUser.uid}`)
 			.get()
 			.then((querySnapshot) => {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					const followedBy = doc.data().followedBy;
 					const follow = followedBy.some((item) => {
-						const result = item === user.uid;
+						const result = item === currentUser.uid;
 						return result;
 					});
 					if (follow) {
@@ -133,7 +135,7 @@ function TopicContainer({ topic, item }) {
 
 	const AddtoMyFollow = () => {
 		db.collection("users")
-			.doc(`${user.uid}`)
+			.doc(`${currentUser.uid}`)
 			.collection("follows")
 			.doc(`${item.star.title}`)
 			.set({
@@ -152,7 +154,7 @@ function TopicContainer({ topic, item }) {
 
 	const RemoveMyFollow = () => {
 		db.collection("users")
-			.doc(`${user.uid}`)
+			.doc(`${currentUser.uid}`)
 			.collection("follows")
 			.doc(`${item.star.title}`)
 			.delete()
@@ -168,7 +170,9 @@ function TopicContainer({ topic, item }) {
 		docRef
 			.doc(`${item.star.title}`)
 			.update({
-				followedBy: firebase.firestore.FieldValue.arrayUnion(`${user.uid}`),
+				followedBy: firebase.firestore.FieldValue.arrayUnion(
+					`${currentUser.uid}`
+				),
 			})
 			.then(() => {
 				// console.log(user.uid);
@@ -178,7 +182,9 @@ function TopicContainer({ topic, item }) {
 		docRef
 			.doc(`${item.star.title}`)
 			.update({
-				followedBy: firebase.firestore.FieldValue.arrayRemove(`${user.uid}`),
+				followedBy: firebase.firestore.FieldValue.arrayRemove(
+					`${currentUser.uid}`
+				),
 			})
 			.then(() => {
 				// console.log(user.uid);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Swal from "sweetalert2";
@@ -52,6 +53,11 @@ const PlaceTxt = styled.div`
 const TitleTxt = styled.p`
 	font-size: 3vmin;
 	font-weight: 600;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	@media screen and (max-width: 1200px) {
 		font-size: 3.5vmin;
 	}
@@ -66,11 +72,8 @@ const PlaceDescription = styled.div`
 const NormalTxt = styled.p`
 	font-size: 2vmin;
 	margin: 1vmin 0;
-	@media screen and (max-width: 1200px) {
-		font-size: 2vmin;
-	}
 	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+		font-size: 2.5vmin;
 	}
 `;
 
@@ -82,6 +85,9 @@ const SmallTxt = styled.p`
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	@media screen and (max-width: 1200px) {
+		font-size: 2vmin;
+	}
 `;
 
 const LikeIcon = styled.img`
@@ -96,11 +102,12 @@ const LikeIcon = styled.img`
 
 function CollectPlace({ data }) {
 	const db = firebase.firestore();
+	const currentUser = useSelector((state) => state.currentUser);
 	const docRef = db.collection("categories");
-	const user = firebase.auth().currentUser;
+
 	const RemoveMyLikes = () => {
 		db.collection("users")
-			.doc(`${user.uid}`)
+			.doc(`${currentUser.uid}`)
 			.collection("likes")
 			.doc(`${data.locationName}`)
 			.delete()
@@ -118,7 +125,9 @@ function CollectPlace({ data }) {
 			.collection("places")
 			.doc(`${data.locationName}`)
 			.update({
-				collectedBy: firebase.firestore.FieldValue.arrayRemove(`${user.uid}`),
+				collectedBy: firebase.firestore.FieldValue.arrayRemove(
+					`${currentUser.uid}`
+				),
 			})
 			.then(() => {
 				// console.log(user.uid);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
 import userIcon from "../img/user.png";
 

@@ -15,7 +15,6 @@ const Container = styled.div`
 	background-size: 100% 100%;
 	border-radius: 10px;
 	position: fixed;
-	overflow-y: scroll;
 	top: 50%;
 	left: 50%;
 	margin-left: -40vmin;
@@ -24,6 +23,18 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	z-index: 5;
+	overflow-y: scroll;
+	&::-webkit-scrollbar {
+		width: 16px;
+	}
+	&::-webkit-scrollbar-track {
+		background: rgba(256, 256, 256, 0);
+	}
+	&::-webkit-scrollbar-thumb {
+		background-color: rgba(256, 256, 256, 0);
+		border-radius: 10px;
+		border: 3px solid rgba(256, 256, 256, 0);
+	}
 	@media screen and (max-width: 1200px) {
 		margin-top: -40vmin;
 		max-height: 85vmin;
@@ -115,23 +126,29 @@ function LookMore({ title, location }) {
 	return (
 		<Container>
 			<CommentArea>
-				{comment.map((data) => {
-					const time = data.timestamp;
-					return (
-						<Comment key={uuidv4()}>
-							<CommentUser src={data.postUserImg || mainImage} />
-							<CommentTxtArea>
-								<CommentTxt>
-									<Score>
-										<ScoreTxt>{data.score}</ScoreTxt>
-									</Score>
-									<NormalTxt>{data.comment}</NormalTxt>
-								</CommentTxt>
-								<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
-							</CommentTxtArea>
-						</Comment>
-					);
-				})}
+				{comment.length === 0 ? (
+					<h3>還沒有人評論喔</h3>
+				) : (
+					<>
+						{comment.map((data) => {
+							const time = data.timestamp;
+							return (
+								<Comment key={uuidv4()}>
+									<CommentUser src={data.postUserImg || mainImage} />
+									<CommentTxtArea>
+										<CommentTxt>
+											<Score>
+												<ScoreTxt>{data.score}</ScoreTxt>
+											</Score>
+											<NormalTxt>{data.comment}</NormalTxt>
+										</CommentTxt>
+										<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
+									</CommentTxtArea>
+								</Comment>
+							);
+						})}
+					</>
+				)}
 			</CommentArea>
 		</Container>
 	);

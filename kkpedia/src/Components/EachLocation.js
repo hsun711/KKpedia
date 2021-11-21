@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import Popup from "reactjs-popup";
-import ImageCarousel from "./ImageCarousel";
 import { v4 as uuidv4 } from "uuid";
 import Swal from "sweetalert2";
 import Map from "./Map";
@@ -117,11 +116,11 @@ const DescDiv = styled.div`
 	color: #57606f;
 	font-size: 2vmin;
 	@media screen and (max-width: 1200px) {
-		font-size: 2vmin;
+		font-size: 2.5vmin;
 	}
-	@media screen and (max-width: 450px) {
-		font-size: 1.2vmin;
-	}
+	/* @media screen and (max-width: 450px) {
+		font-size: 2.5vmin;
+	} */
 `;
 
 const NormalTxt = styled.p`
@@ -185,7 +184,9 @@ const Image = styled.img`
 	max-width: 100%;
 	height: 100%;
 	object-fit: cover;
-	/* margin: 2vmin; */
+	@media screen and (max-width: 1024px) {
+		margin: 2vmin;
+	}
 `;
 
 const CommentArea = styled.div`
@@ -303,13 +304,14 @@ const StyledPopup = styled(Popup)`
 	}
 `;
 
-function EachLocation({ title }) {
+function EachLocation({ title, setActiveItem }) {
 	const [favorite, setFavorite] = useState(false);
 	const [placeData, setPlaceData] = useState([]);
 	const [popUpWriteComment, setPopUpWriteComment] = useState(false);
 	const [comment, setComment] = useState([]);
 	const [readOnly, setReadOnly] = useState(true);
 	const [editText, setEditText] = useState("");
+	const [posterName, setPosterName] = useState("");
 	const [collectUser, setCollectUser] = useState([]);
 	let { location } = useParams();
 	const db = firebase.firestore();
@@ -319,6 +321,7 @@ function EachLocation({ title }) {
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
 	useEffect(() => {
+		setActiveItem("idolplace");
 		const unsubscribe = docRef
 			.doc(`${title}`)
 			.collection("places")
@@ -328,6 +331,13 @@ function EachLocation({ title }) {
 					// doc.data() is never undefined for query doc snapshots
 					setPlaceData([doc.data()]);
 					setEditText(doc.data().description);
+					// console.log(doc.data().uid);
+					db.collection("users")
+						.doc(`${doc.data().uid}`)
+						.get()
+						.then((doc) => {
+							setPosterName(doc.data().userName);
+						});
 				});
 			});
 
@@ -341,7 +351,6 @@ function EachLocation({ title }) {
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
 					const collectedBy = doc.data().collectedBy;
-					// item.push(collectedBy);
 					setCollectUser(collectedBy);
 					const favorite = collectedBy.some((item) => {
 						const result = item === user.uid;
@@ -360,6 +369,8 @@ function EachLocation({ title }) {
 			});
 		return () => unsubscribe();
 	}, []);
+
+	// console.log(placeData);
 
 	useEffect(() => {
 		// desc 遞減 | asc 遞增
@@ -516,7 +527,7 @@ function EachLocation({ title }) {
 								</Photo>
 
 								<LocationDetail>
-									<NormalTxt>貢獻者：{data.postUser}</NormalTxt>
+									<NormalTxt>貢獻者：{posterName}</NormalTxt>
 									<NormalTxt>{data.title}</NormalTxt>
 									<TitleName>{data.locationName}</TitleName>
 									<EditArea>
@@ -572,35 +583,6 @@ function EachLocation({ title }) {
 										</SingleImg>
 									);
 								})}
-								{/* {data.images.length <= 3 ? (
-									<>
-										{data.images.map((image, index) => {
-											return (
-												<SingleImg key={uuidv4()}>
-													<Image
-														src={image}
-														key={index}
-														onClick={() => openImageViewer(index)}
-													/>
-													{isViewerOpen && (
-														<ImageViewer
-															src={data.images}
-															currentIndex={currentImage}
-															onClose={closeImageViewer}
-															disableScroll={false}
-															backgroundStyle={{
-																backgroundColor: "rgba(0,0,0,0.6)",
-															}}
-															closeOnClickOutside={true}
-														/>
-													)}
-												</SingleImg>
-											);
-										})}
-									</>
-								) : (
-									<ImageCarousel images={data.images} showNum={4} />
-								)} */}
 							</MoreImage>
 						</div>
 					);

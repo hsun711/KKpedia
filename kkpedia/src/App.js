@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import firebase from "./utils/firebase";
 import Header from "./Components/Header";
@@ -11,8 +12,9 @@ import IdolPage from "./Components/IdolPage";
 import Profile from "./Components/Profile";
 import SearchResult from "./Components/SearchResult";
 import Home from "./Components/Home";
-import PagNotFound from "./Components/PagNotFound";
+import PageNotFound from "./Components/PageNotFound";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { getCurrentUser, getCategories } from "./state/actions";
 
 const MainContainer = styled.div`
 	max-width: 1560px;
@@ -29,32 +31,38 @@ const Container = styled.div`
 function App() {
 	const [user, setUser] = useState();
 	const db = firebase.firestore();
-	const [allCategory, setAllCategory] = useState([]);
+	// const [allCategory, setAllCategory] = useState([]);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		firebase.auth().onAuthStateChanged((currentUser) => {
 			setUser(currentUser);
+			dispatch(getCurrentUser(currentUser));
 		});
 
-		db.collection("categories")
-			.get()
-			.then((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					// console.log(doc.data());
-					item.push(doc.data());
-				});
-				setAllCategory(item);
+		// db.collection("categories")
+		// 	.get()
+		// 	.then((querySnapshot) => {
+		// 		const item = [];
+		// 		querySnapshot.forEach((doc) => {
+		// 			item.push(doc.data());
+		// 		});
+		// 		// setAllCategory(item);
+		// 		dispatch(getCategories(item));
+		// 	});
+		db.collection("categories").onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				item.push(doc.data());
 			});
+			// setAllCategory(item);
+			dispatch(getCategories(item));
+		});
 	}, []);
 
-	// console.log(userlogin);
-	// console.log(isLogin);
-	// console.log(user);
 	return (
 		<BrowserRouter>
 			<>
-				{/* {isLogin ? null : <LandingPage setIsLogin={setIsLogin} />} */}
 				{user === null ? (
 					<LandingPage />
 				) : (
@@ -90,7 +98,8 @@ function App() {
 											</Container>
 										</Route>
 										<Route path="/search/:search">
-											<SearchResult allCategory={allCategory} />
+											{/* <SearchResult allCategory={allCategory} /> */}
+											<SearchResult />
 										</Route>
 										<Route path="/tvshow/:title">
 											<IdolPage topic="tvshow" />
@@ -102,7 +111,7 @@ function App() {
 											<IdolPage topic="drama" />
 										</Route>
 										<Route path="">
-											<PagNotFound />
+											<PageNotFound />
 										</Route>
 									</Switch>
 								</MainContainer>

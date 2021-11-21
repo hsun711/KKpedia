@@ -180,8 +180,39 @@ function NewOne({ topic, setPopAddOne }) {
 			setLoading(false);
 			return;
 		}
+		if (ig !== "") {
+			const snsRegex = /^https\:\/\/www\.instagram\.com\//;
+			if (ig.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的 instagram 網址`);
+				setLoading(false);
+				return;
+			}
+		}
+		if (fb !== "") {
+			const snsRegex = /^https\:\/\/www\.facebook\.com/;
+			if (fb.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的 facebook 網址`);
+				setLoading(false);
+				return;
+			}
+		}
+		if (twitter !== "") {
+			const snsRegex = /^https\:\/\/twitter\.com\//;
+			if (ig.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的 twitter 網址`);
+				setLoading(false);
+				return;
+			}
+		}
+		if (youtube !== "") {
+			const snsRegex = /^https\:\/\/www\.youtube\.com\//;
+			if (ig.match(snsRegex) === null) {
+				Swal.fire(`請輸入正確的 youtube 網址`);
+				setLoading(false);
+				return;
+			}
+		}
 		const documentRef = db.collection("categories").doc(`${title}`);
-
 		documentRef.get().then((doc) => {
 			if (doc.exists) {
 				Swal.fire(`${title}已經存在了喔`);

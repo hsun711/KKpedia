@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { v4 as uuidv4 } from "uuid";
 import firebase from "../utils/firebase";
+import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 import ReplyPost from "./ReplyPost";
 import ungood from "../img/unthumbs-up.png";
@@ -85,47 +86,6 @@ const ThumbsIcon = styled(CommentIcon)`
 const GoodTotal = styled.p`
 	font-size: 4vmin;
 	margin-right: 4vmin;
-`;
-
-const Recomment = styled.div`
-	display: flex;
-	padding: 2vmin;
-`;
-
-const ReplyImg = styled(PosterImage)`
-	width: 4vmin;
-	height: 4vmin;
-`;
-
-const ReplyComment = styled.div`
-	padding: 1vmin 2vmin 2vmin;
-	background-color: #dfe6e9;
-	min-width: 30vmin;
-	margin-left: 1vmin;
-	border-radius: 10px;
-	display: flex;
-	flex-direction: column;
-	@media screen and (max-width: 1200px) {
-		width: 100%;
-	}
-`;
-
-const ReplyText = styled.div`
-	display: flex;
-	align-items: center;
-`;
-
-const ReplyUserName = styled.p`
-	font-size: 2vmin;
-	font-weight: 600;
-`;
-
-const SmallTxt = styled.p`
-	font-size: 1.3vmin;
-	align-self: flex-end;
-	@media screen and (max-width: 1200px) {
-		font-size: 1vmin;
-	}
 `;
 
 const EditArea = styled.div`
@@ -316,9 +276,7 @@ function RenderPost({ item }) {
 					})}
 				</>
 			) : (
-				<>
-					{renderReply.length > 1 ? <ReplyPost item={renderReply[0]} /> : <></>}
-				</>
+				<></>
 			)}
 
 			<TextArea

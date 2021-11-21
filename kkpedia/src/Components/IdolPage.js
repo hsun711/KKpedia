@@ -15,6 +15,8 @@ import Picture from "./Picture";
 import Calender from "./Calender";
 import Post from "./Post";
 import EachLocation from "./EachLocation";
+import PageNotFound from "./PageNotFound";
+import Loading from "./Loading";
 import firebase from "../utils/firebase";
 import idolimage from "../img/wanted.png";
 import fb from "../img/facebook.png";
@@ -220,10 +222,8 @@ function IdolPage({ topic }) {
 				const item = [];
 				querySnapshot.forEach((doc) => {
 					// doc.data() is never undefined for query doc snapshots
-					// console.log(doc.data());
 					item.push({ star: doc.data() });
 				});
-				// console.log(item);
 				setSns(item);
 				setMainImage(item[0].star.main_image);
 				setBannerImg(item[0].star.main_banner);
@@ -396,184 +396,203 @@ function IdolPage({ topic }) {
 
 	return (
 		<>
-			<BannerArea>
-				<Banner imgCover={bennerURL || initbanner}></Banner>
-				{bannerChange ? (
-					<BannerCheck as="label" htmlFor="uploadBanner" onClick={BannerOk} />
-				) : (
-					<BannerChange as="label" htmlFor="uploadBanner" />
-				)}
-				<input
-					type="file"
-					id="uploadBanner"
-					style={{ display: "none" }}
-					accept="image/*"
-					onChange={(e) => {
-						const fileType = e.target.files[0].type.slice(0, 5);
-						if (fileType !== "image") {
-							Swal.fire("請上傳圖片檔");
-							return;
-						} else {
-							setBannerFile(e.target.files[0]);
-							setBannerChange(true);
-						}
-					}}
-				/>
-			</BannerArea>
-			<Container>
-				<BrowserRouter>
-					<>
-						<Person>
-							<ColumnDiv>
-								<PersonName>{title}</PersonName>
-								<>
-									{sns.map((item) => {
-										return (
-											<Edit key={item.star.title}>
-												{item.star.facebook === "" ? (
-													<EditIcon
-														src={add}
-														onClick={() => {
-															AddSns("facebook");
-														}}
-													/>
-												) : (
-													<SnsLink href={item.star.facebook} target="_blank">
-														<SnsImg src={fb} />
-													</SnsLink>
-												)}
-												{item.star.instagram === "" ? (
-													<EditIcon
-														src={add}
-														onClick={() => {
-															AddSns("instagram");
-														}}
-													/>
-												) : (
-													<SnsLink href={item.star.instagram} target="_blank">
-														<SnsImg src={ig} />
-													</SnsLink>
-												)}
-												{item.star.twitter === "" ? (
-													<EditIcon
-														src={add}
-														onClick={() => {
-															AddSns("twitter");
-														}}
-													/>
-												) : (
-													<SnsLink href={item.star.twitter} target="_blank">
-														<SnsImg src={twitter} />
-													</SnsLink>
-												)}
-												{item.star.youtube === "" ? (
-													<EditIcon
-														src={add}
-														onClick={() => {
-															AddSns("youtube");
-														}}
-													/>
-												) : (
-													<SnsLink href={item.star.youtube} target="_blank">
-														<SnsImg src={youtube} onClick={AddSns} />
-													</SnsLink>
-												)}
-											</Edit>
-										);
-									})}
-								</>
-							</ColumnDiv>
+			{sns.length === 0 ? (
+				<Loading />
+			) : (
+				<>
+					<BannerArea>
+						<Banner imgCover={bennerURL || initbanner}></Banner>
+						{bannerChange ? (
+							<BannerCheck
+								as="label"
+								htmlFor="uploadBanner"
+								onClick={BannerOk}
+							/>
+						) : (
+							<BannerChange as="label" htmlFor="uploadBanner" />
+						)}
+						<input
+							type="file"
+							id="uploadBanner"
+							style={{ display: "none" }}
+							accept="image/*"
+							onChange={(e) => {
+								const fileType = e.target.files[0].type.slice(0, 5);
+								if (fileType !== "image") {
+									Swal.fire("請上傳圖片檔");
+									return;
+								} else {
+									setBannerFile(e.target.files[0]);
+									setBannerChange(true);
+								}
+							}}
+						/>
+					</BannerArea>
+					<Container>
+						<BrowserRouter>
+							<>
+								<Person>
+									<ColumnDiv>
+										<PersonName>{title}</PersonName>
+										<>
+											{sns.map((item) => {
+												return (
+													<Edit key={item.star.title}>
+														{item.star.facebook === "" ? (
+															<EditIcon
+																src={add}
+																onClick={() => {
+																	AddSns("facebook");
+																}}
+															/>
+														) : (
+															<SnsLink
+																href={item.star.facebook}
+																target="_blank"
+															>
+																<SnsImg src={fb} />
+															</SnsLink>
+														)}
+														{item.star.instagram === "" ? (
+															<EditIcon
+																src={add}
+																onClick={() => {
+																	AddSns("instagram");
+																}}
+															/>
+														) : (
+															<SnsLink
+																href={item.star.instagram}
+																target="_blank"
+															>
+																<SnsImg src={ig} />
+															</SnsLink>
+														)}
+														{item.star.twitter === "" ? (
+															<EditIcon
+																src={add}
+																onClick={() => {
+																	AddSns("twitter");
+																}}
+															/>
+														) : (
+															<SnsLink href={item.star.twitter} target="_blank">
+																<SnsImg src={twitter} />
+															</SnsLink>
+														)}
+														{item.star.youtube === "" ? (
+															<EditIcon
+																src={add}
+																onClick={() => {
+																	AddSns("youtube");
+																}}
+															/>
+														) : (
+															<SnsLink href={item.star.youtube} target="_blank">
+																<SnsImg src={youtube} onClick={AddSns} />
+															</SnsLink>
+														)}
+													</Edit>
+												);
+											})}
+										</>
+									</ColumnDiv>
 
-							<Photo>
-								<PersonImage src={previewURL || idolimage} />
-								{photoChange ? (
-									<PhotoCheck
-										as="label"
-										htmlFor="uploadCover"
-										onClick={ChangeOk}
-									/>
-								) : (
-									<PhotoChange as="label" htmlFor="uploadCover" />
-								)}
-								<input
-									type="file"
-									id="uploadCover"
-									style={{ display: "none" }}
-									accept="image/*"
-									onChange={(e) => {
-										const fileType = e.target.files[0].type.slice(0, 5);
-										if (fileType !== "image") {
-											Swal.fire("請上傳圖片檔");
-											return;
-										} else {
-											setFile(e.target.files[0]);
-											setPhotoChange(true);
-										}
-									}}
-								/>
-							</Photo>
-						</Person>
+									<Photo>
+										<PersonImage src={previewURL || idolimage} />
+										{photoChange ? (
+											<PhotoCheck
+												as="label"
+												htmlFor="uploadCover"
+												onClick={ChangeOk}
+											/>
+										) : (
+											<PhotoChange as="label" htmlFor="uploadCover" />
+										)}
+										<input
+											type="file"
+											id="uploadCover"
+											style={{ display: "none" }}
+											accept="image/*"
+											onChange={(e) => {
+												const fileType = e.target.files[0].type.slice(0, 5);
+												if (fileType !== "image") {
+													Swal.fire("請上傳圖片檔");
+													return;
+												} else {
+													setFile(e.target.files[0]);
+													setPhotoChange(true);
+												}
+											}}
+										/>
+									</Photo>
+								</Person>
 
-						<MenuBar>
-							<MenuLink
-								to={`${url}`}
-								onClick={() => {
-									setActiveItem("idolplace");
-								}}
-								style={activeItem === "idolplace" ? active : []}
-							>
-								聖地
-							</MenuLink>
-							<MenuLink
-								to={`${url}/picture`}
-								onClick={() => {
-									setActiveItem("idolphoto");
-								}}
-								style={activeItem === "idolphoto" ? active : []}
-							>
-								圖片區
-							</MenuLink>
-							<MenuLink
-								to={`${url}/calender`}
-								onClick={() => {
-									setActiveItem("idolschedule");
-								}}
-								style={activeItem === "idolschedule" ? active : []}
-							>
-								日程表
-							</MenuLink>
-							<MenuLink
-								to={`${url}/post`}
-								onClick={() => {
-									setActiveItem("idolpost");
-								}}
-								style={activeItem === "idolpost" ? active : []}
-							>
-								留言區
-							</MenuLink>
-						</MenuBar>
-						<PlaceContainer>
-							<Switch>
-								<Route exact path={`${url}`}>
-									<Place title={title} topic={topic} />
-								</Route>
-								<Route exact path={`${url}/picture`}>
-									<Picture title={title} />
-								</Route>
-								<Route exact path={`${url}/calender`}>
-									<Calender title={title} />
-								</Route>
-								<Route exact path={`${url}/post`}>
-									<Post title={title} />
-								</Route>
-								<Route path={`${url}/:location`}>
-									<EachLocation title={title} />
-								</Route>
-							</Switch>
-						</PlaceContainer>
-					</>
-				</BrowserRouter>
-			</Container>
+								<MenuBar>
+									<MenuLink
+										to={`${url}`}
+										onClick={() => {
+											setActiveItem("idolplace");
+										}}
+										style={activeItem === "idolplace" ? active : []}
+									>
+										聖地
+									</MenuLink>
+									<MenuLink
+										to={`${url}/picture`}
+										onClick={() => {
+											setActiveItem("idolphoto");
+										}}
+										style={activeItem === "idolphoto" ? active : []}
+									>
+										圖片區
+									</MenuLink>
+									<MenuLink
+										to={`${url}/calender`}
+										onClick={() => {
+											setActiveItem("idolschedule");
+										}}
+										style={activeItem === "idolschedule" ? active : []}
+									>
+										日程表
+									</MenuLink>
+									<MenuLink
+										to={`${url}/post`}
+										onClick={() => {
+											setActiveItem("idolpost");
+										}}
+										style={activeItem === "idolpost" ? active : []}
+									>
+										留言區
+									</MenuLink>
+								</MenuBar>
+								<PlaceContainer>
+									<Switch>
+										<Route exact path={`${url}`}>
+											<Place title={title} topic={topic} />
+										</Route>
+										<Route exact path={`${url}/picture`}>
+											<Picture title={title} setActiveItem={setActiveItem} />
+										</Route>
+										<Route exact path={`${url}/calender`}>
+											<Calender title={title} setActiveItem={setActiveItem} />
+										</Route>
+										<Route exact path={`${url}/post`}>
+											<Post title={title} setActiveItem={setActiveItem} />
+										</Route>
+										<Route path={`${url}/:location`}>
+											<EachLocation
+												title={title}
+												setActiveItem={setActiveItem}
+											/>
+										</Route>
+									</Switch>
+								</PlaceContainer>
+							</>
+						</BrowserRouter>
+					</Container>
+				</>
+			)}
 		</>
 	);
 }

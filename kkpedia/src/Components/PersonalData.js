@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import firebase from "../utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import FollowIdol from "./FollowIdol";
 import image from "../img/wanted.png";
+import Loading from "./Loading";
 
 const ProfileContainer = styled.div`
 	margin-top: 5vmin;
@@ -19,10 +21,12 @@ const TitleText = styled.p`
 const FollowStar = styled.div`
 	width: 100%;
 	display: flex;
-	justify-content: space-evenly;
+	justify-content: flex-start;
 	flex-wrap: wrap;
-	padding: 2vmin;
 	margin-bottom: 10vmin;
+	@media screen and (max-width: 1200px) {
+		justify-content: center;
+	}
 `;
 
 const EachFeolowLink = styled.a`
@@ -37,9 +41,10 @@ const EachFeolowLink = styled.a`
 	align-items: center;
 	justify-content: center;
 	cursor: pointer;
+	margin: 3vmin;
 	@media screen and (max-width: 1200px) {
-		width: 35vmin;
-		height: 40vmin;
+		width: 30vmin;
+		height: 30vmin;
 		margin: 2vmin;
 	}
 `;
@@ -74,18 +79,23 @@ const NormalTxt = styled.p`
 	font-weight: 600;
 	margin-bottom: 1vmin;
 	color: #1e272e;
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
 	@media screen and (max-width: 1200px) {
 		font-size: 3vmin;
 	}
 	@media screen and (max-width: 500px) {
-		font-size: 1vmin;
+		font-size: 3.5vmin;
 	}
 `;
 
-function PersonalData() {
+function PersonalData({ setActiveItem }) {
+	// const currentUser = useSelector((state) => state.currentUser);
 	const user = firebase.auth().currentUser;
 	const db = firebase.firestore();
-	const userId = user.uid;
 	const [contribution, setContribution] = useState([]);
 	const [follow, setFollow] = useState([]);
 
@@ -109,7 +119,7 @@ function PersonalData() {
 	useEffect(() => {
 		const unsubscribe = db
 			.collection("users")
-			.doc(`${userId}`)
+			.doc(`${user.uid}`)
 			.collection("follows")
 			.onSnapshot((querySnapshot) => {
 				const item = [];
@@ -118,24 +128,30 @@ function PersonalData() {
 				});
 				setFollow(item);
 			});
+		setActiveItem("/profile");
 		return () => unsubscribe();
 	}, []);
 
 	return (
 		<ProfileContainer>
 			<TitleText>Follow</TitleText>
-			<FollowStar>
-				{follow.map((data) => {
-					return (
-						<FollowIdol
-							title={data.title}
-							topic={data.topic}
-							image={data.main_image}
-							key={uuidv4()}
-						/>
-					);
-				})}
-			</FollowStar>
+			{user ? (
+				<FollowStar>
+					{follow.map((data) => {
+						return (
+							<FollowIdol
+								title={data.title}
+								topic={data.topic}
+								image={data.main_image}
+								key={uuidv4()}
+							/>
+						);
+					})}
+				</FollowStar>
+			) : (
+				<Loading />
+			)}
+
 			<TitleText>貢獻過 {contribution.length} 個景點</TitleText>
 			<FollowStar>
 				{contribution.map((item) => {
