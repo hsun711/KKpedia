@@ -84,13 +84,17 @@ function Picture({ title, setActiveItem }) {
 	useEffect(() => {
 		const unsubscribe = getPhotos(title, setPhotos);
 		setActiveItem("idolphoto");
-		return () => unsubscribe();
+		return () => {
+			unsubscribe();
+		};
 	}, []);
 
 	useEffect(() => {
 		if (currentUser && currentUser.uid) {
 			const unsubscribe = snapshotUserData(currentUser.uid, setUserData);
-			return () => unsubscribe();
+			return () => {
+				unsubscribe();
+			};
 		}
 	}, [currentUser]);
 

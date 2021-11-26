@@ -12,12 +12,17 @@ import like from "../../img/like.png";
 import edit from "../../img/pencil.png";
 import check from "../../img/checked.png";
 import Loading from "../common/Loading";
+import EachComment from "./EachComment";
 import { useParams } from "react-router-dom";
 import {
 	addToPlaceCollectBy,
 	removePlaceCollectBy,
 	removeUserLikes,
 	addToUserLikes,
+	getUserData,
+	editPlaceDescription,
+	getPlaceCollectBy,
+	getAllReviews,
 } from "../../utils/firebaseFunc";
 import {
 	MainContainer,
@@ -39,13 +44,6 @@ import {
 	SingleImg,
 	Image,
 	CommentArea,
-	Comment,
-	CommentUser,
-	CommentTxtArea,
-	CommentTxt,
-	Score,
-	ScoreTxt,
-	TimeStamp,
 	BottomBtn,
 	CheckBtn,
 	Cover,
@@ -80,60 +78,39 @@ function EachLocation({ title, setActiveItem }) {
 						setPlaceData([doc.data()]);
 						setEditText(doc.data().description);
 
-						db.collection("users")
-							.doc(`${doc.data().uid}`)
-							.get()
-							.then((doc) => {
-								setPosterName(doc.data().userName);
-							});
+						getUserData(doc.data().uid).then((doc) => {
+							setPosterName(doc.data().userName);
+						});
 					});
 				} else {
 					setPlaceData([]);
 				}
 			});
 
-		docRef
-			.doc(`${title}`)
-			.collection("places")
-			.where("locationName", "==", `${location}`)
-			.where("collectedBy", "array-contains", `${user.uid}`)
-			.get()
-			.then((querySnapshot) => {
-				querySnapshot.forEach((doc) => {
-					const collectedBy = doc.data().collectedBy;
-					setCollectUser(collectedBy);
-					const favorite = collectedBy.some((item) => {
-						const result = item === user.uid;
-						return result;
-					});
-					if (favorite) {
-						setFavorite(true);
-					} else {
-						setFavorite(false);
-					}
+		getPlaceCollectBy(title, location, user.uid).then((querySnapshot) => {
+			querySnapshot.forEach((doc) => {
+				const collectedBy = doc.data().collectedBy;
+				setCollectUser(collectedBy);
+				const favorite = collectedBy.some((item) => {
+					const result = item === user.uid;
+					return result;
 				});
-			})
-			.catch((error) => {
-				console.log("Error getting documents: ", error);
+				if (favorite) {
+					setFavorite(true);
+				} else {
+					setFavorite(false);
+				}
 			});
+		});
+
 		return () => unsubscribe();
 	}, []);
 
 	useEffect(() => {
-		const unsubscribe = docRef
-			.doc(`${title}`)
-			.collection("reviews")
-			.where("locationName", "==", `${location}`)
-			.orderBy("timestamp", "desc") // desc 遞減 | asc 遞增
-			.limit(3)
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					item.push(doc.data());
-				});
-				setComment(item);
-			});
-		return () => unsubscribe();
+		const unsubscribe = getAllReviews(title, location, setComment);
+		return () => {
+			unsubscribe();
+		};
 	}, []);
 
 	const popUp = () => {
@@ -154,21 +131,10 @@ function EachLocation({ title, setActiveItem }) {
 	const Editable = () => {
 		if (readOnly === false) {
 			setReadOnly(true);
-			docRef
-				.doc(`${title}`)
-				.collection("places")
-				.doc(`${location}`)
-				.update({
-					description: `${editText}`,
-				});
+			editPlaceDescription("categories", title, "places", location, editText);
+
 			collectUser.forEach((user) => {
-				db.collection("users")
-					.doc(`${user}`)
-					.collection("likes")
-					.doc(`${location}`)
-					.update({
-						description: `${editText}`,
-					});
+				editPlaceDescription("users", user, "likes", location, editText);
 			});
 		} else {
 			setReadOnly(false);
@@ -275,22 +241,8 @@ function EachLocation({ title, setActiveItem }) {
 							})}
 							<SubTitle>Review</SubTitle>
 							<CommentArea>
-								{comment.map((data) => {
-									const time = data.timestamp;
-									return (
-										<Comment key={uuidv4()}>
-											<CommentUser src={data.postUserImg || coverImage} />
-											<CommentTxtArea>
-												<CommentTxt>
-													<Score>
-														<ScoreTxt>{data.score}</ScoreTxt>
-													</Score>
-													<NormalTxt>{data.comment}</NormalTxt>
-												</CommentTxt>
-												<TimeStamp>{new Date(time).toLocaleString()}</TimeStamp>
-											</CommentTxtArea>
-										</Comment>
-									);
+								{comment.slice(0, 3).map((data) => {
+									return <EachComment data={data} key={data.docid} />;
 								})}
 							</CommentArea>
 							<BottomBtn>

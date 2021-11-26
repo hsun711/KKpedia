@@ -5,7 +5,7 @@ import { Link, useRouteMatch } from "react-router-dom";
 import board from "../../img/cork-board.png";
 import sticker from "../../img/sticker6.png";
 import NewPlace from "./NewPlace";
-import { placeData } from "../../utils/firebaseFunc";
+import { getPlaceData } from "../../utils/firebaseFunc";
 
 const OutsideContainer = styled.div`
 	width: 100%;
@@ -157,15 +157,16 @@ function Place({ title, topic }) {
 	let { path, url } = useRouteMatch();
 	const [popAddPlace, setPopAddPlace] = useState(false);
 	const [place, setPlace] = useState([]);
-	// const [placeName, setPlaceName] = useState("");
 
 	const AddSomePlace = () => {
 		setPopAddPlace(!popAddPlace);
 	};
 
 	useEffect(() => {
-		const unsubscribe = placeData(title, setPlace);
-		return () => unsubscribe();
+		const unsubscribe = getPlaceData(title, setPlace);
+		return () => {
+			unsubscribe();
+		};
 	}, []);
 	return (
 		<OutsideContainer>

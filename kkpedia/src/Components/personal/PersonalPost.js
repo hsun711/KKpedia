@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import firebase from "../../utils/firebase";
 import styled from "styled-components";
 import Swal from "sweetalert2";
 import RenderPost from "../topic/RenderPost";
 import cancel from "../../img/trash.png";
+import { getUserPost, removeUserPost } from "../../utils/firebaseFunc";
 
 const Container = styled.div`
 	position: relative;
@@ -30,29 +30,18 @@ const DeletePost = styled.div`
 `;
 
 function PersonalPost({ setActiveItem }) {
-	const db = firebase.firestore();
 	const currentUser = useSelector((state) => state.currentUser);
 	const [postData, setPostData] = useState([]);
 
 	useEffect(() => {
-		const unsubscribe = db
-			.collection("posts")
-			.where("userId", "==", `${currentUser.uid}`)
-			.orderBy("postTime", "desc")
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					const data = {
-						data: doc.data(),
-						id: doc.id,
-					};
-					item.push(data);
-				});
-				setPostData(item);
-			});
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = getUserPost(currentUser.uid, setPostData);
+			return () => {
+				unsubscribe();
+			};
+		}
 		setActiveItem("/profile/myPost");
-		return () => unsubscribe();
-	}, []);
+	}, [currentUser]);
 
 	const handleDelete = (e) => {
 		Swal.fire({
@@ -65,15 +54,7 @@ function PersonalPost({ setActiveItem }) {
 			confirmButtonText: "Yes!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				db.collection("posts")
-					.doc(`${e.target.dataset.id}`)
-					.delete()
-					.then(() => {
-						Swal.fire("刪除成功!", "被刪除了留言已回不來了", "success");
-					})
-					.catch((error) => {
-						console.error("Error removing document: ", error);
-					});
+				removeUserPost(e.target.dataset.id);
 			}
 		});
 	};

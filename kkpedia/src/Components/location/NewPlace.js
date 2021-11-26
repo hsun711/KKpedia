@@ -17,9 +17,14 @@ import {
 	InputArea,
 } from "../../style/newOne";
 import {
-	getCategoriesTitle,
+	getCategoriesTitleData,
 	snapshotUserData,
 	sendAlertToFollower,
+	levelUpUser,
+	addPhotos,
+	getPlaceName,
+	putImageToStorage,
+	getImageURL,
 } from "../../utils/firebaseFunc";
 
 const InputTitle = styled.p`
@@ -68,7 +73,6 @@ const AddImagesTitle = styled.p`
 function NewPlace({ title, setPopAddPlace, topic }) {
 	const currentUser = useSelector((state) => state.currentUser);
 	const db = firebase.firestore();
-	const docRef = db.collection("users").doc(`${currentUser.uid}`);
 	const [loading, setLoading] = useState(false);
 	const [titleData, setTitleData] = useState({});
 	const [userData, setUserData] = useState({});
@@ -80,9 +84,16 @@ function NewPlace({ title, setPopAddPlace, topic }) {
 	const [files, setFiles] = useState([]);
 
 	useEffect(() => {
-		getCategoriesTitle(title, setTitleData);
-		snapshotUserData(currentUser.uid, setUserData);
-	}, []);
+		getCategoriesTitleData(title).then((doc) => {
+			setTitleData(doc.data());
+		});
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = snapshotUserData(currentUser.uid, setUserData);
+			return () => {
+				unsubscribe();
+			};
+		}
+	}, [currentUser]);
 
 	// 把從子層 MapAutocomplete 收到的資訊存進 state 裡
 	const GetAddress = (addressdata) => {
@@ -105,32 +116,32 @@ function NewPlace({ title, setPopAddPlace, topic }) {
 		}
 	};
 
-	const UpdateLevel = () => {
-		docRef.update({
-			userLevel: userData.userLevel + 5,
-		});
-	};
-
 	const SendAlert = () => {
-		const docid = db
-			.collection("users")
-			.doc(`${currentUser}`)
-			.collection("news")
-			.doc().id;
-
-		const otherFollower = titleData.followedBy.filter((follower) => {
+		const otherFollower = titleData.followedBy?.filter((follower) => {
 			return follower !== currentUser.uid;
 		});
 
-		otherFollower.forEach((user) => {
-			sendAlertToFollower(user, docid, title, topic, locationName);
+		const data = {
+			title: title,
+			topic: topic,
+			locationName: locationName,
+		};
+
+		otherFollower?.forEach((user) => {
+			sendAlertToFollower(user, data);
 		});
+	};
+
+	const UpdateLevel = () => {
+		levelUpUser(currentUser.uid, userData.userLevel, 5);
+		SendAlert();
 	};
 
 	const AddNewPlace = () => {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
 		const promises = [];
+
 		if (locationName === "") {
 			Swal.fire("景點/餐廳名稱沒有填唷");
 			setLoading(false);
@@ -157,79 +168,50 @@ function NewPlace({ title, setPopAddPlace, topic }) {
 			setLoading(false);
 			return;
 		}
-		documentRef
-			.collection("places")
-			.doc(`${locationName}`)
-			.get()
-			.then((doc) => {
-				if (doc.exists) {
-					Swal.fire(`${locationName}已經存在了喔`);
+		getPlaceName(title, locationName).then((doc) => {
+			if (doc.exists) {
+				Swal.fire(`${locationName}已經存在了喔`);
+				setLoading(false);
+				return;
+			} else {
+				const data = {
+					topic: topic,
+					title: title,
+					address: address,
+					latitude: latitude,
+					placeId: placeId,
+					description: description,
+					locationName: locationName,
+					postUser: userData.userName,
+					uid: currentUser.uid,
+					images: [],
+				};
+				if (files.length === 0) {
+					Swal.fire("至少上傳一張照片唷~");
 					setLoading(false);
 					return;
 				} else {
-					const data = {
-						topic: topic,
-						title: title,
-						address: address,
-						latitude: latitude,
-						placeId: placeId,
-						description: description,
-						locationName: locationName,
-						postUser: userData.userName,
-						uid: currentUser.uid,
-						images: [],
-					};
-					documentRef
-						.collection("places")
-						.doc(`${locationName}`)
-						.set(data, { merge: true })
-						.then((docRef) => {
-							UpdateLevel();
-							SendAlert();
-						});
+					addPhotos(title, "places", locationName, data, UpdateLevel);
 					files.map((file) => {
 						new Compressor(file, {
 							quality: 0.8,
 							success: (compressedResult) => {
 								const id = uuidv4();
-								const uploadTask = firebase
-									.storage()
-									.ref(`place_images/${documentRef.id}/${id}`)
-									.put(compressedResult);
-								promises.push(uploadTask);
-								uploadTask.on(
-									"state_changed",
-									function progress(snapshot) {
-										const progress =
-											(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-										if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-											// console.log(`Progress: ${progress}%`);
-										}
-									},
-									function error(error) {
-										console.log(error);
-									},
-									function complete() {
-										firebase
-											.storage()
-											.ref(`place_images/${documentRef.id}/`)
-											.child(`${id}`)
-											.getDownloadURL()
-											.then((imgUrls) => {
-												documentRef
-													.collection("places")
-													.doc(`${locationName}`)
-													.update({
-														images: firebase.firestore.FieldValue.arrayUnion(
-															`${imgUrls}`
-														),
-													})
-													.then(() => {
-														// console.log(user.uid);
-													});
-											});
-									}
+								const uploadTask = putImageToStorage(
+									`place_images/${documentRef.id}/${id}`,
+									compressedResult
 								);
+
+								promises.push(uploadTask);
+								uploadTask.then(function complete() {
+									getImageURL(
+										`place_images/${documentRef.id}/`,
+										id,
+										title,
+										"places",
+										locationName
+									);
+								});
 							},
 						});
 					});
@@ -241,7 +223,8 @@ function NewPlace({ title, setPopAddPlace, topic }) {
 						})
 						.catch((err) => console.log(err));
 				}
-			});
+			}
+		});
 	};
 	return (
 		<Container>

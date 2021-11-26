@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
 import star from "../../img/star.png";
 import paper from "../../img/rm429-013.png";
 import Swal from "sweetalert2";
 import { SendBtn } from "../../style/newOne";
-import { getUserData, setPlaceReview } from "../../utils/firebaseFunc";
+import { setPlaceReview } from "../../utils/firebaseFunc";
 
 const Container = styled.div`
 	width: 50vmin;
@@ -94,19 +94,8 @@ const TextArea = styled.textarea`
 
 function WriteComment({ title, location, setPopUpWriteComment }) {
 	const currentUser = useSelector((state) => state.currentUser);
-	const [userImg, setUserImg] = useState("");
 	const [score, setScore] = useState("0");
 	const [comment, setComment] = useState("");
-
-	useEffect(() => {
-		if (currentUser && currentUser.uid) {
-			getUserData(currentUser.uid).then((doc) => {
-				if (doc.exists) {
-					setUserImg(doc.data().userImage);
-				}
-			});
-		}
-	}, [currentUser]);
 
 	const GiveScore = (e) => {
 		setScore(e.target.value);
@@ -125,7 +114,6 @@ function WriteComment({ title, location, setPopUpWriteComment }) {
 
 		const data = {
 			uid: currentUser.uid,
-			postUserImg: userImg,
 			comment: comment,
 			locationName: location,
 			score: score,

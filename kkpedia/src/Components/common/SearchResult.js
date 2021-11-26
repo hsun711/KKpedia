@@ -111,14 +111,14 @@ function SearchResult() {
 	useEffect(() => {
 		setLoading(true);
 		algolia.search(search).then((result) => {
-			const ar = [];
+			const arr = [];
 			result.hits.map((hit) => {
 				const result = allCategories.filter((data) => {
 					return data.title === hit.title;
 				});
-				ar.push(...result);
+				arr.push(...result);
 			});
-			setResultData(ar);
+			setResultData(arr);
 			setLoading(false);
 		});
 	}, [search]);

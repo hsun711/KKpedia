@@ -1,9 +1,19 @@
 import firebase from "./firebase";
 import Swal from "sweetalert2";
 import Compressor from "compressorjs";
+import { v4 as uuidv4 } from "uuid";
 const doccategory = firebase.firestore().collection("categories");
 const docuser = firebase.firestore().collection("users");
 const docpost = firebase.firestore().collection("posts");
+
+export const getPlaceCollectBy = (title, location, userId) => {
+	return doccategory
+		.doc(`${title}`)
+		.collection("places")
+		.where("locationName", "==", `${location}`)
+		.where("collectedBy", "array-contains", `${userId}`)
+		.get();
+};
 
 export const addToPlaceCollectBy = (title, location, userId) => {
 	doccategory
@@ -66,6 +76,35 @@ export const getFollowedBy = (title, userId) => {
 		.get();
 };
 
+export const getUserFollow = (userId, setFunc) => {
+	return docuser
+		.doc(`${userId}`)
+		.collection("follows")
+		.onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				item.push(doc.data());
+			});
+			setFunc(item);
+		});
+};
+
+export const getUserContribution = (userId, setFunc) => {
+	// collectionGroup 可以跳過第一個 collection 直接到第二個 collection 去篩選指定的東西
+	// 就不用在第一個 collection 裡的 doc 裡一個一個篩選
+	return firebase
+		.firestore()
+		.collectionGroup("places")
+		.where("uid", "==", `${userId}`)
+		.onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				item.push(doc.data());
+			});
+			setFunc(item);
+		});
+};
+
 export const addToUserFollow = (userId, title, data) => {
 	docuser
 		.doc(`${userId}`)
@@ -77,6 +116,35 @@ export const addToUserFollow = (userId, title, data) => {
 		})
 		.catch((error) => {
 			console.error("Error adding document: ", error);
+		});
+};
+
+export const getUserPost = (userId, setFunc) => {
+	return docpost
+		.where("userId", "==", `${userId}`)
+		.orderBy("postTime", "desc")
+		.onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				const data = {
+					data: doc.data(),
+					id: doc.id,
+				};
+				item.push(data);
+			});
+			setFunc(item);
+		});
+};
+
+export const removeUserPost = (docId) => {
+	docpost
+		.doc(`${docId}`)
+		.delete()
+		.then(() => {
+			Swal.fire("刪除成功!", "被刪除了留言已回不來了", "success");
+		})
+		.catch((error) => {
+			console.error("Error removing document: ", error);
 		});
 };
 
@@ -112,14 +180,62 @@ export const removeFollowedBy = (title, userId) => {
 		.then(() => {});
 };
 
+export const getAllReviews = (title, location, setFunc) => {
+	return doccategory
+		.doc(`${title}`)
+		.collection("reviews")
+		.where("locationName", "==", `${location}`)
+		.orderBy("timestamp", "desc") // desc 遞減 | asc 遞增
+		.onSnapshot((querySnapshot) => {
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				item.push(doc.data());
+			});
+			setFunc(item);
+		});
+};
+
 export const snapshotUserData = (userId, setFunc) => {
 	return docuser.doc(`${userId}`).onSnapshot((doc) => {
 		setFunc(doc.data());
 	});
 };
 
+export const snapshotUserNews = (userId, setLength, setFunc) => {
+	return docuser
+		.doc(`${userId}`)
+		.collection("news")
+		.onSnapshot((querySnapshot) => {
+			setLength(querySnapshot.docs.length);
+			const item = [];
+			querySnapshot.forEach((doc) => {
+				item.push(doc.data());
+			});
+			setFunc(item);
+		});
+};
+
 export const getUserData = (userId) => {
 	return docuser.doc(`${userId}`).get();
+};
+
+export const snapshotUserCollectPlace = (userId, setFunc) => {
+	return docuser
+		.doc(`${userId}`)
+		.collection("likes")
+		.onSnapshot((snapshot) => {
+			const item = [];
+			snapshot.forEach((doc) => {
+				item.push(doc.data());
+			});
+			setFunc(item);
+		});
+};
+
+export const levelUpUser = (userId, userLevel, num) => {
+	docuser.doc(`${userId}`).update({
+		userLevel: Number(userLevel) + Number(num),
+	});
 };
 
 export const getTopicData = (topic, setFunc) => {
@@ -132,36 +248,42 @@ export const getTopicData = (topic, setFunc) => {
 	});
 };
 
-export const getCategoriesTitle = (title, setFunc) => {
-	doccategory
-		.doc(`${title}`)
-		.get()
-		.then((doc) => {
-			setFunc(doc.data());
-		});
+export const getCategoriesTitleData = (title) => {
+	return doccategory.doc(`${title}`).get();
 };
 
-export const sendAlertToFollower = (
-	user,
-	docid,
-	title,
-	topic,
-	locationName
-) => {
+export const sendAlertToFollower = (user, data) => {
+	const docid = docuser.doc(`${user}`).collection("news").doc().id;
+	const finalData = { ...data, docid: docid };
+
 	docuser
 		.doc(`${user}`)
 		.collection("news")
 		.doc(docid)
-		.set(
-			{
-				title: title,
-				topic: topic,
-				docid: docid,
-				locationName: locationName,
-			},
-			{ merge: true }
-		)
+		.set(finalData, { merge: true })
 		.then(() => {});
+};
+
+export const deleteUserNews = (userId, docid, topic, title, locationName) => {
+	docuser
+		.doc(`${userId}`)
+		.collection("news")
+		.doc(`${docid}`)
+		.delete()
+		.then(() => {
+			window.location.replace(`/${topic}/${title}/${locationName}`);
+		});
+};
+
+export const addPhotos = (title, subcollection, docid, data, func) => {
+	doccategory
+		.doc(`${title}`)
+		.collection(`${subcollection}`)
+		.doc(`${docid}`)
+		.set(data, { merge: true })
+		.then((docRef) => {
+			func();
+		});
 };
 
 export const getPhotos = (title, setFunc) => {
@@ -178,7 +300,7 @@ export const getPhotos = (title, setFunc) => {
 		});
 };
 
-export const placeData = (title, setFunc) => {
+export const getPlaceData = (title, setFunc) => {
 	return doccategory
 		.doc(`${title}`)
 		.collection("places")
@@ -189,6 +311,14 @@ export const placeData = (title, setFunc) => {
 			});
 			setFunc(placeDetail);
 		});
+};
+
+export const getPlaceName = (title, locationName) => {
+	return doccategory
+		.doc(`${title}`)
+		.collection("places")
+		.doc(`${locationName}`)
+		.get();
 };
 
 export const getPostDoc = (title, setFunc) => {
@@ -218,21 +348,53 @@ export const createPost = (data) => {
 		});
 };
 
-export const updateUserImage = (docref, file, metadata, userId, area) => {
+export const updateSingleImage = (
+	docref,
+	file,
+	metadata,
+	collectionName,
+	docId,
+	area
+) => {
 	const fileRef = firebase.storage().ref(docref);
 	new Compressor(file, {
 		quality: 0.8,
 		success: (compressedResult) => {
 			fileRef.put(compressedResult, metadata).then(() => {
 				fileRef.getDownloadURL().then((imageUrl) => {
-					docuser.doc(userId).update({
-						[area]: `${imageUrl}`,
-					});
+					firebase
+						.firestore()
+						.collection(`${collectionName}`)
+						.doc(docId)
+						.update({
+							[area]: `${imageUrl}`,
+						});
 				});
 			});
 			Swal.fire("更新成功");
 		},
 	});
+};
+
+export const putImageToStorage = (docRef, file) => {
+	return firebase.storage().ref(docRef).put(file);
+};
+
+export const getImageURL = (docRef, childId, title, subCollection, docId) => {
+	firebase
+		.storage()
+		.ref(docRef)
+		.child(`${childId}`)
+		.getDownloadURL()
+		.then((imgUrls) => {
+			doccategory
+				.doc(`${title}`)
+				.collection(`${subCollection}`)
+				.doc(`${docId}`)
+				.update({
+					images: firebase.firestore.FieldValue.arrayUnion(`${imgUrls}`),
+				});
+		});
 };
 
 export const editUserName = (userId, txt) => {
@@ -297,13 +459,49 @@ export const sendReplyComment = (itemId, data) => {
 };
 
 export const setPlaceReview = (title, data, setFunc) => {
+	const docid = doccategory.doc(`${title}`).collection("reviews").doc().id;
+	const finalData = { ...data, docid: docid };
 	doccategory
 		.doc(`${title}`)
 		.collection("reviews")
-		.doc()
-		.set(data, { merge: true })
+		.doc(docid)
+		.set(finalData, { merge: true })
 		.then(() => {
 			Swal.fire("留言成功");
 			setFunc(false);
 		});
+};
+
+export const editPlaceDescription = (
+	collectionName,
+	docName,
+	subCollection,
+	location,
+	editText
+) => {
+	firebase
+		.firestore()
+		.collection(`${collectionName}`)
+		.doc(`${docName}`)
+		.collection(`${subCollection}`)
+		.doc(`${location}`)
+		.update({
+			description: `${editText}`,
+		});
+};
+
+export const uploadStarImages = (title, subCollection, data) => {
+	const docid = doccategory.doc(`${title}`).collection("photos").doc().id;
+
+	doccategory
+		.doc(`${title}`)
+		.collection(`${subCollection}`)
+		.doc(`${docid}`)
+		.set(data, { merge: true });
+};
+
+export const updateSnsURL = (title, sns, text) => {
+	doccategory.doc(`${title}`).update({
+		[sns]: `${text}`,
+	});
 };

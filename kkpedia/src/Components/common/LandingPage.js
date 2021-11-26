@@ -69,8 +69,6 @@ const StartBtn = styled.div`
 	cursor: pointer;
 	display: inline-block;
 	align-self: center;
-	font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
-		sans-serif;
 	z-index: 99;
 	font-size: 4vmin;
 	font-weight: 600;

@@ -17,8 +17,14 @@ import {
 	SendBtn,
 	Add,
 } from "../../style/newOne";
-
-import { getUserData } from "../../utils/firebaseFunc";
+import { checkImages } from "../../utils/commonFunc";
+import {
+	getUserData,
+	levelUpUser,
+	addPhotos,
+	putImageToStorage,
+	getImageURL,
+} from "../../utils/firebaseFunc";
 
 const InputTitle = styled.p`
 	width: 55vmin;
@@ -52,7 +58,6 @@ function NewPicture({ title, AddPicture }) {
 	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
 	const user = firebase.auth().currentUser;
-	const docRef = db.collection("users").doc(`${user.uid}`);
 	const [imgDescription, setImgDescription] = useState("");
 
 	useEffect(() => {
@@ -68,30 +73,17 @@ function NewPicture({ title, AddPicture }) {
 	}, [currentUser]);
 
 	const OnFileChange = (e) => {
-		// Get Files
-		for (let i = 0; i < e.target.files.length; i++) {
-			const newFile = e.target.files[i];
-			// const fileType = newFile.type.slice(0, 5);
-			const fileType = newFile.type.includes("image");
-			if (!fileType) {
-				Swal.fire("請上傳圖片檔");
-				return;
-			} else {
-				setFiles((prevState) => [...prevState, newFile]);
-			}
-		}
+		checkImages(e, setFiles);
 	};
 	const UpdateLevel = () => {
-		docRef.update({
-			userLevel: userLevel + 7,
-		});
+		levelUpUser(currentUser.uid, userLevel, 7);
 	};
 
 	const handleUpload = () => {
 		setLoading(true);
 		const documentRef = db.collection("categories").doc(`${title}`);
-		const promises = [];
 		const docid = documentRef.collection("photos").doc().id;
+		const promises = [];
 
 		const data = {
 			uid: user.uid,
@@ -99,64 +91,44 @@ function NewPicture({ title, AddPicture }) {
 			postTime: new Date().getTime(),
 			images: [],
 		};
-		documentRef
-			.collection("photos")
-			.doc(`${docid}`)
-			.set(data, { merge: true })
-			.then((docRef) => {
-				UpdateLevel();
-			});
-		files.map((file) => {
-			new Compressor(file, {
-				quality: 0.8,
-				success: (compressedResult) => {
-					const id = uuidv4();
-					const uploadTask = firebase
-						.storage()
-						.ref(`idol_images/${documentRef.id}/${id}`)
-						.put(compressedResult);
-					promises.push(uploadTask);
-					uploadTask.on(
-						"state_changed",
-						function progress(snapshot) {
-							const progress =
-								(snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-							if (snapshot.state === firebase.storage.TaskState.RUNNING) {
-								console.log(`Progress: ${progress}%`);
-							}
-						},
-						function error(error) {
-							console.log(error);
-						},
-						function complete() {
-							firebase
-								.storage()
-								.ref(`idol_images/${documentRef.id}/`)
-								.child(`${id}`)
-								.getDownloadURL()
-								.then((imgUrls) => {
-									documentRef
-										.collection("photos")
-										.doc(`${docid}`)
-										.update({
-											images: firebase.firestore.FieldValue.arrayUnion(
-												`${imgUrls}`
-											),
-										});
-								});
-						}
-					);
-				},
-			});
-		});
+		if (files.length === 0) {
+			Swal.fire("至少上傳一張照片唷~");
+			setLoading(false);
+			return;
+		} else {
+			addPhotos(title, "photos", docid, data, UpdateLevel);
 
-		Promise.all(promises)
-			.then(() => {
-				setLoading(false);
-				AddPicture(false);
-				Swal.fire("貢獻值加 7 點~");
-			})
-			.catch((err) => console.log(err));
+			files.map((file) => {
+				new Compressor(file, {
+					quality: 0.8,
+					success: (compressedResult) => {
+						const id = uuidv4();
+						const uploadTask = putImageToStorage(
+							`idol_images/${documentRef.id}/${id}`,
+							compressedResult
+						);
+						promises.push(uploadTask);
+						uploadTask.then(function complete() {
+							getImageURL(
+								`idol_images/${documentRef.id}/`,
+								id,
+								title,
+								"photos",
+								docid
+							);
+						});
+					},
+				});
+			});
+
+			Promise.all(promises)
+				.then(() => {
+					setLoading(false);
+					AddPicture(false);
+					Swal.fire("貢獻值加 7 點~");
+				})
+				.catch((err) => console.log(err));
+		}
 	};
 
 	return (

@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import {
 	BrowserRouter,
 	Route,
-	Link,
 	Switch,
 	useParams,
 	useRouteMatch,
@@ -22,178 +20,34 @@ import fb from "../../img/facebook.png";
 import ig from "../../img/instagram.png";
 import twitter from "../../img/twitter.png";
 import youtube from "../../img/youtube.png";
-import check from "../../img/checked.png";
-import changeimg from "../../img/photo-camera.png";
 import add from "../../img/add.png";
 import initbanner from "../../img/18034.jpg";
-
-const BannerArea = styled.div`
-	display: flex;
-	flex-direction: column;
-`;
-
-const Banner = styled.div`
-	width: 100%;
-	height: 40vmin;
-	background-image: url(${(props) => props.imgCover});
-	background-repeat: no-repeat;
-	background-color: black;
-	background-position: center 45%;
-	background-size: 100% auto;
-	border-radius: 0px 0px 10px 10px;
-`;
-
-const BannerChange = styled.div`
-	align-self: flex-end;
-	background-image: url(${changeimg});
-	background-repeat: no-repeat;
-	background-size: 60%;
-	background-position: center center;
-	background-color: #3a3b3c;
-	border-radius: 50%;
-	width: 4vmin;
-	height: 4vmin;
-	cursor: pointer;
-	margin-top: -5vmin;
-	margin-right: 1vmin;
-`;
-
-const BannerCheck = styled(BannerChange)`
-	background-image: url(${check});
-	background-color: rgba(0, 0, 0, 0);
-`;
-
-const Container = styled.div`
-	width: 90%;
-	height: 100%;
-	margin: -1vmin auto;
-	padding-bottom: 7vmin;
-	@media screen and (max-width: 1200px) {
-		width: 100%;
-		margin: auto;
-	}
-`;
-
-const ColumnDiv = styled.div`
-	align-self: flex-end;
-	min-width: 25vmin;
-	display: flex;
-	flex-direction: column;
-`;
-
-const Person = styled.div`
-	margin-left: 1vmin;
-	display: flex;
-	align-items: center;
-	@media screen and (max-width: 1200px) {
-		justify-content: center;
-		margin-top: 3vmin;
-	}
-`;
-
-const PersonName = styled.p`
-	font-size: 4.5vmin;
-	font-weight: 600;
-	text-align: center;
-	align-self: center;
-	@media screen and (max-width: 1200px) {
-		font-size: 6vmin;
-	}
-`;
-const SnsLink = styled.a`
-	list-style: none;
-	margin-top: 2.5vmin;
-	cursor: pointer;
-`;
-
-const SnsImg = styled.img`
-	width: 3vmin;
-	@media screen and (max-width: 1200px) {
-		width: 4vmin;
-	}
-`;
-
-const Edit = styled.div`
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-`;
-
-const EditIcon = styled.img`
-	width: 3vmin;
-	margin-top: 2vmin;
-	cursor: pointer;
-	@media screen and (max-width: 1200px) {
-		width: 4vmin;
-	}
-`;
-
-const Photo = styled.div`
-	display: flex;
-	position: relative;
-	height: 15vmin;
-`;
-
-const PersonImage = styled.img`
-	margin-left: 2vmin;
-	max-width: 100%;
-	max-height: 100%;
-	border-radius: 10%;
-`;
-
-const PhotoChange = styled.div`
-	background-image: url(${changeimg});
-	background-repeat: no-repeat;
-	background-size: 60%;
-	background-position: center center;
-	background-color: #3a3b3c;
-	border-radius: 50%;
-	width: 3vmin;
-	height: 3vmin;
-	cursor: pointer;
-	margin-right: 1vmin;
-	position: absolute;
-	bottom: -1vmin;
-	right: -2vmin;
-`;
-
-const PhotoCheck = styled(PhotoChange)`
-	background-image: url(${check});
-`;
-
-const MenuBar = styled.div`
-	margin-left: 1vmin;
-	margin-top: 7vmin;
-	display: flex;
-	@media screen and (max-width: 1200px) {
-		justify-content: space-evenly;
-	}
-`;
-
-const MenuLink = styled(Link)`
-	font-size: 3vmin;
-	font-weight: 600;
-	text-decoration: none;
-	color: #404040;
-	display: flex;
-	margin-right: 4vmin;
-	@media screen and (max-width: 1200px) {
-		margin-right: 0vmin;
-		font-size: 4vmin;
-	}
-`;
-
-const PlaceContainer = styled.div`
-	display: flex;
-	justify-content: center;
-	flex-wrap: wrap;
-	margin-top: 5vmin;
-	width: 100%;
-	@media screen and (max-width: 1200px) {
-		margin-top: 3vmin;
-		margin: 5vmin auto;
-	}
-`;
+import { uploadImage, checkSnsURL } from "../../utils/commonFunc";
+import {
+	updateSingleImage,
+	getCategoriesTitleData,
+} from "../../utils/firebaseFunc";
+import {
+	BannerArea,
+	Banner,
+	BannerChange,
+	BannerCheck,
+	Container,
+	ColumnDiv,
+	Person,
+	PersonName,
+	SnsLink,
+	SnsImg,
+	Edit,
+	EditIcon,
+	Photo,
+	PersonImage,
+	PhotoChange,
+	PhotoCheck,
+	MenuBar,
+	MenuLink,
+	PlaceContainer,
+} from "../../style/idolPage";
 
 function IdolPage({ topic }) {
 	let { path, url } = useRouteMatch();
@@ -228,39 +82,30 @@ function IdolPage({ topic }) {
 				}
 			});
 
-		db.collection("categories")
-			.doc(`${title}`)
-			.get()
-			.then((doc) => {
-				if (doc.exists) {
-					setFollowUsers(doc.data().followedBy);
-				} else {
-					setIsPageNotFound(true);
-				}
-			});
+		getCategoriesTitleData(title).then((doc) => {
+			if (doc.exists) {
+				setFollowUsers(doc.data().followedBy);
+			} else {
+				setIsPageNotFound(true);
+			}
+		});
 
 		return () => unsubscribe();
 	}, []);
 
 	const BannerOk = () => {
 		setBannerChange(false);
-		const fileRef = firebase.storage().ref(`banner_images/${title}`);
 		const metadata = {
 			contentType: bannerFile.type,
 		};
-		new Compressor(bannerFile, {
-			quality: 0.8,
-			success: (compressedResult) => {
-				fileRef.put(compressedResult, metadata).then(() => {
-					fileRef.getDownloadURL().then((imageUrl) => {
-						docRef.doc(`${title}`).update({
-							main_banner: `${imageUrl}`,
-						});
-					});
-				});
-				Swal.fire("更新成功");
-			},
-		});
+		updateSingleImage(
+			`banner_images/${title}`,
+			bannerFile,
+			metadata,
+			"categories",
+			title,
+			"main_banner"
+		);
 	};
 
 	const ChangeOk = () => {
@@ -303,24 +148,7 @@ function IdolPage({ topic }) {
 				input: "text",
 				inputPlaceholder: "",
 			});
-
-			if (text === undefined) {
-				return;
-			}
-
-			if (text.match(snsRegex) === null) {
-				Swal.fire(`請輸入正確的${sns}網址`);
-				return;
-			}
-
-			let url = text;
-			if (!url) {
-				url = "";
-			} else {
-				docRef.doc(`${title}`).update({
-					facebook: `${url}`,
-				});
-			}
+			checkSnsURL(text, title, snsRegex, "facebook");
 		} else if (sns === "instagram") {
 			const snsRegex = /^https:\/\/www\.instagram\.com\//;
 			let { value: text } = await Swal.fire({
@@ -328,21 +156,7 @@ function IdolPage({ topic }) {
 				input: "text",
 				inputPlaceholder: "",
 			});
-			if (text === undefined) {
-				return;
-			}
-			if (text.match(snsRegex) === null) {
-				Swal.fire(`請輸入正確的${sns}網址`);
-				return;
-			}
-			let url = text;
-			if (!url) {
-				url = "";
-			} else {
-				docRef.doc(`${title}`).update({
-					instagram: `${url}`,
-				});
-			}
+			checkSnsURL(text, title, snsRegex, "instagram");
 		} else if (sns === "twitter") {
 			const snsRegex = /^https:\/\/twitter\.com\//;
 			let { value: text } = await Swal.fire({
@@ -350,22 +164,7 @@ function IdolPage({ topic }) {
 				input: "text",
 				inputPlaceholder: "",
 			});
-
-			if (text === undefined) {
-				return;
-			}
-			if (text.match(snsRegex) === null) {
-				Swal.fire(`請輸入正確的${sns}網址`);
-				return;
-			}
-			let url = text;
-			if (!url) {
-				url = "";
-			} else {
-				docRef.doc(`${title}`).update({
-					twitter: `${url}`,
-				});
-			}
+			checkSnsURL(text, title, snsRegex, "twitter");
 		} else if (sns === "youtube") {
 			const snsRegex = /^https:\/\/www\.youtube\.com\//;
 			let { value: text } = await Swal.fire({
@@ -373,22 +172,7 @@ function IdolPage({ topic }) {
 				input: "text",
 				inputPlaceholder: "",
 			});
-
-			if (text === undefined) {
-				return;
-			}
-			if (text.match(snsRegex) === null) {
-				Swal.fire(`請輸入正確的${sns}網址`);
-				return;
-			}
-			let url = text;
-			if (!url) {
-				url = "";
-			} else {
-				docRef.doc(`${title}`).update({
-					youtube: `${url}`,
-				});
-			}
+			checkSnsURL(text, title, snsRegex, "youtube");
 		}
 	};
 
@@ -419,14 +203,7 @@ function IdolPage({ topic }) {
 							style={{ display: "none" }}
 							accept="image/*"
 							onChange={(e) => {
-								const fileType = e.target.files[0].type.slice(0, 5);
-								if (fileType !== "image") {
-									Swal.fire("請上傳圖片檔");
-									return;
-								} else {
-									setBannerFile(e.target.files[0]);
-									setBannerChange(true);
-								}
+								uploadImage(e, setBannerFile, setBannerChange);
 							}}
 						/>
 					</BannerArea>
@@ -511,14 +288,7 @@ function IdolPage({ topic }) {
 											style={{ display: "none" }}
 											accept="image/*"
 											onChange={(e) => {
-												const fileType = e.target.files[0].type.slice(0, 5);
-												if (fileType !== "image") {
-													Swal.fire("請上傳圖片檔");
-													return;
-												} else {
-													setFile(e.target.files[0]);
-													setPhotoChange(true);
-												}
+												uploadImage(e, setFile, setPhotoChange);
 											}}
 										/>
 									</Photo>

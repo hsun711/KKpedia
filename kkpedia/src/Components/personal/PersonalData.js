@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import firebase from "../../utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import FollowIdol from "./FollowIdol";
 import image from "../../img/wanted.png";
 import Loading from "../common/Loading";
+import { getUserFollow, getUserContribution } from "../../utils/firebaseFunc";
 
 const ProfileContainer = styled.div`
 	margin-top: 5vmin;
@@ -93,49 +93,33 @@ const NormalTxt = styled.p`
 `;
 
 function PersonalData({ setActiveItem }) {
-	// const currentUser = useSelector((state) => state.currentUser);
-	const user = firebase.auth().currentUser;
-	const db = firebase.firestore();
+	const currentUser = useSelector((state) => state.currentUser);
 	const [contribution, setContribution] = useState([]);
 	const [follow, setFollow] = useState([]);
 
 	useEffect(() => {
-		// collectionGroup 可以跳過第一個 collection 直接到第二個 collection 去篩選指定的東西
-		// 就不用在第一個 collection 裡的 doc 裡一個一個篩選
-		const unsubscribe = db
-			.collectionGroup("places")
-			.where("uid", "==", `${user.uid}`)
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					item.push(doc.data());
-				});
-				setContribution(item);
-			});
-
-		return () => unsubscribe();
-	}, []);
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = getUserContribution(currentUser.uid, setContribution);
+			return () => {
+				unsubscribe();
+			};
+		}
+	}, [currentUser]);
 
 	useEffect(() => {
-		const unsubscribe = db
-			.collection("users")
-			.doc(`${user.uid}`)
-			.collection("follows")
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					item.push(doc.data());
-				});
-				setFollow(item);
-			});
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = getUserFollow(currentUser.uid, setFollow);
+			return () => {
+				unsubscribe();
+			};
+		}
 		setActiveItem("/profile");
-		return () => unsubscribe();
-	}, []);
+	}, [currentUser]);
 
 	return (
 		<ProfileContainer>
 			<TitleText>Follow</TitleText>
-			{user ? (
+			{currentUser ? (
 				<FollowStar>
 					{follow.map((data) => {
 						return (

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
-import firebase from "../../utils/firebase";
+import { useSelector } from "react-redux";
+import { deleteUserNews } from "../../utils/firebaseFunc";
 
 const Container = styled.div`
 	display: flex;
@@ -13,19 +14,16 @@ const Container = styled.div`
 `;
 
 function Notification({ data }) {
-	const db = firebase.firestore();
-	const user = firebase.auth().currentUser;
+	const currentUser = useSelector((state) => state.currentUser);
+
 	const deleteNews = () => {
-		db.collection("users")
-			.doc(`${user.uid}`)
-			.collection("news")
-			.doc(`${data.docid}`)
-			.delete()
-			.then(() => {
-				window.location.replace(
-					`/${data.topic}/${data.title}/${data.locationName}`
-				);
-			});
+		deleteUserNews(
+			currentUser.uid,
+			data.docid,
+			data.topic,
+			data.title,
+			data.locationName
+		);
 	};
 	return (
 		<Container onClick={deleteNews}>{data.title} 有更新景點囉~~</Container>

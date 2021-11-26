@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import GoogleMapReact from "google-map-react";
-import firebase from "../../utils/firebase";
 import { Key } from "../../key";
 import styled from "styled-components";
 import pin from "../../img/pin-map.png";
+import { snapshotUserCollectPlace } from "../../utils/firebaseFunc";
 
 const MyPositionMarker = ({ text }) => (
 	<PlaceDetail>
@@ -46,27 +47,20 @@ const PlaceText = styled.div`
 
 // Map
 const SimpleMap = (props) => {
-	const handleApiLoaded = (map, maps) => {
-		// use map and maps objects
-		// console.log("載入完成!"); // 印出「載入完成」
-	};
-
 	const [collectPlace, setCollectPlace] = useState([]);
-	const user = firebase.auth().currentUser;
-	const db = firebase.firestore();
-	const userId = user.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
+	const currentUser = useSelector((state) => state.currentUser);
 
 	useEffect(() => {
-		const unsubscribe = docRef.collection("likes").onSnapshot((snapshot) => {
-			const item = [];
-			snapshot.forEach((doc) => {
-				item.push(doc.data());
-			});
-			setCollectPlace(item);
-		});
-		return () => unsubscribe();
-	}, []);
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = snapshotUserCollectPlace(
+				currentUser.uid,
+				setCollectPlace
+			);
+			return () => {
+				unsubscribe();
+			};
+		}
+	}, [currentUser]);
 	return (
 		// Important! Always set the container height explicitly
 		<Container>
@@ -75,7 +69,6 @@ const SimpleMap = (props) => {
 				defaultCenter={props.center}
 				defaultZoom={props.zoom}
 				yesIWantToUseGoogleMapApiInternals // 設定為 true
-				onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)} // 載入完成後執行
 			>
 				{collectPlace.map((item) => {
 					return (

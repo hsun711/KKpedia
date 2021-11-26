@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import GoogleMapReact from "google-map-react";
 import { Key } from "../../key";
 import styled from "styled-components";
@@ -21,12 +21,6 @@ const Pin = styled.div`
 
 // Map
 const SimpleMap = (props) => {
-	const handleApiLoaded = (map, maps) => {
-		// use map and maps objects
-		// console.log("載入完成!");
-	};
-	const [places, setPlaces] = useState([props]);
-
 	return (
 		// Important! Always set the container height explicitly
 		<Container>
@@ -35,17 +29,14 @@ const SimpleMap = (props) => {
 				defaultCenter={props.latitude}
 				defaultZoom={props.zoom}
 				yesIWantToUseGoogleMapApiInternals // 設定為 true
-				onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)} // 載入完成後執行
 			>
-				{places.map((item) => (
-					<AnyReactComponent
-						key={item.placeId}
-						lat={item.latitude.lat}
-						lng={item.latitude.lng}
-						placeId={item.placeId}
-						text=""
-					/>
-				))}
+				<AnyReactComponent
+					key={props.placeId}
+					lat={props.latitude.lat}
+					lng={props.latitude.lng}
+					placeId={props.placeId}
+					text=""
+				/>
 			</GoogleMapReact>
 		</Container>
 	);

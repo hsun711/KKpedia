@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import styled from "styled-components";
-import firebase from "../../utils/firebase";
 import img from "../../img/wanted.png";
 import like from "../../img/like.png";
 import {
@@ -104,7 +103,6 @@ const LikeIcon = styled.img`
 `;
 
 function CollectPlace({ data }) {
-	const db = firebase.firestore();
 	const currentUser = useSelector((state) => state.currentUser);
 
 	const ToggleCollect = () => {

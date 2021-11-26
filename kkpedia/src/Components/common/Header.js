@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
 import userIcon from "../../img/user.png";
 import SideMenu from "../common/SideMenu";
 import Notification from "../common/Notification";
 import { useHistory } from "react-router-dom";
-import { snapshotUserData } from "../../utils/firebaseFunc";
-
+import { snapshotUserData, snapshotUserNews } from "../../utils/firebaseFunc";
 import {
 	HeaderContainer,
 	Notify,
@@ -34,35 +33,45 @@ function Header() {
 	const [newAlert, setNewAlert] = useState(0);
 	const [newsData, setNewsData] = useState([]);
 	const [renderNews, setRenderNews] = useState(false);
-	const db = firebase.firestore();
-	const user = firebase.auth().currentUser;
+	const currentUser = useSelector((state) => state.currentUser);
+
 	const showSidebar = () => {
 		setSideBar(!sideBar);
 	};
-	// const currentUser = useSelector((state) => state.currentUser);
 
 	useEffect(() => {
-		snapshotUserData(user.uid, setUserData);
-	}, []);
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = snapshotUserData(currentUser.uid, setUserData);
+			return () => {
+				unsubscribe();
+			};
+		}
+	}, [currentUser]);
 
 	useEffect(() => {
-		const unsubscribe = db
-			.collection("users")
-			.doc(`${user.uid}`)
-			.collection("news")
-			.onSnapshot((querySnapshot) => {
-				setNewAlert(querySnapshot.docs.length);
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					item.push(doc.data());
-				});
-				setNewsData(item);
-			});
-		return () => unsubscribe();
-	}, []);
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = snapshotUserNews(
+				currentUser.uid,
+				setNewAlert,
+				setNewsData
+			);
+
+			return () => unsubscribe();
+		}
+	}, [currentUser]);
 
 	const showNewAlert = () => {
 		setRenderNews(!renderNews);
+	};
+
+	const checkInput = (e) => {
+		if (e.target.value === "") {
+			Swal.fire("請輸入搜尋對象");
+			return;
+		} else {
+			history.push(`/search/${inputSearch}`);
+			e.target.value = "";
+		}
 	};
 
 	return (
@@ -84,25 +93,13 @@ function Header() {
 								}}
 								onKeyPress={(e) => {
 									if (e.key === "Enter") {
-										if (e.target.value === "") {
-											Swal.fire("請輸入搜尋對象");
-											return;
-										} else {
-											history.push(`/search/${inputSearch}`);
-											e.target.value = "";
-										}
+										checkInput(e);
 									}
 								}}
 							/>
 							<InputBtn
 								onClick={(e) => {
-									if (e.target.value === "") {
-										Swal.fire("請輸入搜尋對象");
-										return;
-									} else {
-										history.push(`/search/${inputSearch}`);
-										e.target.value = "";
-									}
+									checkInput(e);
 								}}
 							/>
 						</Search>
@@ -113,9 +110,7 @@ function Header() {
 							<MemberImgDiv>
 								<Member
 									src={
-										userData?.userImage !== null
-											? userData?.userImage
-											: userIcon
+										userData?.userImage !== null ? userData.userImage : userIcon
 									}
 								/>
 							</MemberImgDiv>

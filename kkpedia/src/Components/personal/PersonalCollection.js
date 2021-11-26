@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
-import firebase from "../../utils/firebase";
 import MultiMap from "../map/MultiMap";
 import CollectPlace from "./CollectPlace";
+import { snapshotUserCollectPlace } from "../../utils/firebaseFunc";
 
 const ProfileContainer = styled.div`
 	width: 100%;
@@ -24,25 +25,21 @@ const CollectionArea = styled.div`
 `;
 
 function PersonalCollection({ setActiveItem }) {
-	const user = firebase.auth().currentUser;
-	const db = firebase.firestore();
-	const userId = user.uid;
-	const docRef = db.collection("users").doc(`${userId}`);
+	const currentUser = useSelector((state) => state.currentUser);
 	const [collectPlace, setCollectPlace] = useState([]);
 
 	useEffect(() => {
-		const unsubscribe = docRef
-			.collection("likes")
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					item.push(doc.data());
-				});
-				setCollectPlace(item);
-			});
+		if (currentUser && currentUser.uid) {
+			const unsubscribe = snapshotUserCollectPlace(
+				currentUser.uid,
+				setCollectPlace
+			);
+			return () => {
+				unsubscribe();
+			};
+		}
 		setActiveItem("/profile/myCollection");
-		return () => unsubscribe();
-	}, []);
+	}, [currentUser]);
 
 	return (
 		<ProfileContainer>

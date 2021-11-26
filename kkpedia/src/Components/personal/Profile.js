@@ -9,7 +9,7 @@ import levelImg from "../../img/level-up.png";
 import initbanner from "../../img/18034.jpg";
 import {
 	getUserData,
-	updateUserImage,
+	updateSingleImage,
 	editUserName,
 } from "../../utils/firebaseFunc";
 import {
@@ -69,10 +69,11 @@ function Profile() {
 		const metadata = {
 			contentType: bannerFile.type,
 		};
-		updateUserImage(
+		updateSingleImage(
 			`users_images/banner${currentUser.uid}`,
 			bannerFile,
 			metadata,
+			"users",
 			currentUser.uid,
 			"user_banner"
 		);
@@ -83,10 +84,11 @@ function Profile() {
 		const metadata = {
 			contentType: file.type,
 		};
-		updateUserImage(
+		updateSingleImage(
 			`users_images/${currentUser.uid}`,
 			file,
 			metadata,
+			"users",
 			currentUser.uid,
 			"userImage"
 		);
