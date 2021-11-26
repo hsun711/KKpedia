@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
 import firebase from "./utils/firebase";
-import Header from "./Components/Header";
-import Idol from "./Components/Idol";
-import Drama from "./Components/Drama";
-import TvShow from "./Components/TvShow";
-import LandingPage from "./Components/LandingPage";
-import Loading from "./Components/Loading";
-import IdolPage from "./Components/IdolPage";
-import Profile from "./Components/Profile";
-import SearchResult from "./Components/SearchResult";
-import Home from "./Components/Home";
-import PageNotFound from "./Components/PageNotFound";
+import Header from "./Components/common/Header";
+import Idol from "./Components/topic/Idol";
+import Drama from "./Components/topic/Drama";
+import TvShow from "./Components/topic/TvShow";
+import LandingPage from "./Components/common/LandingPage";
+import Loading from "./Components/common/Loading";
+import IdolPage from "./Components/topic/IdolPage";
+import Profile from "./Components/personal/Profile";
+import SearchResult from "./Components/common/SearchResult";
+import Home from "./Components/common/Home";
+import PageNotFound from "./Components/common/PageNotFound";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import { getCurrentUser, getCategories } from "./state/actions";
 
@@ -21,7 +21,6 @@ const MainContainer = styled.div`
 	margin: 0 auto;
 	display: flex;
 	flex-direction: column;
-	/* border: 1px solid black; */
 `;
 
 const Container = styled.div`
@@ -31,8 +30,8 @@ const Container = styled.div`
 function App() {
 	const [user, setUser] = useState();
 	const db = firebase.firestore();
-	// const [allCategory, setAllCategory] = useState([]);
 	const dispatch = useDispatch();
+	// const currentUser = useSelector((state) => state.currentUser);
 
 	useEffect(() => {
 		firebase.auth().onAuthStateChanged((currentUser) => {
@@ -40,22 +39,11 @@ function App() {
 			dispatch(getCurrentUser(currentUser));
 		});
 
-		// db.collection("categories")
-		// 	.get()
-		// 	.then((querySnapshot) => {
-		// 		const item = [];
-		// 		querySnapshot.forEach((doc) => {
-		// 			item.push(doc.data());
-		// 		});
-		// 		// setAllCategory(item);
-		// 		dispatch(getCategories(item));
-		// 	});
 		db.collection("categories").onSnapshot((querySnapshot) => {
 			const item = [];
 			querySnapshot.forEach((doc) => {
 				item.push(doc.data());
 			});
-			// setAllCategory(item);
 			dispatch(getCategories(item));
 		});
 	}, []);
@@ -98,7 +86,6 @@ function App() {
 											</Container>
 										</Route>
 										<Route path="/search/:search">
-											{/* <SearchResult allCategory={allCategory} /> */}
 											<SearchResult />
 										</Route>
 										<Route path="/tvshow/:title">
