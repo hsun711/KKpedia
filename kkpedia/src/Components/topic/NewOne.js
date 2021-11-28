@@ -44,6 +44,15 @@ function NewOne({ topic, setPopAddOne }) {
 
 	const SendNewOn = () => {
 		setLoading(true);
+		const data = {
+			topic: topic,
+			title: title,
+			facebook: fb,
+			instagram: ig,
+			twitter: twitter,
+			youtube: youtube,
+			main_banner: "",
+		};
 		if (title === "") {
 			Swal.fire("藝人 / 戲劇 / 綜藝名稱沒有填喔!");
 			setLoading(false);
@@ -90,19 +99,7 @@ function NewOne({ topic, setPopAddOne }) {
 			} else {
 				if (file === null) {
 					documentRef
-						.set(
-							{
-								topic: topic,
-								title: title,
-								facebook: fb,
-								instagram: ig,
-								twitter: twitter,
-								youtube: youtube,
-								main_image: "",
-								main_banner: "",
-							},
-							{ merge: true }
-						)
+						.set({ ...data, main_image: "" }, { merge: true })
 						.then((docRef) => {
 							setLoading(false);
 							setPopAddOne(false);
@@ -117,25 +114,11 @@ function NewOne({ topic, setPopAddOne }) {
 					new Compressor(file, {
 						quality: 0.8,
 						success: (compressedResult) => {
-							// compressedResult has the compressed file.
-							// Use the compressed file to upload the images to your server.
 							fileRef.put(compressedResult, metadata).then(() => {
 								fileRef.getDownloadURL().then((imageUrl) => {
 									const mainimage = compressedResult ? imageUrl : "";
 									documentRef
-										.set(
-											{
-												topic: topic,
-												title: title,
-												facebook: fb,
-												instagram: ig,
-												twitter: twitter,
-												youtube: youtube,
-												main_image: mainimage,
-												main_banner: "",
-											},
-											{ merge: true }
-										)
+										.set({ ...data, main_image: mainimage }, { merge: true })
 										.then((docRef) => {
 											setLoading(false);
 											setPopAddOne(false);

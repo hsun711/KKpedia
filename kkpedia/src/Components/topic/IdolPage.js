@@ -12,20 +12,16 @@ import Place from "../location/Place";
 import Picture from "../picture/Picture";
 import Calender from "../calender/Calender";
 import Post from "./Post";
+import SnsIcon from "./SnsIcon";
 import EachLocation from "../location/EachLocation";
 import PageNotFound from "../common/PageNotFound";
 import firebase from "../../utils/firebase";
 import idolimage from "../../img/wanted.png";
-import fb from "../../img/facebook.png";
-import ig from "../../img/instagram.png";
-import twitter from "../../img/twitter.png";
-import youtube from "../../img/youtube.png";
-import add from "../../img/add.png";
 import initbanner from "../../img/18034.jpg";
-import { uploadImage, checkSnsURL } from "../../utils/commonFunc";
+import { uploadImage } from "../../utils/commonFunc";
 import {
 	updateSingleImage,
-	getCategoriesTitleData,
+	snapshotTitlePlace,
 } from "../../utils/firebaseFunc";
 import {
 	BannerArea,
@@ -36,10 +32,6 @@ import {
 	ColumnDiv,
 	Person,
 	PersonName,
-	SnsLink,
-	SnsImg,
-	Edit,
-	EditIcon,
 	Photo,
 	PersonImage,
 	PhotoChange,
@@ -53,44 +45,31 @@ function IdolPage({ topic }) {
 	let { path, url } = useRouteMatch();
 	let { title } = useParams();
 	const [isPageNotFound, setIsPageNotFound] = useState(false);
-	const [sns, setSns] = useState([]);
+	const [titleData, setTitleData] = useState([]);
 	const [activeItem, setActiveItem] = useState("idolplace");
-	const [mainImage, setMainImage] = useState("");
 	const [photoChange, setPhotoChange] = useState(false);
-	const [bannerImg, setBannerImg] = useState("");
 	const [bannerChange, setBannerChange] = useState(false);
-	const [followUsers, setFollowUsers] = useState([]);
 	const [file, setFile] = useState(null);
 	const [bannerFile, setBannerFile] = useState(null);
 	const db = firebase.firestore();
 	const docRef = db.collection("categories");
-	const previewURL = file ? URL.createObjectURL(file) : mainImage;
-	const bennerURL = bannerFile ? URL.createObjectURL(bannerFile) : bannerImg;
+	const previewURL = file
+		? URL.createObjectURL(file)
+		: titleData[0]?.main_image;
+	const bennerURL = bannerFile
+		? URL.createObjectURL(bannerFile)
+		: titleData[0]?.main_banner;
 
 	useEffect(() => {
-		const unsubscribe = docRef
-			.where("title", "==", `${title}`)
-			.onSnapshot((querySnapshot) => {
-				const item = [];
-				querySnapshot.forEach((doc) => {
-					item.push(doc.data());
-				});
-				if (item.length > 0) {
-					setSns(item);
-					setMainImage(item[0].main_image);
-					setBannerImg(item[0].main_banner);
-				}
-			});
+		const unsubscribe = snapshotTitlePlace(
+			title,
+			setTitleData,
+			setIsPageNotFound
+		);
 
-		getCategoriesTitleData(title).then((doc) => {
-			if (doc.exists) {
-				setFollowUsers(doc.data().followedBy);
-			} else {
-				setIsPageNotFound(true);
-			}
-		});
-
-		return () => unsubscribe();
+		return () => {
+			unsubscribe();
+		};
 	}, []);
 
 	const BannerOk = () => {
@@ -122,8 +101,8 @@ function IdolPage({ topic }) {
 						docRef.doc(`${title}`).update({
 							main_image: `${imageUrl}`,
 						});
-						if (followUsers?.length !== 0) {
-							followUsers.forEach((user) => {
+						if (titleData[0].followedBy?.length !== 0) {
+							titleData[0].followedBy.forEach((user) => {
 								db.collection("users")
 									.doc(`${user}`)
 									.collection("follows")
@@ -138,42 +117,6 @@ function IdolPage({ topic }) {
 				Swal.fire("更新成功");
 			},
 		});
-	};
-
-	const AddSns = async (sns) => {
-		if (sns === "facebook") {
-			const snsRegex = /^https:\/\/www\.facebook\.com/;
-			let { value: text } = await Swal.fire({
-				title: `請輸入${sns}網址`,
-				input: "text",
-				inputPlaceholder: "",
-			});
-			checkSnsURL(text, title, snsRegex, "facebook");
-		} else if (sns === "instagram") {
-			const snsRegex = /^https:\/\/www\.instagram\.com\//;
-			let { value: text } = await Swal.fire({
-				title: `請輸入${sns}網址`,
-				input: "text",
-				inputPlaceholder: "",
-			});
-			checkSnsURL(text, title, snsRegex, "instagram");
-		} else if (sns === "twitter") {
-			const snsRegex = /^https:\/\/twitter\.com\//;
-			let { value: text } = await Swal.fire({
-				title: `請輸入${sns}網址`,
-				input: "text",
-				inputPlaceholder: "",
-			});
-			checkSnsURL(text, title, snsRegex, "twitter");
-		} else if (sns === "youtube") {
-			const snsRegex = /^https:\/\/www\.youtube\.com\//;
-			let { value: text } = await Swal.fire({
-				title: `請輸入${sns}網址`,
-				input: "text",
-				inputPlaceholder: "",
-			});
-			checkSnsURL(text, title, snsRegex, "youtube");
-		}
 	};
 
 	const active = {
@@ -214,58 +157,9 @@ function IdolPage({ topic }) {
 									<ColumnDiv>
 										<PersonName>{title}</PersonName>
 										<>
-											{sns.map((item) => {
+											{titleData.map((item) => {
 												return (
-													<Edit key={item.title}>
-														{item.facebook === "" ? (
-															<EditIcon
-																src={add}
-																onClick={() => {
-																	AddSns("facebook");
-																}}
-															/>
-														) : (
-															<SnsLink href={item.facebook} target="_blank">
-																<SnsImg src={fb} />
-															</SnsLink>
-														)}
-														{item.instagram === "" ? (
-															<EditIcon
-																src={add}
-																onClick={() => {
-																	AddSns("instagram");
-																}}
-															/>
-														) : (
-															<SnsLink href={item.instagram} target="_blank">
-																<SnsImg src={ig} />
-															</SnsLink>
-														)}
-														{item.twitter === "" ? (
-															<EditIcon
-																src={add}
-																onClick={() => {
-																	AddSns("twitter");
-																}}
-															/>
-														) : (
-															<SnsLink href={item.twitter} target="_blank">
-																<SnsImg src={twitter} />
-															</SnsLink>
-														)}
-														{item.youtube === "" ? (
-															<EditIcon
-																src={add}
-																onClick={() => {
-																	AddSns("youtube");
-																}}
-															/>
-														) : (
-															<SnsLink href={item.youtube} target="_blank">
-																<SnsImg src={youtube} onClick={AddSns} />
-															</SnsLink>
-														)}
-													</Edit>
+													<SnsIcon key={item.title} item={item} title={title} />
 												);
 											})}
 										</>

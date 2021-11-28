@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import firebase from "../../utils/firebase";
 import Swal from "sweetalert2";
 import { useHistory } from "react-router-dom";
 import Loading from "../common/Loading";
@@ -8,6 +7,7 @@ import socialMediaAuth from "../../utils/socialMediaAuth";
 import fb from "../../img/facebook.png";
 import google from "../../img/google.png";
 import { facebookProvider, googleProvider } from "../../utils/authMethod";
+import { creatUser, setUserData, signinUser } from "../../utils/firebaseFunc";
 
 const Container = styled.div`
 	width: 50vmin;
@@ -143,10 +143,9 @@ function LoginPage() {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
 	const [loading, setLoading] = useState(false);
-	const db = firebase.firestore();
 
 	const HandleLogin = async (provider) => {
-		const res = await socialMediaAuth(provider);
+		await socialMediaAuth(provider);
 		history.push("/");
 	};
 
@@ -163,9 +162,8 @@ function LoginPage() {
 			setLoading(false);
 			return;
 		}
-		firebase
-			.auth()
-			.createUserWithEmailAndPassword(email, password)
+
+		creatUser(email, password)
 			.then((response) => {
 				history.push("/");
 				setLoading(false);
@@ -173,22 +171,15 @@ function LoginPage() {
 				setPassword(password);
 				setEmail(email);
 
-				db.collection("users")
-					.doc(`${response.user.uid}`)
-					.set(
-						{
-							email: response.user.email,
-							userImage: response.user.photoURL,
-							userName: userName,
-							userId: response.user.uid,
-							userLevel: 0,
-							user_banner: "",
-						},
-						{ merge: true }
-					)
-					.then((docRef) => {
-						Swal.fire("註冊成功");
-					});
+				const data = {
+					email: response.user.email,
+					userImage: response.user.photoURL,
+					userName: userName,
+					userId: response.user.uid,
+					userLevel: 0,
+					user_banner: "",
+				};
+				setUserData(response.user.uid, data);
 			})
 			.catch((error) => {
 				switch (error.code) {
@@ -209,9 +200,8 @@ function LoginPage() {
 	const Signin = (e) => {
 		setLoading(true);
 		e.preventDefault();
-		firebase
-			.auth()
-			.signInWithEmailAndPassword(email, password)
+
+		signinUser(email, password)
 			.then((resp) => {
 				history.push("/");
 				setLoading(false);

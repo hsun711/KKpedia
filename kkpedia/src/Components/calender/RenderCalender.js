@@ -1,20 +1,15 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import Swal from "sweetalert2";
-import interactionPlugin, { Draggle } from "@fullcalendar/interaction";
+import interactionPlugin from "@fullcalendar/interaction";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import firebase from "../../utils/firebase";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-
-// const items = initialCalender.map((item) => {
-// 	return {
-// 		title: item.event,
-// 		date: new Date(item.date + "T00:00:00"),
-// 	};
-// });
-
-// const INITIAL_EVENTS = items;
+import {
+	removeCalenderEvent,
+	setCalenderEvent,
+	getCalenderEvent,
+} from "../../utils/firebaseFunc";
 
 const CalenderArea = styled.div`
 	font-size: 3vmin;
@@ -73,36 +68,14 @@ const CalenderArea = styled.div`
 
 export default function RenderCalender({ title }) {
 	const [events, setEvents] = useState([]);
-	const [initial, setInitial] = useState([]);
-	const db = firebase.firestore();
-	const docRef = db.collection("categories");
 
 	useEffect(() => {
-		const unsubscribe = docRef
-			.doc(`${title}`)
-			.collection("calenders")
-			.onSnapshot((snapshot) => {
-				const enevtDetail = [];
-				snapshot.forEach((doc) => {
-					enevtDetail.push(doc.data());
-				});
-				setEvents(enevtDetail);
-			});
-		return () => unsubscribe();
-	}, []);
+		const unsubscribe = getCalenderEvent(title, setEvents);
 
-	// 設定可拖曳元素，並且設定將元素拖曳到行事曆上之後要顯示的文字
-	// useEffect(() => {
-	// 	const containerEl = document.querySelector("#events");
-	// 	new Draggable(containerEl, {
-	// 		itemSelector: ".event",
-	// 		eventData: (eventEl) => {
-	// 			return {
-	// 				title: eventEl.innerText,
-	// 			};
-	// 		},
-	// 	});
-	// }, []);
+		return () => {
+			unsubscribe();
+		};
+	}, []);
 
 	const HandleDateClick = async (date) => {
 		let { value: text } = await Swal.fire({
@@ -118,23 +91,16 @@ export default function RenderCalender({ title }) {
 		if (text === "") {
 			return;
 		}
-		let event = text;
-		let selectedDate = date.dateStr;
-		// let selectedDate = new Date(date.dateStr + "T00:00:00");
 
+		let selectedDate = date.dateStr;
 		const data = {
-			title: event,
+			title: text,
 			date: selectedDate,
 		};
 
-		docRef
-			.doc(`${title}`)
-			.collection("calenders")
-			.doc()
-			.set(data, { merge: true })
-			.then((docRef) => {
-				setEvents([...events, data]);
-			});
+		setCalenderEvent(title, data).then((docRef) => {
+			setEvents([...events, data]);
+		});
 	};
 
 	const DeletedEvent = (eventInfo) => {
@@ -148,19 +114,16 @@ export default function RenderCalender({ title }) {
 			confirmButtonText: "Yes!",
 		}).then((result) => {
 			if (result.isConfirmed) {
-				docRef
-					.doc(`${title}`)
-					.collection("calenders")
-					.where("title", "==", `${eventInfo.event.title}`)
-					.where("date", "==", `${eventInfo.event.startStr}`)
-					.get()
-					.then((querySnapshot) => {
-						querySnapshot.forEach((doc) => {
-							doc.ref.delete();
-							Swal.fire("刪除成功!", "被刪除的行程回不來囉", "success");
-							// console.log(doc.ref);
-						});
+				removeCalenderEvent(
+					title,
+					eventInfo.event.title,
+					eventInfo.event.startStr
+				).then((querySnapshot) => {
+					querySnapshot.forEach((doc) => {
+						doc.ref.delete();
+						Swal.fire("刪除成功!", "被刪除的行程回不來囉", "success");
 					});
+				});
 			}
 		});
 	};
@@ -169,10 +132,7 @@ export default function RenderCalender({ title }) {
 		<CalenderArea>
 			<FullCalendar
 				plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]} //載入外掛
-				// initialEvents={events}
 				selectable
-				// editable // 允許內部拖曳
-				// droppable // 允許由外部拖曳
 				dateClick={HandleDateClick}
 				eventClick={DeletedEvent}
 				headerToolbar={{
