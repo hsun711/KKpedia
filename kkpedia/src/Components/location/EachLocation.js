@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import firebase from "../../utils/firebase";
+import { useSelector } from "react-redux";
 import { v4 as uuidv4 } from "uuid";
 import Map from "../map/Map";
 import LookMore from "./LookMore";
@@ -19,10 +19,10 @@ import {
 	removePlaceCollectBy,
 	removeUserLikes,
 	addToUserLikes,
-	getUserData,
 	editPlaceDescription,
 	getPlaceCollectBy,
 	getAllReviews,
+	snapshopEachPlace,
 } from "../../utils/firebaseFunc";
 import {
 	MainContainer,
@@ -51,6 +51,7 @@ import {
 } from "../../style/eachLocation";
 
 function EachLocation({ title, setActiveItem }) {
+	const currentUser = useSelector((state) => state.currentUser);
 	const [favorite, setFavorite] = useState(false);
 	const [placeData, setPlaceData] = useState();
 	const [popUpWriteComment, setPopUpWriteComment] = useState(false);
@@ -60,50 +61,40 @@ function EachLocation({ title, setActiveItem }) {
 	const [posterName, setPosterName] = useState("");
 	const [collectUser, setCollectUser] = useState([]);
 	let { location } = useParams();
-	const db = firebase.firestore();
-	const docRef = db.collection("categories");
-	const user = firebase.auth().currentUser;
 	const [currentImage, setCurrentImage] = useState(0);
 	const [isViewerOpen, setIsViewerOpen] = useState(false);
 
 	useEffect(() => {
 		setActiveItem("idolplace");
-		const unsubscribe = docRef
-			.doc(`${title}`)
-			.collection("places")
-			.where("locationName", "==", `${location}`)
-			.onSnapshot((querySnapshot) => {
-				if (querySnapshot.docs.length > 0) {
-					querySnapshot.forEach((doc) => {
-						setPlaceData([doc.data()]);
-						setEditText(doc.data().description);
+		const unsubscribe = snapshopEachPlace(
+			title,
+			location,
+			setPlaceData,
+			setEditText,
+			setPosterName
+		);
 
-						getUserData(doc.data().uid).then((doc) => {
-							setPosterName(doc.data().userName);
-						});
+		getPlaceCollectBy(title, location, currentUser.uid).then(
+			(querySnapshot) => {
+				querySnapshot.forEach((doc) => {
+					const collectedBy = doc.data().collectedBy;
+					setCollectUser(collectedBy);
+					const favorite = collectedBy.some((item) => {
+						const result = item === currentUser.uid;
+						return result;
 					});
-				} else {
-					setPlaceData([]);
-				}
-			});
-
-		getPlaceCollectBy(title, location, user.uid).then((querySnapshot) => {
-			querySnapshot.forEach((doc) => {
-				const collectedBy = doc.data().collectedBy;
-				setCollectUser(collectedBy);
-				const favorite = collectedBy.some((item) => {
-					const result = item === user.uid;
-					return result;
+					if (favorite) {
+						setFavorite(true);
+					} else {
+						setFavorite(false);
+					}
 				});
-				if (favorite) {
-					setFavorite(true);
-				} else {
-					setFavorite(false);
-				}
-			});
-		});
+			}
+		);
 
-		return () => unsubscribe();
+		return () => {
+			unsubscribe();
+		};
 	}, []);
 
 	useEffect(() => {
@@ -120,11 +111,11 @@ function EachLocation({ title, setActiveItem }) {
 	const AddtoFavorite = () => {
 		setFavorite(!favorite);
 		if (favorite === true) {
-			removePlaceCollectBy(title, location, user.uid);
-			removeUserLikes(user.uid, location);
+			removePlaceCollectBy(title, location, currentUser.uid);
+			removeUserLikes(currentUser.uid, location);
 		} else {
-			addToUserLikes(user.uid, placeData);
-			addToPlaceCollectBy(title, location, user.uid);
+			addToUserLikes(currentUser.uid, placeData);
+			addToPlaceCollectBy(title, location, currentUser.uid);
 		}
 	};
 
@@ -188,7 +179,7 @@ function EachLocation({ title, setActiveItem }) {
 														onClick={Editable}
 													/>
 													{readOnly ? (
-														<DescDiv>{editText}</DescDiv>
+														<DescDiv>{placeData[0].description}</DescDiv>
 													) : (
 														<Description
 															edit={readOnly}
