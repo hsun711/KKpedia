@@ -43,7 +43,13 @@ You can also create your own native account or use default test account below
 
 - Search for specific idol and add new place.
 - Collect the attractions that idols have visited.
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/77537057/144053756-606f866a-92c3-4d03-8323-5863f1600d3c.gif)
+
 - Click image into fullscreen mode and swipe through.
+
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/77537057/144054543-c8ddbad5-1d3e-443a-8f71-561ea54763c4.gif)
+
 
 # Future Features
 - Add photomontage feature.
