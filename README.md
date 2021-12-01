@@ -24,17 +24,22 @@ You can also create your own native account or use default test account below
   - Firebase Authentication
   - Firebase Storage
   - Firestore
-  - Algolia
 - Packages
   - Compressor.js
   - FullCalendar
   - react-places-autocomplete
   - google-map-react
   - react-simple-image-viewer
+  - reactjs-popup
+  - algoliasearch
 - Other
   - Lint Tool: ESLint
   - Version Control : Git / GitHub
   - Unit Test: Jest
+
+# Flow Chart
+
+![flowChart ](https://user-images.githubusercontent.com/77537057/144165695-9c2567b6-43d0-4729-9c8e-f28bbe00c499.png)
 
 # Demo
 - Login Page
@@ -42,6 +47,9 @@ You can also create your own native account or use default test account below
 ![loginpage](https://user-images.githubusercontent.com/77537057/144011201-e71b8967-113d-4cf5-8642-5fc2dce83379.png)
 
 - Search for specific idol and add new place.
+
+![ezgif com-gif-maker](https://user-images.githubusercontent.com/77537057/144169058-7661936d-7557-4c23-a1a1-7635ed7d24a5.gif)
+
 - Collect the attractions that idols have visited.
 
 ![ezgif com-gif-maker](https://user-images.githubusercontent.com/77537057/144053756-606f866a-92c3-4d03-8323-5863f1600d3c.gif)
