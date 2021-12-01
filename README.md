@@ -52,7 +52,7 @@ You can also create your own native account or use default test account below
 
 - Collect the attractions that idols have visited.
 
-![ezgif com-gif-maker](https://user-images.githubusercontent.com/77537057/144053756-606f866a-92c3-4d03-8323-5863f1600d3c.gif)
+![ezgif com-gif-maker (1)](https://user-images.githubusercontent.com/77537057/144177988-d3622e88-36bb-4c60-aab8-790d94884b3c.gif)
 
 - Click image into fullscreen mode and swipe through.
 
