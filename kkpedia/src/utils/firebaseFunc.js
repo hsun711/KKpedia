@@ -1,10 +1,14 @@
 import firebase from "./firebase";
 import Swal from "sweetalert2";
 import Compressor from "compressorjs";
+import { v4 as uuidv4 } from "uuid";
 const doccategory = firebase.firestore().collection("categories");
 const docuser = firebase.firestore().collection("users");
 const docpost = firebase.firestore().collection("posts");
 
+///////// User Area ////////////
+///////// User Area ////////////
+///////// User Area ////////////
 ///////// User Area ////////////
 export const creatUser = (email, password) => {
 	return firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -206,6 +210,9 @@ export const deleteUserNews = (userId, docid, topic, title, locationName) => {
 };
 
 ///////// Place Area ////////////
+///////// Place Area ////////////
+///////// Place Area ////////////
+///////// Place Area ////////////
 export const getPlaceData = (title, setFunc) => {
 	return doccategory
 		.doc(`${title}`)
@@ -349,6 +356,9 @@ export const setPlaceReview = (title, data, setFunc) => {
 };
 
 ///////// 3 Topic & Each Title Area ////////////
+///////// 3 Topic & Each Title Area ////////////
+///////// 3 Topic & Each Title Area ////////////
+///////// 3 Topic & Each Title Area ////////////
 export const getTopicData = (topic, setFunc) => {
 	return doccategory.where("topic", "==", topic).onSnapshot((querySnapshot) => {
 		const item = [];
@@ -482,17 +492,10 @@ export const sendReplyComment = (itemId, data) => {
 		});
 };
 
-export const addPhotos = (title, subcollection, docid, data, func) => {
-	doccategory
-		.doc(`${title}`)
-		.collection(`${subcollection}`)
-		.doc(`${docid}`)
-		.set(data, { merge: true })
-		.then((docRef) => {
-			func();
-		});
-};
-
+///////// Photo Area ////////////
+///////// Photo Area ////////////
+///////// Photo Area ////////////
+///////// Photo Area ////////////
 export const getPhotos = (title, setFunc) => {
 	return doccategory
 		.doc(`${title}`)
@@ -504,6 +507,17 @@ export const getPhotos = (title, setFunc) => {
 				item.push(doc.data());
 			});
 			setFunc(item);
+		});
+};
+
+export const addPhotos = (title, subcollection, docid, data, func) => {
+	doccategory
+		.doc(`${title}`)
+		.collection(`${subcollection}`)
+		.doc(`${docid}`)
+		.set(data, { merge: true })
+		.then((docRef) => {
+			func();
 		});
 };
 
@@ -572,6 +586,10 @@ export const updateSnsURL = (title, sns, text) => {
 	});
 };
 
+///////// Calender Area ////////////
+///////// Calender Area ////////////
+///////// Calender Area ////////////
+///////// Calender Area ////////////
 export const getCalenderEvent = (title, setFunc) => {
 	return doccategory
 		.doc(`${title}`)
