@@ -32,15 +32,16 @@ export const checkImages = (e, setFunc) => {
 
 export const checkSnsURL = (text, title, snsRegex, sns) => {
 	if (text === undefined) {
-		return;
+		return false;
 	}
 	if (text.match(snsRegex) === null) {
 		Swal.fire(`請輸入正確的${sns}網址`);
-		return;
+		return false;
 	}
 	if (!text) {
 		text = "";
 	} else {
 		updateSnsURL(title, sns, text);
+		return { title, sns, text };
 	}
 };

@@ -57,7 +57,6 @@ function NewPicture({ title, AddPicture }) {
 	const [loading, setLoading] = useState(false);
 	const [userLevel, setUserLevel] = useState(0);
 	const [files, setFiles] = useState([]);
-	const user = firebase.auth().currentUser;
 	const [imgDescription, setImgDescription] = useState("");
 
 	useEffect(() => {
@@ -86,7 +85,7 @@ function NewPicture({ title, AddPicture }) {
 		const promises = [];
 
 		const data = {
-			uid: user.uid,
+			uid: currentUser.uid,
 			description: imgDescription,
 			postTime: new Date().getTime(),
 			images: [],
