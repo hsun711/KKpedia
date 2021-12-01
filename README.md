@@ -34,7 +34,6 @@ You can also create your own native account or use default test account below
   - algoliasearch
 - Other
   - Lint Tool: ESLint
-  - Version Control : Git / GitHub
   - Unit Test: Jest
 
 # Flow Chart
