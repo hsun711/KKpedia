@@ -13,12 +13,11 @@ const OutsideContainer = styled.div`
 	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
 	border-radius: 10px;
 	display: flex;
-	justify-content: flex-start;
+	justify-content: center;
 	flex-wrap: wrap;
 	padding: 2vmin;
 	@media screen and (max-width: 1200px) {
 		margin: 3vmin;
-		justify-content: center;
 	}
 `;
 
@@ -180,7 +179,6 @@ function Place({ title, topic }) {
 						topic={topic}
 						title={title}
 						setPopAddPlace={setPopAddPlace}
-						// setPlaceName={setPlaceName}
 					/>
 				</div>
 			) : (

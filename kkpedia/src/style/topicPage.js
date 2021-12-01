@@ -74,7 +74,7 @@ const EachContainer = styled.div`
 	box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.2);
 	border-radius: 10px;
 	display: flex;
-	justify-content: space-between;
+	justify-content: center;
 	flex-wrap: wrap;
 	margin-top: 3vmin;
 	padding: 3vmin;
