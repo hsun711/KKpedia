@@ -39,7 +39,7 @@ You can also create your own native account or use default test account below
 
 # Flow Chart
 
-![flowChart ](https://user-images.githubusercontent.com/77537057/144165695-9c2567b6-43d0-4729-9c8e-f28bbe00c499.png)
+![untitled](https://user-images.githubusercontent.com/77537057/144178727-24adf0db-df53-47b3-9940-c7172a15b298.png)
 
 # Demo
 - Login Page
