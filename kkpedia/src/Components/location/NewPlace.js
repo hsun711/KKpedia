@@ -212,16 +212,12 @@ function NewPlace({ title, setPopAddPlace, topic }) {
 										locationName
 									);
 								});
+								setLoading(false);
+								setPopAddPlace(false);
+								Swal.fire("貢獻值加 5 點~");
 							},
 						});
 					});
-					Promise.all(promises)
-						.then(() => {
-							setLoading(false);
-							setPopAddPlace(false);
-							Swal.fire("貢獻值加 5 點~");
-						})
-						.catch((err) => console.log(err));
 				}
 			}
 		});

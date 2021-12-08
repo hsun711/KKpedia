@@ -1,7 +1,6 @@
 import firebase from "./firebase";
 import Swal from "sweetalert2";
 import Compressor from "compressorjs";
-import { v4 as uuidv4 } from "uuid";
 const doccategory = firebase.firestore().collection("categories");
 const docuser = firebase.firestore().collection("users");
 const docpost = firebase.firestore().collection("posts");
