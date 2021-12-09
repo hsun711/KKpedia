@@ -70,7 +70,7 @@ function Header() {
 			return;
 		} else {
 			history.push(`/search/${inputSearch}`);
-			e.target.value = "";
+			setInputSearch("");
 		}
 	};
 
