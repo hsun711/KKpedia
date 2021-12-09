@@ -116,12 +116,16 @@ function NewPicture({ title, AddPicture }) {
 								docid
 							);
 						});
-						setLoading(false);
-						AddPicture(false);
-						Swal.fire("貢獻值加 7 點~");
 					},
 				});
 			});
+			Promise.all(promises)
+				.then(() => {
+					setLoading(false);
+					AddPicture(false);
+					Swal.fire("貢獻值加 7 點~");
+				})
+				.catch((err) => console.log(err));
 		}
 	};
 
