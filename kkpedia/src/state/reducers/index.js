@@ -3,8 +3,8 @@ import getCurrentUserReducer from "./getCurrentUserReducer";
 import getCategoriesReducer from "./getCategoriesReducer";
 
 const allReducers = combineReducers({
-	currentUser: getCurrentUserReducer,
-	allCategories: getCategoriesReducer,
+  currentUser: getCurrentUserReducer,
+  allCategories: getCategoriesReducer,
 });
 
 export default allReducers;

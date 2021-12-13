@@ -1,14 +1,14 @@
 * {
-	box-sizing: border-box;
-	margin: 0px;
-	padding: 0px;
-	color: #404040;
-	font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
-		sans-serif;
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  color: #404040;
+  font-family: -apple-system, system-ui, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
 }
 
 body {
-	background-image: url("./img/craft-texture-brown-journal-note.jpg");
-	background-size: cover;
-	background-attachment: fixed;
+  background-image: url("./img/craft-texture-brown-journal-note.jpg");
+  background-size: cover;
+  background-attachment: fixed;
 }
