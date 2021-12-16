@@ -96,13 +96,13 @@ function NewPlace({ title, setPopAddPlace, topic }) {
   }, [currentUser]);
 
   // 把從子層 MapAutocomplete 收到的資訊存進 state 裡
-  const GetAddress = (addressdata) => {
+  const getAddress = (addressdata) => {
     setAddress(addressdata[0]);
     setPlaceId(addressdata[1]);
     setLatitude(addressdata[2]);
   };
 
-  const OnFileChange = (e) => {
+  const onFileChange = (e) => {
     // Get Files
     for (let i = 0; i < e.target.files.length; i++) {
       const newFile = e.target.files[i];
@@ -116,7 +116,7 @@ function NewPlace({ title, setPopAddPlace, topic }) {
     }
   };
 
-  const SendAlert = () => {
+  const sendAlert = () => {
     const otherFollower = titleData.followedBy?.filter((follower) => {
       return follower !== currentUser.uid;
     });
@@ -132,42 +132,32 @@ function NewPlace({ title, setPopAddPlace, topic }) {
     });
   };
 
-  const UpdateLevel = () => {
+  const updateLevel = () => {
     levelUpUser(currentUser.uid, userData.userLevel, 5);
-    SendAlert();
+    sendAlert();
   };
 
-  const AddNewPlace = () => {
+  const addNewPlace = () => {
     setLoading(true);
     const documentRef = db.collection("categories").doc(`${title}`);
     const promises = [];
 
-    if (locationName === "") {
-      Swal.fire("景點/餐廳名稱沒有填唷");
-      setLoading(false);
-      return;
-    }
-    if (description === "") {
-      Swal.fire("景點/餐廳描述沒有填唷");
-      setLoading(false);
-      return;
-    }
-    if (address === "") {
-      Swal.fire("地址沒有填唷");
-      setLoading(false);
-      return;
-    }
-    if (files.length < 1) {
-      Swal.fire("請至少上傳一張照片喔");
+    const alertMessage =
+      locationName === ""
+        ? "景點/餐廳名稱沒有填唷"
+        : description === ""
+        ? "景點/餐廳描述沒有填唷"
+        : address === ""
+        ? "地址沒有填唷"
+        : files.length < 1
+        ? "請至少上傳一張照片喔"
+        : null;
+    if (alertMessage) {
+      Swal.fire(alertMessage);
       setLoading(false);
       return;
     }
 
-    if (files.length > 5) {
-      Swal.fire("最多上傳5張照片喔");
-      setLoading(false);
-      return;
-    }
     getPlaceName(title, locationName).then((doc) => {
       if (doc.exists) {
         Swal.fire(`${locationName}已經存在了喔`);
@@ -191,7 +181,7 @@ function NewPlace({ title, setPopAddPlace, topic }) {
           setLoading(false);
           return;
         } else {
-          addPhotos(title, "places", locationName, data, UpdateLevel);
+          addPhotos(title, "places", locationName, data, updateLevel);
           files.map((file) => {
             new Compressor(file, {
               quality: 0.8,
@@ -253,7 +243,7 @@ function NewPlace({ title, setPopAddPlace, topic }) {
       </Title>
       <Title>
         <ShortTitle>詳細地址：</ShortTitle>
-        <MapAutocomplete placeaddress={GetAddress} />
+        <MapAutocomplete placeaddress={getAddress} />
       </Title>
       <ImageTitle>
         <AddImagesTitle>上傳照片(最多上傳5張照片喔)：</AddImagesTitle>
@@ -264,7 +254,7 @@ function NewPlace({ title, setPopAddPlace, topic }) {
           id="postImages"
           style={{ display: "none" }}
           accept="image/*"
-          onChange={OnFileChange}
+          onChange={onFileChange}
         />
       </ImageTitle>
       <MultiImgs>
@@ -276,7 +266,7 @@ function NewPlace({ title, setPopAddPlace, topic }) {
           );
         })}
       </MultiImgs>
-      <SendBtn onClick={AddNewPlace}>新增</SendBtn>
+      <SendBtn onClick={addNewPlace}>新增</SendBtn>
       {loading && <Loading />}
     </Container>
   );

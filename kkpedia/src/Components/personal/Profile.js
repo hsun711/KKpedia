@@ -31,6 +31,7 @@ import {
   PhotoCheck,
   LevelTag,
   LevelImg,
+  LevelNum,
   MenuBar,
   MenuLink,
 } from "../../style/profile";
@@ -38,7 +39,7 @@ import {
 import { uploadImage } from "../../utils/commonFunc";
 
 function Profile() {
-  let { path, url } = useRouteMatch();
+  let { url } = useRouteMatch();
   const currentUser = useSelector((state) => state.currentUser);
   const [activeItem, setActiveItem] = useState(url);
   const [readOnly, setReadOnly] = useState(true);
@@ -163,7 +164,7 @@ function Profile() {
             )}
             <LevelTag>
               <LevelImg src={levelImg} />
-              LV.{level}
+              <LevelNum>LV.{level}</LevelNum>
             </LevelTag>
           </EditArea>
         </Person>

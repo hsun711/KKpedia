@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 import firebase from "./utils/firebase";
 import Header from "./Components/common/Header";
@@ -31,7 +31,6 @@ function App() {
   const [user, setUser] = useState();
   const db = firebase.firestore();
   const dispatch = useDispatch();
-  // const currentUser = useSelector((state) => state.currentUser);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((currentUser) => {

@@ -26,7 +26,7 @@ const Container = styled.div`
 const NoResult = styled.div`
   width: 80%;
   height: 30vmin;
-  font-size: 8vmin;
+  font-size: 6vmin;
   margin: 20vmin auto;
   background-color: rgba(256, 256, 256, 0.8);
   box-shadow: 10px 10px 30px 5px rgba(0, 0, 0, 0.25);
@@ -127,7 +127,7 @@ function SearchResult() {
     <>
       {!loading && resultData.length === 0 && (
         <NoResult>
-          <p>此藝人/戲劇/綜藝還沒被建立唷!</p>
+          <p>此藝人／戲劇／綜藝還沒被建立唷!</p>
         </NoResult>
       )}
       {!loading && resultData.length > 0 && (

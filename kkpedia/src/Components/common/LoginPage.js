@@ -140,8 +140,8 @@ const CheckBtn = styled(LoginBtn)`
 function LoginPage() {
   const history = useHistory();
   const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("eee@gmail.com");
+  const [password, setPassword] = useState("123456");
   const [loading, setLoading] = useState(false);
 
   const HandleLogin = async (provider) => {

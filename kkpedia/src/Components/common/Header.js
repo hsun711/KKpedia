@@ -10,6 +10,7 @@ import { snapshotUserData, snapshotUserNews } from "../../utils/firebaseFunc";
 import {
   HeaderContainer,
   Notify,
+  NoNewNotify,
   HeaderContent,
   HeaderNav,
   Logo,
@@ -97,11 +98,7 @@ function Header() {
                   }
                 }}
               />
-              <InputBtn
-                onClick={(e) => {
-                  checkInput(e);
-                }}
-              />
+              <InputBtn onClick={checkInput} />
             </Search>
             <Bell onClick={showNewAlert}>
               {newAlert !== 0 ? <AlertNum>{newAlert}</AlertNum> : null}
@@ -125,9 +122,21 @@ function Header() {
         <Notify>
           {renderNews ? (
             <Notify>
-              {newsData.map((data) => {
-                return <Notification data={data} key={data.docid} />;
-              })}
+              {newsData.length === 0 ? (
+                <NoNewNotify>沒有新的通知唷!</NoNewNotify>
+              ) : (
+                <>
+                  {newsData.map((data) => {
+                    return (
+                      <Notification
+                        data={data}
+                        key={data.docid}
+                        setRenderNews={setRenderNews}
+                      />
+                    );
+                  })}
+                </>
+              )}
             </Notify>
           ) : null}
         </Notify>

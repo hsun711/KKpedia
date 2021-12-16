@@ -104,7 +104,7 @@ const StartBtn = styled.div`
 function LandingPage() {
   const [popUpsignin, setPopUpsignin] = useState(false);
 
-  const ShowSignIn = () => {
+  const showSignIn = () => {
     setPopUpsignin(!popUpsignin);
   };
 
@@ -113,7 +113,7 @@ function LandingPage() {
       <WelcomePage>
         {popUpsignin ? (
           <div>
-            <Cover onClick={ShowSignIn} />
+            <Cover onClick={showSignIn} />
             <LoginPage />
           </div>
         ) : (
@@ -122,7 +122,7 @@ function LandingPage() {
             <WelcomeText>總要有一次奮不顧身</WelcomeText>
             <WelcomeText>去看偶像站在臺上閃閃發光的樣子</WelcomeText>
             <WelcomeText>看不了的日子就來 KKpedia 吧!</WelcomeText>
-            <StartBtn onClick={ShowSignIn}>Start</StartBtn>
+            <StartBtn onClick={showSignIn}>Start</StartBtn>
           </WelcomeArea>
         )}
       </WelcomePage>

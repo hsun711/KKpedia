@@ -19,40 +19,32 @@ const Pin = styled.div`
   height: 3vmin;
 `;
 
-// Map
-const SimpleMap = (props) => {
+const Map = ({ latitude, placeId }) => {
+  const defaultProps = {
+    center: {
+      lat: 25.04,
+      lng: 121.5,
+    },
+    zoom: 15,
+  };
   return (
     <Container>
       <GoogleMapReact
         bootstrapURLKeys={{ key: Key }}
-        defaultCenter={props.latitude}
-        defaultZoom={props.zoom}
+        defaultCenter={latitude}
+        defaultZoom={defaultProps.zoom}
         yesIWantToUseGoogleMapApiInternals
       >
         <AnyReactComponent
-          key={props.placeId}
-          lat={props.latitude.lat}
-          lng={props.latitude.lng}
-          placeId={props.placeId}
+          key={placeId}
+          lat={latitude.lat}
+          lng={latitude.lng}
+          placeId={placeId}
           text=""
         />
       </GoogleMapReact>
     </Container>
   );
 };
-
-// 由於改寫成 functional component，故另外設定 defaultProps
-SimpleMap.defaultProps = {
-  center: {
-    lat: 25.04,
-    lng: 121.5,
-  },
-  zoom: 15,
-};
-
-// App
-function Map({ latitude, placeId }) {
-  return <SimpleMap latitude={latitude} placeId={placeId} />;
-}
 
 export default Map;

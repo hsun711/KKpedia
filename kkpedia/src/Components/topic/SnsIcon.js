@@ -5,7 +5,7 @@ import twitter from "../../img/twitter.png";
 import youtube from "../../img/youtube.png";
 import add from "../../img/add.png";
 import { checkSnsURL } from "../../utils/commonFunc";
-import { SnsLink, SnsImg, Edit, EditIcon } from "../../style/idolPage";
+import { SnsLink, SnsImg, Edit, EditIcon, IconDiv } from "../../style/idolPage";
 
 function SnsIcon({ item, title }) {
   const AddSns = async (sns) => {
@@ -14,65 +14,85 @@ function SnsIcon({ item, title }) {
       input: "text",
       inputPlaceholder: "",
     });
-    if (sns === "facebook") {
-      const snsRegex = /^https:\/\/www\.facebook\.com/;
-      checkSnsURL(text, title, snsRegex, "facebook");
-    } else if (sns === "instagram") {
-      const snsRegex = /^https:\/\/www\.instagram\.com\//;
-      checkSnsURL(text, title, snsRegex, "instagram");
-    } else if (sns === "twitter") {
-      const snsRegex = /^https:\/\/twitter\.com\//;
-      checkSnsURL(text, title, snsRegex, "twitter");
-    } else if (sns === "youtube") {
-      const snsRegex = /^https:\/\/www\.youtube\.com\//;
-      checkSnsURL(text, title, snsRegex, "youtube");
+    switch (sns) {
+      case "facebook": {
+        const snsRegex = /^https:\/\/www\.facebook\.com/;
+        checkSnsURL(text, title, snsRegex, "facebook");
+        break;
+      }
+      case "instagram": {
+        const snsRegex = /^https:\/\/www\.instagram\.com\//;
+        checkSnsURL(text, title, snsRegex, "instagram");
+        break;
+      }
+      case "twitter": {
+        const snsRegex = /^https:\/\/twitter\.com\//;
+        checkSnsURL(text, title, snsRegex, "twitter");
+        break;
+      }
+      case "youtube": {
+        const snsRegex = /^https:\/\/www\.youtube\.com\//;
+        checkSnsURL(text, title, snsRegex, "youtube");
+        break;
+      }
+      default:
+        break;
     }
   };
+
   return (
     <Edit key={item.title}>
       {item.facebook === "" ? (
-        <EditIcon
-          src={add}
-          onClick={() => {
-            AddSns("facebook");
-          }}
-        />
+        <IconDiv>
+          <EditIcon
+            src={add}
+            onClick={() => {
+              AddSns("facebook");
+            }}
+          />
+        </IconDiv>
       ) : (
         <SnsLink href={item.facebook} target="_blank">
           <SnsImg src={fb} />
         </SnsLink>
       )}
       {item.instagram === "" ? (
-        <EditIcon
-          src={add}
-          onClick={() => {
-            AddSns("instagram");
-          }}
-        />
+        <IconDiv>
+          <EditIcon
+            src={add}
+            onClick={() => {
+              AddSns("instagram");
+            }}
+          />
+        </IconDiv>
       ) : (
         <SnsLink href={item.instagram} target="_blank">
           <SnsImg src={ig} />
         </SnsLink>
       )}
       {item.twitter === "" ? (
-        <EditIcon
-          src={add}
-          onClick={() => {
-            AddSns("twitter");
-          }}
-        />
+        <IconDiv>
+          <EditIcon
+            src={add}
+            onClick={() => {
+              AddSns("twitter");
+            }}
+          />
+        </IconDiv>
       ) : (
         <SnsLink href={item.twitter} target="_blank">
           <SnsImg src={twitter} />
         </SnsLink>
       )}
       {item.youtube === "" ? (
-        <EditIcon
-          src={add}
-          onClick={() => {
-            AddSns("youtube");
-          }}
-        />
+        <IconDiv>
+          <EditIcon
+            src={add}
+            onClick={() => {
+              AddSns("youtube");
+            }}
+          />
+        </IconDiv>
       ) : (
         <SnsLink href={item.youtube} target="_blank">
           <SnsImg src={youtube} />

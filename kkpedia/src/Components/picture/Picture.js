@@ -5,6 +5,7 @@ import NewPicture from "./NewPicture";
 import { v4 as uuidv4 } from "uuid";
 import EachPictures from "./EachPictures";
 import { snapshotUserData, getPhotos } from "../../utils/firebaseFunc";
+import { HintText, Add, Cover } from "../../style/place";
 
 const Container = styled.div`
   width: 100%;
@@ -12,37 +13,6 @@ const Container = styled.div`
   flex-direction: column;
   @media screen and (max-width: 1200px) {
     width: 90%;
-  }
-`;
-
-const Add = styled.div`
-  background-color: #f3f4f6;
-  border: 2px solid #422800;
-  border-radius: 30px;
-  box-shadow: #422800 4px 4px 0 0;
-  color: #422800;
-  cursor: pointer;
-  position: fixed;
-  bottom: 3vmin;
-  right: 2vmin;
-  display: inline-block;
-  font-weight: 600;
-  font-size: 2vmin;
-  padding: 0 2vmin;
-  line-height: 4.2vmin;
-  text-align: center;
-  text-decoration: none;
-  user-select: none;
-  -webkit-user-select: none;
-  touch-action: manipulation;
-  &:hover {
-    background-color: #f8eedb;
-    box-shadow: #422800 2px 2px 0 0;
-    transform: translate(2px, 2px);
-  }
-  @media screen and (max-width: 1200px) {
-    line-height: 5vmin;
-    padding: 0.75vmin 2vmin;
   }
 `;
 
@@ -58,17 +28,6 @@ const EachPhoto = styled.div`
   @media screen and (max-width: 1200px) {
     width: 80%;
   }
-`;
-
-const Cover = styled.div`
-  width: 100vw;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: black;
-  opacity: 0.6;
-  z-index: 2;
 `;
 
 function Picture({ title, setActiveItem }) {
@@ -116,9 +75,17 @@ function Picture({ title, setActiveItem }) {
             </>
           ) : (
             <Container>
-              {photos.map((item) => {
-                return <EachPictures item={item} key={uuidv4()} />;
-              })}
+              {photos.length === 0 ? (
+                <EachPhoto>
+                  <HintText>還沒有人貢獻照片呢~快去搶頭香吧!</HintText>
+                </EachPhoto>
+              ) : (
+                <>
+                  {photos.map((item) => {
+                    return <EachPictures item={item} key={uuidv4()} />;
+                  })}
+                </>
+              )}
             </Container>
           )}
         </>

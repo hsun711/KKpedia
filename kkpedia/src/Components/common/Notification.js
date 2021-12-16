@@ -13,10 +13,11 @@ const Container = styled.div`
   }
 `;
 
-function Notification({ data }) {
+function Notification({ data, setRenderNews }) {
   const currentUser = useSelector((state) => state.currentUser);
 
   const deleteNews = () => {
+    setRenderNews(false);
     deleteUserNews(
       currentUser.uid,
       data.docid,
@@ -25,6 +26,7 @@ function Notification({ data }) {
       data.locationName
     );
   };
+
   return (
     <Container onClick={deleteNews}>{data.title} 有更新景點囉~~</Container>
   );

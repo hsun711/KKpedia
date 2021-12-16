@@ -17,10 +17,23 @@ const Container = styled.div`
   height: 60vmin;
 `;
 
+const PlaceText = styled.div`
+  display: none;
+  font-size: 1.75vmin;
+  font-weight: 600;
+  background-color: rgba(224, 217, 207, 0.8);
+  padding: 0.5vmin;
+  border-radius: 8px;
+  margin-left: 0.5vmin;
+  z-index: 5;
+`;
+
 const PlaceDetail = styled.div`
   display: flex;
-  min-width: 30vmin;
-  align-items: center;
+  min-width: 20vmin;
+  &:hover ${PlaceText} {
+    display: block;
+  }
 `;
 
 const Pin = styled.div`
@@ -29,24 +42,21 @@ const Pin = styled.div`
   background-size: 100%;
   width: 2vmin;
   height: 2vmin;
-`;
-
-const PlaceText = styled.div`
-  font-size: 1.75vmin;
-  font-weight: 600;
-  background-color: rgba(224, 217, 207, 0.8);
-  padding: 0.5vmin;
-  border-radius: 8px;
-  margin-left: 0.5vmin;
   &:hover {
-    background-color: white;
     transform: scale(1.1);
-    z-index: 2;
+    cursor: pointer;
   }
 `;
 
-// Map
-const SimpleMap = (props) => {
+const MultiMap = () => {
+  const defaultProps = {
+    center: {
+      lat: 32.19,
+      lng: 126.85,
+    },
+    zoom: 2,
+  };
+
   const [collectPlace, setCollectPlace] = useState([]);
   const currentUser = useSelector((state) => state.currentUser);
 
@@ -62,13 +72,12 @@ const SimpleMap = (props) => {
     }
   }, [currentUser]);
   return (
-    // Important! Always set the container height explicitly
     <Container>
       <GoogleMapReact
         bootstrapURLKeys={{ key: Key }}
-        defaultCenter={props.center}
-        defaultZoom={props.zoom}
-        yesIWantToUseGoogleMapApiInternals // 設定為 true
+        defaultCenter={defaultProps.center}
+        defaultZoom={defaultProps.zoom}
+        yesIWantToUseGoogleMapApiInternals
       >
         {collectPlace.map((item) => {
           return (
@@ -84,19 +93,5 @@ const SimpleMap = (props) => {
     </Container>
   );
 };
-
-// 由於改寫成 functional component，故另外設定 defaultProps
-SimpleMap.defaultProps = {
-  center: {
-    lat: 32.19,
-    lng: 126.85,
-  },
-  zoom: 4,
-};
-
-// App
-function MultiMap() {
-  return <SimpleMap />;
-}
 
 export default MultiMap;

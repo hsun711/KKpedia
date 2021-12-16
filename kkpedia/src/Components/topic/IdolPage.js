@@ -42,7 +42,7 @@ import {
 } from "../../style/idolPage";
 
 function IdolPage({ topic }) {
-  let { path, url } = useRouteMatch();
+  let { url } = useRouteMatch();
   let { title } = useParams();
   const [isPageNotFound, setIsPageNotFound] = useState(false);
   const [titleData, setTitleData] = useState([]);

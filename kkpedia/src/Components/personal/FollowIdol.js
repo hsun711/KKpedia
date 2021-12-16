@@ -75,10 +75,10 @@ const NormalTxt = styled.p`
   }
 `;
 
-function FellowIdol({ title, image, topic }) {
+function FollowIdol({ title, image, topic }) {
   const currentUser = useSelector((state) => state.currentUser);
 
-  const ToggleFollow = () => {
+  const toggleFollow = () => {
     removeUserFollow(currentUser.uid, title);
     removeFollowedBy(title, currentUser.uid);
   };
@@ -89,10 +89,10 @@ function FellowIdol({ title, image, topic }) {
       </FollowLink>
       <EachStar>
         <NormalTxt>{title}</NormalTxt>
-        <LikeIcon src={like} onClick={ToggleFollow} />
+        <LikeIcon src={like} onClick={toggleFollow} />
       </EachStar>
     </EachFollow>
   );
 }
 
-export default FellowIdol;
+export default FollowIdol;

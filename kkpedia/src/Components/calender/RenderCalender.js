@@ -77,7 +77,7 @@ export default function RenderCalender({ title }) {
     };
   }, []);
 
-  const HandleDateClick = async (date) => {
+  const handleDateClick = async (date) => {
     let { value: text } = await Swal.fire({
       title: "輸入行程",
       input: "text",
@@ -103,7 +103,7 @@ export default function RenderCalender({ title }) {
     });
   };
 
-  const DeletedEvent = (eventInfo) => {
+  const deletedEvent = (eventInfo) => {
     Swal.fire({
       title: "確定要刪除嗎?",
       text: "刪除就回不來了喔!",
@@ -133,8 +133,8 @@ export default function RenderCalender({ title }) {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin, timeGridPlugin]} //載入外掛
         selectable
-        dateClick={HandleDateClick}
-        eventClick={DeletedEvent}
+        dateClick={handleDateClick}
+        eventClick={deletedEvent}
         headerToolbar={{
           left: "today", // 自訂按鈕可以加在這邊
           center: "title",
