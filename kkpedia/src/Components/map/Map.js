@@ -27,6 +27,7 @@ const Map = ({ latitude, placeId }) => {
     },
     zoom: 15,
   };
+
   return (
     <Container>
       <GoogleMapReact

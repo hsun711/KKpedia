@@ -24,6 +24,7 @@ const Input = styled.input`
     height: 5.5vmin;
   }
 `;
+
 function MapAutocomplete(props) {
   const [address, setAddress] = useState("");
   const [coordinates, setCoordinates] = useState({ lat: null, lng: null });
@@ -56,7 +57,6 @@ function MapAutocomplete(props) {
                 const style = {
                   backgroundColor: suggestion.active ? "#DCC7A6" : "#fff",
                 };
-
                 return (
                   <div
                     {...getSuggestionItemProps(suggestion, { style })}

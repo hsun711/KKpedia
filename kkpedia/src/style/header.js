@@ -15,7 +15,7 @@ const HeaderContainer = styled.div`
 `;
 
 const Notify = styled.div`
-  background-color: #fff;
+  background-color: #f7f1e3;
   width: 50%;
   border-radius: 0 0 10px 10px;
   align-self: flex-end;

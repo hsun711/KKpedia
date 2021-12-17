@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import algolia from "../../utils/algolia";
 import styled from "styled-components";
 import Loading from "../common/Loading";
 import board from "../../img/cork-board.png";
@@ -101,6 +100,17 @@ const LinkTitle = styled.p`
   text-overflow: ellipsis;
 `;
 
+function selectMatchItem(lists, keyWord) {
+  let reg = new RegExp(keyWord.toLowerCase());
+  let resArr = [];
+  lists.filter((item) => {
+    if (item.title.toLowerCase().match(reg)) {
+      resArr.push(item);
+    }
+  });
+  return resArr;
+}
+
 function SearchResult() {
   const allCategories = useSelector((state) => state.allCategories);
   const history = useHistory();
@@ -110,17 +120,8 @@ function SearchResult() {
 
   useEffect(() => {
     setLoading(true);
-    algolia.search(search).then((result) => {
-      const arr = [];
-      result.hits.map((hit) => {
-        const result = allCategories.filter((data) => {
-          return data.title === hit.title;
-        });
-        arr.push(...result);
-      });
-      setResultData(arr);
-      setLoading(false);
-    });
+    setResultData(selectMatchItem(allCategories, `${search}`));
+    setLoading(false);
   }, [search]);
 
   return (
