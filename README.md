@@ -31,7 +31,6 @@ You can also create your own native account or use default test account below
   - google-map-react
   - react-simple-image-viewer
   - reactjs-popup
-  - algoliasearch
 - Other
   - Lint Tool: ESLint
   - Unit Test: Jest
