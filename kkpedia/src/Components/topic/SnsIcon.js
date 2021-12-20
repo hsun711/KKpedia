@@ -5,7 +5,16 @@ import twitter from "../../img/twitter.png";
 import youtube from "../../img/youtube.png";
 import add from "../../img/add.png";
 import { checkSnsURL } from "../../utils/commonFunc";
-import { SnsLink, SnsImg, Edit, EditIcon, IconDiv } from "../../style/idolPage";
+import {
+  SnsLink,
+  SnsImg,
+  Edit,
+  EditIcon,
+  IconDivFb,
+  IconDivIg,
+  IconDivTw,
+  IconDivYt,
+} from "../../style/idolPage";
 
 function SnsIcon({ item, title }) {
   const AddSns = async (sns) => {
@@ -43,56 +52,56 @@ function SnsIcon({ item, title }) {
   return (
     <Edit key={item.title}>
       {item.facebook === "" ? (
-        <IconDiv>
+        <IconDivFb>
           <EditIcon
             src={add}
             onClick={() => {
               AddSns("facebook");
             }}
           />
-        </IconDiv>
+        </IconDivFb>
       ) : (
         <SnsLink href={item.facebook} target="_blank">
           <SnsImg src={fb} />
         </SnsLink>
       )}
       {item.instagram === "" ? (
-        <IconDiv>
+        <IconDivIg>
           <EditIcon
             src={add}
             onClick={() => {
               AddSns("instagram");
             }}
           />
-        </IconDiv>
+        </IconDivIg>
       ) : (
         <SnsLink href={item.instagram} target="_blank">
           <SnsImg src={ig} />
         </SnsLink>
       )}
       {item.twitter === "" ? (
-        <IconDiv>
+        <IconDivTw>
           <EditIcon
             src={add}
             onClick={() => {
               AddSns("twitter");
             }}
           />
-        </IconDiv>
+        </IconDivTw>
       ) : (
         <SnsLink href={item.twitter} target="_blank">
           <SnsImg src={twitter} />
         </SnsLink>
       )}
       {item.youtube === "" ? (
-        <IconDiv>
+        <IconDivYt>
           <EditIcon
             src={add}
             onClick={() => {
               AddSns("youtube");
             }}
           />
-        </IconDiv>
+        </IconDivYt>
       ) : (
         <SnsLink href={item.youtube} target="_blank">
           <SnsImg src={youtube} />

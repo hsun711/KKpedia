@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 import EachPictures from "./EachPictures";
 import { snapshotUserData, getPhotos } from "../../utils/firebaseFunc";
 import { HintText, Add, Cover } from "../../style/place";
+import Loading from "../common/Loading";
 
 const Container = styled.div`
   width: 100%;
@@ -25,9 +26,6 @@ const EachPhoto = styled.div`
   width: 100%;
   border-radius: 10px;
   margin-bottom: 2vmin;
-  @media screen and (max-width: 1200px) {
-    width: 80%;
-  }
 `;
 
 function Picture({ title, setActiveItem }) {

@@ -33,6 +33,7 @@ function Place({ title, topic }) {
       unsubscribe();
     };
   }, []);
+
   return (
     <OutsideContainer>
       <Add onClick={AddSomePlace} topic="Idol">

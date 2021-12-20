@@ -96,18 +96,59 @@ const Edit = styled.div`
   position: relative;
 `;
 
-const IconDiv = styled.div`
+const IconDivFb = styled.div`
   &:hover::before {
     position: absolute;
     top: 6vmin;
     color: #000;
     font-size: 1.5vmin;
     font-weight: 600;
-    width: 6vmin;
+    width: 4vmin;
     padding: 0.2vmin;
-    background: #f3f4f6;
     border-radius: 5px;
-    content: "新增網址";
+    content: "Facebook";
+  }
+`;
+
+const IconDivIg = styled.div`
+  &:hover::before {
+    position: absolute;
+    top: 6vmin;
+    color: #000;
+    font-size: 1.5vmin;
+    font-weight: 600;
+    width: 4vmin;
+    padding: 0.2vmin;
+    border-radius: 5px;
+    content: "Instagram";
+  }
+`;
+
+const IconDivTw = styled.div`
+  &:hover::before {
+    position: absolute;
+    top: 6vmin;
+    color: #000;
+    font-size: 1.5vmin;
+    font-weight: 600;
+    width: 4vmin;
+    padding: 0.2vmin;
+    border-radius: 5px;
+    content: "Twitter";
+  }
+`;
+
+const IconDivYt = styled.div`
+  &:hover::before {
+    position: absolute;
+    top: 6vmin;
+    color: #000;
+    font-size: 1.5vmin;
+    font-weight: 600;
+    width: 4vmin;
+    padding: 0.2vmin;
+    border-radius: 5px;
+    content: "Youtube";
   }
 `;
 
@@ -201,7 +242,10 @@ export {
   SnsImg,
   Edit,
   EditIcon,
-  IconDiv,
+  IconDivFb,
+  IconDivIg,
+  IconDivTw,
+  IconDivYt,
   Photo,
   PersonImage,
   PhotoChange,
