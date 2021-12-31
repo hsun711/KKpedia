@@ -14,7 +14,8 @@ import SearchResult from "./Components/common/SearchResult";
 import Home from "./Components/common/Home";
 import PageNotFound from "./Components/common/PageNotFound";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
-import { getCurrentUser, getCategories } from "./state/actions";
+import { getCurrentUser } from "./state/actions";
+import { Context } from "./utils/Context";
 
 const MainContainer = styled.div`
   max-width: 1560px;
@@ -31,6 +32,7 @@ function App() {
   const [user, setUser] = useState();
   const db = firebase.firestore();
   const dispatch = useDispatch();
+  const [category, setCategory] = useState([]);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((currentUser) => {
@@ -43,7 +45,7 @@ function App() {
       querySnapshot.forEach((doc) => {
         item.push(doc.data());
       });
-      dispatch(getCategories(item));
+      setCategory(item);
     });
   }, []);
 
@@ -85,7 +87,9 @@ function App() {
                       </Container>
                     </Route>
                     <Route path="/search/:search">
-                      <SearchResult />
+                      <Context.Provider value={category}>
+                        <SearchResult />
+                      </Context.Provider>
                     </Route>
                     <Route path="/tvshow/:title">
                       <IdolPage topic="tvshow" />

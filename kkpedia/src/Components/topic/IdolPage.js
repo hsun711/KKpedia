@@ -102,7 +102,7 @@ function IdolPage({ topic }) {
               main_image: `${imageUrl}`,
             });
             if (titleData[0].followedBy?.length !== 0) {
-              titleData[0].followedBy.forEach((user) => {
+              titleData[0].followedBy?.forEach((user) => {
                 db.collection("users")
                   .doc(`${user}`)
                   .collection("follows")

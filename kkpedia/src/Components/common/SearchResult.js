@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState, useContext } from "react";
 import styled from "styled-components";
 import Loading from "../common/Loading";
 import board from "../../img/cork-board.png";
 import sticker from "../../img/sticker2.png";
 import idol from "../../img/wanted.png";
 import { useParams, useHistory } from "react-router-dom";
+import { Context } from "../../utils/Context";
 
 const Container = styled.div`
   width: 80%;
@@ -112,7 +112,7 @@ function selectMatchItem(lists, keyWord) {
 }
 
 function SearchResult() {
-  const allCategories = useSelector((state) => state.allCategories);
+  const allCategories = useContext(Context);
   const history = useHistory();
   const { search } = useParams();
   const [resultData, setResultData] = useState([]);
